@@ -1,0 +1,65 @@
+﻿@model Sareoo.Areas.Admin.Models.ViewModels.LessonDetailsViewModel
+
+@{
+    ViewData["Title"] = "إدارة الدرس: " + Model.Lesson.Title;
+}
+
+<!-- This is the new alert section -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div id="success-alert" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6" role="alert">
+        <strong class="font-bold"><i class="fas fa-check-circle"></i> نجاح!</strong>
+        <span class="block sm:inline">@TempData["SuccessMessage"]</span>
+        <span class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="this.parentElement.style.display='none';" style="cursor: pointer;">
+            <svg class="fill-current h-6 w-6 text-green-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" /></svg>
+        </span>
+    </div>
+}
+
+<div class="space-y-8">
+    <!-- Lesson Info & Navigation -->
+    <div>
+        <a asp-action="Index" asp-route-courseId="@Model.Lesson.CourseId" class="secondary-btn px-4 py-2 rounded-lg mb-6 inline-block">
+            <i class="fas fa-arrow-right ml-2"></i> العودة لقائمة الدروس
+        </a>
+        <h2 class="text-3xl font-bold">إدارة الدرس: @Model.Lesson.Title</h2>
+    </div>
+
+    <!-- Attachments Section -->
+    <div class="card-bg p-6 rounded-lg">
+        <h3 class="text-xl font-semibold mb-4">الملفات المرفقة</h3>
+        <form asp-action="AddAttachment" method="post" enctype="multipart/form-data" class="flex items-center gap-4 mb-4">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="lessonId" value="@Model.Lesson.Id" />
+            <input asp-for="NewAttachment" type="file" class="input-style w-full p-2.5" required />
+            <button type="submit" class="primary-btn px-5 py-2.5 rounded-lg flex-shrink-0">رفع ملف</button>
+        </form>
+        <ul class="space-y-2">
+            @foreach (var attachment in Model.Lesson.Attachments)
+            {
+                <li class="flex justify-between items-center bg-gray-900/50 p-3 rounded-md">
+                    <a href="@attachment.FilePath" target="_blank" class="text-blue-400 hover:underline">@attachment.FileName</a>
+                    <form asp-action="DeleteAttachment" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="attachmentId" value="@attachment.Id" />
+                        <button type="submit" class="text-red-400 hover:text-red-300" title="حذف"><i class="fas fa-trash"></i></button>
+                    </form>
+                </li>
+            }
+        </ul>
+    </div>
+
+    
+<!-- Add script at the end of the file -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const alert = document.getElementById('success-alert');
+        if (alert) {
+            setTimeout(() => {
+                alert.style.transition = 'opacity 0.5s ease';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.style.display = 'none', 500);
+            }, 3000); // Alert will disappear after 3 seconds
+        }
+    });
+</script>

@@ -1,0 +1,249 @@
+﻿@model Sareoo.Areas.Admin.Models.Entities.Certificate
+@using Sareoo.Helpers
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <title>شهادة إتمام دورة - @Model.Course.Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="~/images/logo.png" type="image/x-icon">
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/all.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        @@font-face {
+            font-family: 'Hayah';
+            src: url('/font/alfont_com_AlFont_com_Hayah-1.otf') format('opentype');
+        }
+
+        body {
+            background-color: #0b261d; /* Dark Green Background */
+            font-family: 'Hayah', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .print-button-container {
+            margin-bottom: 20px;
+        }
+
+        .print-btn {
+            background-color: #d4af37; /* Gold Button */
+            border: none;
+            color: #fff;
+            padding: 10px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+            .print-btn:hover {
+                background-color: #b08d26; /* Darker Gold Hover */
+                color: #fff;
+            }
+
+        .certificate-frame {
+            background-image: url('/images/certificate.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 100%;
+            max-width: 1100px;
+            aspect-ratio: 1.414 / 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .certificate-content {
+            color: #212529;
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .certificate-logo {
+            position: absolute;
+            top: 13%;
+            left: 14.8%;
+            transform: translateX(-50%);
+            width: 100px;
+        }
+
+        .certificate-text-block {
+            position: absolute;
+            top: 35%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70%;
+        }
+
+        .certificate-text {
+            font-size: 1.9rem;
+            line-height: 1.9;
+            color: #343a40;
+        }
+
+            .certificate-text span {
+                color: #154734; /* Brand Green for highlighted text */
+                font-weight: bold;
+            }
+
+        .issue-date {
+            margin-top: 1.1rem;
+            font-size: 1.6rem;
+            color: #555;
+        }
+
+        .signature-section {
+            position: absolute;
+            bottom: 15%;
+            width: 85%;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .signature-block {
+            text-align: center;
+        }
+
+            .signature-block p {
+                margin-bottom: 5px;
+                font-size: 1.6rem;
+            }
+
+            .signature-block hr {
+                border-top: 1px solid #d4af37; /* Gold Line */
+                width: 180px;
+                margin: 5px auto;
+                opacity: 1;
+            }
+
+        @@page {
+            size: A4 landscape;
+            margin: 0;
+        }
+
+        @@media print {
+            body {
+                background-color: #fff !important;
+                padding: 0;
+                margin: 0;
+            }
+
+            .print-button-container {
+                display: none !important;
+            }
+
+            .certificate-page-container {
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100vw;
+                height: 100vh;
+            }
+
+            .certificate-frame {
+                width: 100% !important;
+                height: 100% !important;
+                max-width: none !important;
+                box-shadow: none !important;
+                border: none !important;
+                aspect-ratio: unset;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="print-button-container">
+        <!-- Removed inline style to let CSS class handle the Gold color -->
+        <button class="btn print-btn" id="downloadBtn">
+            <i class="fas fa-download me-2"></i> تحميل الشهادة
+        </button>
+    </div>
+
+    <div class="certificate-frame" id="certificateToExport">
+        <div class="certificate-content" id="certificate">
+            <img src="~/images/logoC.png" alt="شعار المنصة" class="certificate-logo">
+
+            <div class="certificate-text-block">
+                <p class="certificate-text">
+                    تمنح هذه الشهادة إلى <span>@Model.Student.FullName</span>
+                </p>
+                <p class="certificate-text">
+                    وذلك لإنجازه دورة <span>@Model.Course.Title</span> بتقدير <span>@Model.GradePercentage %</span> وبواقع <span>@Model.Course.TotalHours</span> ساعة تدريبية.
+                </p>
+                <p class="issue-date">تاريخ الإصدار: @Model.IssueDate.ToString("yyyy/MM/dd")</p>
+            </div>
+
+            <div class="signature-section">
+                <div class="signature-block">
+                    <!-- Changed inline color to Brand Green -->
+                    <p style="color:#154734;">فريق وسارعو</p>
+                    <hr>
+                    <p>المشرف العام</p>
+                </div>
+                <div class="signature-block">
+                    <!-- Changed inline color to Brand Green -->
+                    <p style="color:#154734;">@Model.Course.Teacher.FullName</p>
+                    <hr>
+                    <p>مدرب الدورة</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            document.getElementById('downloadBtn').addEventListener('click', function () {
+                const element = document.getElementById('certificateToExport');
+                const studentName = "@Model.Student.FullName".replace(/\s/g, '_');
+                const courseName = "@Model.Course.Title".replace(/\s/g, '_');
+                const filename = `شهادة-${studentName}-${courseName}.pdf`;
+
+                html2canvas(element, {
+                    scale: 2, 
+                    useCORS: true,
+                    backgroundColor: null 
+                }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/jpeg', 0.98);
+
+                    const pdf = new window.jspdf.jsPDF({
+                        orientation: 'landscape',
+                        unit: 'in',
+                        format: 'a4'
+                    });
+
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = pdf.internal.pageSize.getHeight();
+
+                    pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+                    pdf.save(filename);
+                });
+            });
+
+            const arabicNumbers = str => str.toString().replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+            document.querySelectorAll('#certificate span, #certificate p').forEach(el => {
+                if (el.children.length === 0 && el.textContent.trim() !== '') {
+                    el.innerHTML = el.innerHTML.replace(/(\d+%?|\d+\/\d+\/\d+)/g, (match) => arabicNumbers(match));
+                }
+            });
+        });
+    </script>
+</body>
+</html>

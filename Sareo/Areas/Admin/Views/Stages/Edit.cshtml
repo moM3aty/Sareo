@@ -1,0 +1,26 @@
+﻿@model Sareoo.Areas.Admin.Models.Entities.Stage
+
+@{
+    ViewData["Title"] = "تعديل المرحلة";
+}
+
+<div class="max-w-4xl mx-auto">
+    <h2 class="text-3xl font-bold mb-6">تعديل: @Model.Name</h2>
+    <form asp-action="Edit">
+        <input type="hidden" asp-for="Id" />
+        <div class="card-bg p-6 rounded-lg space-y-4">
+            <div asp-validation-summary="ModelOnly" class="text-red-400 mb-4"></div>
+
+            <div>
+                <label asp-for="Name" class="block mb-2 text-sm font-medium">اسم المرحلة</label>
+                <input asp-for="Name" class="input-style w-full p-2.5" />
+                <span asp-validation-for="Name" class="text-red-400 mt-2 text-xs"></span>
+            </div>
+
+            <div class="flex items-center justify-end space-x-4 space-x-reverse pt-4">
+                <input type="submit" value="حفظ التعديلات" class="primary-btn px-6 py-2 rounded-lg cursor-pointer" />
+                <a asp-action="Index" class="secondary-btn px-6 py-2 rounded-lg">العودة للقائمة</a>
+            </div>
+        </div>
+    </form>
+</div>

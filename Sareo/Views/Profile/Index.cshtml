@@ -1,0 +1,329 @@
+﻿@model Sareoo.ViewModels.UserProfileViewModel
+@using Sareoo.Helpers
+
+@{
+    ViewData["Title"] = "الملف الشخصي";
+    var allCoursesCount = Model.InProgressCourses.Count + Model.CompletedCourses.Count;
+}
+<style>
+    .nav-tabs {
+        width: fit-content;
+        padding: 10px 20px !important
+    }
+    option{
+        color:#000;
+    }
+</style>
+
+<section class="section-padding profile">
+    <div class="container">
+        <!-- Profile Header & Stats -->
+        <div class="row g-4 justify-content-center align-items-center mb-5">
+            <div class="col-12">
+                <div class="profile-card w-100">
+                    <div class="d-flex flex-column flex-md-row gap-4 justify-content-md-between align-items-center">
+                        <div class="info">
+                            <h3 class="name">@Model.FullName</h3>
+                            <span class="d-block"><i class="fas fa-location-dot"></i> @(string.IsNullOrEmpty(Model.City) ? "غير محدد" : Model.City), @(string.IsNullOrEmpty(Model.Country) ? "غير محدد" : Model.Country)</span>
+                            <span class="d-block"><i class="fas fa-book-open"></i> @(Model.GradeName ?? "غير محدد")</span>
+                            <span class="d-block"><i class="fas fa-calendar-alt"></i> انضم في @ArabicNumberHelper.ToArabicNumerals(Model.RegistrationDate.ToString("dd MMMM, yyyy"))</span>
+                        </div>
+                        <div class="edit">
+                            <button class="edit-btn"><i class="fas fa-pen"></i> تعديل الملف</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3"><div class="card p-3 d-flex flex-column justify-content-center align-items-center gap-2"><div class="icon"><i class="fas fa-book-open"></i></div><h3 class="mb-0">@ArabicNumberHelper.ToArabicNumerals(Model.CompletedCoursesCount)</h3><p>الدورات المكتملة</p></div></div>
+            <div class="col-md-6 col-lg-3"><div class="card p-3 d-flex flex-column justify-content-center align-items-center gap-2"><div class="icon"><i class="fas fa-certificate"></i></div><h3 class="mb-0">@ArabicNumberHelper.ToArabicNumerals(Model.CertificatesCount)</h3><p>الشهادات المحصلة</p></div></div>
+            <div class="col-md-6 col-lg-3"><div class="card p-3 d-flex flex-column justify-content-center align-items-center gap-2"><div class="icon"><i class="fas fa-clock"></i></div><h3 class="mb-0">@ArabicNumberHelper.ToArabicNumerals(Model.TotalLearningHours)</h3><p>ساعات التعلم</p></div></div>
+            <div class="col-md-6 col-lg-3"><div class="card p-3 d-flex flex-column justify-content-center align-items-center gap-2"><div class="icon"><i class="fas fa-chart-line"></i></div><h3 class="mb-0">@ArabicNumberHelper.ToArabicNumerals(Model.AverageGrade)%</h3><p>متوسط الدرجات</p></div></div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-tabs justify-content-evenly mb-5" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation"><button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button">نظرة عامة</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="my-courses-tab" data-bs-toggle="tab" data-bs-target="#my-courses" type="button">دوراتي (@ArabicNumberHelper.ToArabicNumerals(allCoursesCount))</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="books-tab" data-bs-toggle="tab" data-bs-target="#books" type="button">الكتب (@ArabicNumberHelper.ToArabicNumerals(Model.AvailableBooks.Count))</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="recorded-lessons-tab" data-bs-toggle="tab" data-bs-target="#recordedLessons" type="button">الدورات المسجلة</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="live-lessons-tab" data-bs-toggle="tab" data-bs-target="#liveLessons" type="button">الدروس المباشرة</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="certificates-tab" data-bs-toggle="tab" data-bs-target="#certificates" type="button">الشهادات (@ArabicNumberHelper.ToArabicNumerals(Model.Certificates.Count))</button></li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="myTabContent">
+            <!-- Overview Tab -->
+            <div class="tab-pane fade show active" id="overview" role="tabpanel">
+                <div id="view-mode">
+                    <div class="row g-4 align-items-center">
+                        <div class="col-md-8"><div class="card p-3 mb-3 h-auto"><h4 class="mb-3">المعلومات الشخصية</h4><div class="row g-2"><div class="col-md-6"><div class="mb-3"><label>الاسم الكامل</label><input type="text" class="form-control" value="@Model.FullName" readonly></div></div><div class="col-md-6"><div class="mb-3"><label>رقم الهاتف</label><input type="text" class="form-control" value="@(Model.PhoneNumber != null ? ArabicNumberHelper.ToArabicNumerals(Model.PhoneNumber) : "غير متوفر")" readonly></div></div><div class="col-md-12"><div class="mb-2"><label>البريد الإلكتروني</label><input type="text" class="form-control" value="@Model.Email" readonly></div></div></div></div></div>
+                        <div class="col-md-4"><div class="card p-3 h-auto"><h4 class="text-center">ملخص التقدم</h4><div class="progress mt-3 mb-3" style="height: 15px;border:1px solid #17aeff;"><div class="progress-bar" role="progressbar" style="width: @Model.OverallProgressPercentage%;" aria-valuenow="@Model.OverallProgressPercentage" aria-valuemin="0" aria-valuemax="100">@ArabicNumberHelper.ToArabicNumerals(Model.OverallProgressPercentage)%</div></div><div class="d-flex justify-content-around text-center small"><div><div class="fw-bold fs-5">@ArabicNumberHelper.ToArabicNumerals(Model.CompletedCoursesCount)</div><div class=" text-white">دورة مكتملة</div></div><div><div class="fw-bold fs-5">@ArabicNumberHelper.ToArabicNumerals(Model.InProgressCoursesCount)</div><div class=" text-white">قيد التقدم</div></div><div><div class="fw-bold fs-5">@ArabicNumberHelper.ToArabicNumerals(Model.CertificatesCount)</div><div class=" text-white">شهادات محصلة</div></div></div></div></div>
+                    </div>
+                </div>
+                <div id="edit-mode" style="display:none;">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-8">
+                            <div class="card p-4">
+                                <h4 class="mb-4">تعديل المعلومات الشخصية</h4>
+                                <form asp-action="Edit" asp-controller="Profile" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label asp-for="EditProfileViewModel.FullName" class="form-label"></label>
+                                            <input asp-for="EditProfileViewModel.FullName" class="form-control" />
+                                            <span asp-validation-for="EditProfileViewModel.FullName" class="text-danger small"></span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label asp-for="EditProfileViewModel.PhoneNumber" class="form-label"></label>
+                                            <input asp-for="EditProfileViewModel.PhoneNumber" class="form-control" />
+                                            <span asp-validation-for="EditProfileViewModel.PhoneNumber" class="text-danger small"></span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label asp-for="EditProfileViewModel.City" class="form-label"></label>
+                                            <input asp-for="EditProfileViewModel.City" class="form-control" />
+                                            <span asp-validation-for="EditProfileViewModel.City" class="text-danger small"></span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label asp-for="EditProfileViewModel.Country" class="form-label"></label>
+                                            <input asp-for="EditProfileViewModel.Country" class="form-control" />
+                                            <span asp-validation-for="EditProfileViewModel.Country" class="text-danger small"></span>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label asp-for="EditProfileViewModel.GradeId" class="form-label"></label>
+                                            <select asp-for="EditProfileViewModel.GradeId" class="form-control" asp-items="@Model.EditProfileViewModel.Grades"></select>
+                                            <span asp-validation-for="EditProfileViewModel.GradeId" class="text-danger small"></span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4">
+                                        <button type="submit" class="btn btn-primary">حفظ التعديلات</button>
+                                        <button type="button" class="btn btn-secondary" id="cancelEditBtn">إلغاء</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- My Courses Tab -->
+            <div class="tab-pane fade" id="my-courses" role="tabpanel">
+                <h4 class="mb-4 text-white">دورات قيد التقدم (@ArabicNumberHelper.ToArabicNumerals(Model.InProgressCourses.Count))</h4>
+                <div class="row g-4 mb-5">
+                    @if (Model.InProgressCourses.Any())
+                    {
+                        foreach (var course in Model.InProgressCourses)
+                        {
+                            <div class="col-md-6 col-lg-4"><partial name="_UserProfileCourseCardPartial" model="course" /></div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-center text-white">ليس لديك دورات قيد التقدم حالياً.</p>
+                    }
+                </div>
+                <hr class="my-5" />
+                <h4 class="mb-4 text-white">دورات مكتملة (@ArabicNumberHelper.ToArabicNumerals(Model.CompletedCourses.Count))</h4>
+                <div class="row g-4">
+                    @if (Model.CompletedCourses.Any())
+                    {
+                        foreach (var course in Model.CompletedCourses)
+                        {
+                            <div class="col-md-6 col-lg-4"><partial name="_UserProfileCourseCardPartial" model="course" /></div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-center text-white">لم تكمل أي دورات بعد.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Books Tab -->
+            <div class="tab-pane fade" id="books" role="tabpanel">
+                <div class="heading text-center mb-4"><h2 class="title">الكتب المتاحة</h2><p class="description">تصفح الكتب المتاحة لصفك الدراسي.</p></div>
+                <div class="row g-4 mt-5">
+                    @if (Model.AvailableBooks.Any())
+                    {
+                        foreach (var book in Model.AvailableBooks)
+                        {
+                            <div class="col-md-6 col-lg-4">
+                                <partial name="_BookCardPartial" model="book" />
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-center text-white">لا توجد كتب متاحة لصفك الدراسي حالياً.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Recorded Lessons Tab -->
+            <div class="tab-pane fade" id="recordedLessons" role="tabpanel">
+                <div class="heading text-center mb-4"><h2 class="title">الدورات المسجلة</h2><p class="description">تصفح واشترك في الدورات المتاحة لصفك الدراسي.</p></div>
+                <div class="row g-4 mt-5">
+                    @if (Model.AvailableCourses.Any())
+                    {
+                        foreach (var course in Model.AvailableCourses)
+                        {
+                            <div class="col-md-6 col-lg-4"><partial name="_AvailableCourseCardPartial" model="course" /></div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-center text-white">لا توجد دورات مسجلة متاحة لصفك الدراسي حالياً.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Live Lessons Tab -->
+            <div class="tab-pane fade" id="liveLessons" role="tabpanel">
+                <div class="heading text-center mb-5"><h2 class="title">الدروس المباشرة</h2><p class="description">انضم إلى الدروس المباشرة التفاعلية مع أفضل المعلمين</p></div>
+                <ul class="nav nav-tabs justify-content-center mb-4" id="lessonTabs" role="tablist">
+                    <li class="nav-item" role="presentation"><button class="nav-link active" id="upcoming-tab" data-bs-toggle="tab" data-bs-target="#upcoming" type="button">الدروس القادمة (@ArabicNumberHelper.ToArabicNumerals(Model.UpcomingLessons.Count))</button></li>
+                    <li class="nav-item" role="presentation"><button class="nav-link" id="now-tab" data-bs-toggle="tab" data-bs-target="#now" type="button">مباشر الآن (@ArabicNumberHelper.ToArabicNumerals(Model.LiveNowLessons.Count))</button></li>
+                </ul>
+                <div class="tab-content" id="lessonTabsContent">
+                    <div class="tab-pane fade" id="now" role="tabpanel">
+                        <div class="row g-4">
+                            @if (Model.LiveNowLessons.Any())
+                            {
+                                foreach (var lesson in Model.LiveNowLessons)
+                                {
+                                    <div class="col-12"><partial name="_LiveNowLessonCardPartial" model="lesson" /></div>
+                                }
+                            }
+                            else
+                            {
+                                <p class="text-center text-white">لا توجد دروس مباشرة الآن.</p>
+                            }
+                        </div>
+                    </div>
+                    <div class="tab-pane fade show active" id="upcoming" role="tabpanel">
+                        <div class="row g-4">
+                            @if (Model.UpcomingLessons.Any())
+                            {
+                                foreach (var lesson in Model.UpcomingLessons)
+                                {
+                                    <div class="col-md-6 col-lg-4"><partial name="_UserProfileLiveLessonCardPartial" model="lesson" /></div>
+                                }
+                            }
+                            else
+                            {
+                                <p class="text-center text-white">لا توجد دروس قادمة مجدولة.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certificates Tab -->
+            <div class="tab-pane fade" id="certificates" role="tabpanel">
+                <h3 class="title text-center mb-5">شهاداتي</h3>
+                <div class="row g-4">
+                    @if (Model.Certificates.Any())
+                    {
+                        foreach (var cert in Model.Certificates)
+                        {
+                            <div class="col-12"><partial name="_CertificateCardPartial" model="cert" /></div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-center text-white">ليس لديك أي شهادات حالياً.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Edit Profile Logic
+            const editBtn = document.querySelector('.edit-btn');
+            const cancelBtn = document.getElementById('cancelEditBtn');
+            const viewMode = document.getElementById('view-mode');
+            const editMode = document.getElementById('edit-mode');
+
+            if(editBtn && cancelBtn && viewMode && editMode) {
+                editBtn.addEventListener('click', () => {
+                    viewMode.style.display = 'none';
+                    editMode.style.display = 'block';
+                    editMode.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                });
+
+                cancelBtn.addEventListener('click', () => {
+                    viewMode.style.display = 'block';
+                    editMode.style.display = 'none';
+                });
+            }
+
+            const showEditModeOnLoad = @((TempData["ShowEditMode"] as bool? == true || !ViewData.ModelState.IsValid).ToString().ToLower());
+            if (showEditModeOnLoad) {
+                if(viewMode && editMode) {
+                    viewMode.style.display = 'none';
+                    editMode.style.display = 'block';
+                }
+            }
+
+            // Reminder Logic
+            document.querySelectorAll('.remind-me').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const form = this.closest('form');
+                    const lessonId = form.querySelector('input[name="lessonId"]').value;
+                    const token = form.querySelector('input[name="__RequestVerificationToken"]').value;
+
+                    fetch('/LiveLessons/SetReminder', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'RequestVerificationToken': token
+                        },
+                        body: `lessonId=${lessonId}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.success) {
+                            this.textContent = 'تم ضبط التذكير';
+                            this.disabled = true;
+                        }
+                    });
+                });
+            });
+
+            function toArabicNumerals(str) {
+                if (str === null || str === undefined) return '';
+                return str.toString()
+                    .replace(/0/g, '٠').replace(/1/g, '١').replace(/2/g, '٢')
+                    .replace(/3/g, '٣').replace(/4/g, '٤').replace(/5/g, '٥')
+                    .replace(/6/g, '٦').replace(/7/g, '٧').replace(/8/g, '٨')
+                    .replace(/9/g, '٩');
+            }
+
+            document.querySelectorAll('[data-countdown]').forEach(timerElement => {
+                const countDownDate = new Date(timerElement.dataset.countdown).getTime();
+
+                const interval = setInterval(function() {
+                    const now = new Date().getTime();
+                    const distance = countDownDate - now;
+
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    timerElement.innerHTML = `يبدأ خلال: ${toArabicNumerals(days)}ي ${toArabicNumerals(hours)}س ${toArabicNumerals(minutes)}د ${toArabicNumerals(seconds)}ث`;
+
+                    if (distance < 0) {
+                        clearInterval(interval);
+                        timerElement.innerHTML = "الدرس بدأ الآن!";
+                    }
+                }, 1000);
+            });
+        });
+    </script>
+}

@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Sareoo.Areas.Admin.Models.ViewModels.BookIndexViewModel>
+
+@{
+    ViewData["Title"] = "إدارة الكتب";
+}
+
+<div id="books">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold">إدارة الكتب (PDF)</h2>
+        <a asp-action="Create" class="primary-btn px-5 py-2 rounded-lg flex items-center">
+            <i class="fas fa-plus ml-2"></i> إضافة كتاب جديد
+        </a>
+    </div>
+
+    <div class="card-bg p-4 rounded-lg mb-6">
+        <form asp-action="Index" method="get" class="flex items-center gap-4">
+            <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" placeholder="ابحث بالعنوان، الصف، المادة أو المدرس..." class="input-style w-full p-2.5" />
+            <button type="submit" class="primary-btn px-5 py-2.5 rounded-lg">بحث</button>
+            <a asp-action="Index" class="secondary-btn px-5 py-2.5 rounded-lg">مسح</a>
+        </form>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        @foreach (var item in Model)
+        {
+            <div class="card-bg rounded-lg overflow-hidden flex flex-col">
+                <img src="@(string.IsNullOrEmpty(item.CoverImageUrl) ? "https://placehold.co/600x400/1b263b/e0e1dd?text=Book" : item.CoverImageUrl)"
+                     onerror="this.src='https://placehold.co/600x400/1b263b/e0e1dd?text=Error'"
+                     class="w-full h-100 object-cover">
+                <div class="p-4 flex flex-col flex-grow">
+                    <h3 class="text-lg font-bold text-white flex-grow">@item.Title</h3>
+                    <div class="text-sm text-gray-400 mt-2 border-t border-gray-700 pt-3">
+                        <p><i class="fas fa-graduation-cap ml-2"></i>@item.GradeName</p>
+                        <p class="mt-1"><i class="fas fa-book ml-2"></i>@item.SubjectName</p>
+                        <p class="mt-1"><i class="fas fa-chalkboard-teacher ml-2"></i>@item.TeacherName</p>
+                    </div>
+                    <div class="flex justify-between items-center mt-4">
+                        <a href="@Url.Content(item.PdfFilePath)" target="_blank" class="secondary-btn px-4 py-2 rounded-lg text-sm">عرض الكتاب</a>
+                        <div class="space-x-2 space-x-reverse">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="text-yellow-400 hover:text-yellow-300 p-2 rounded-lg bg-black/20" title="تعديل"><i class="fas fa-edit"></i></a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="text-red-400 hover:text-red-300 p-2 rounded-lg bg-black/20" title="حذف"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

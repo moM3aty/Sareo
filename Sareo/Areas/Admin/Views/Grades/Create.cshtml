@@ -1,0 +1,35 @@
+﻿@model Sareoo.Areas.Admin.Models.ViewModels.GradeFormViewModel
+
+@{
+    ViewData["Title"] = "إضافة صف جديد";
+}
+
+<div class="max-w-4xl mx-auto">
+    <h2 class="text-3xl font-bold mb-6">إضافة صف جديد</h2>
+    <form asp-action="Create">
+        <div class="card-bg p-6 rounded-lg space-y-4">
+            <div asp-validation-summary="ModelOnly" class="text-red-400 mb-4"></div>
+
+            <div>
+                <label asp-for="Grade.Name" class="block mb-2 text-sm font-medium">اسم الصف</label>
+                <input asp-for="Grade.Name" class="input-style w-full p-2.5" />
+                <span asp-validation-for="Grade.Name" class="text-red-400 mt-2 text-xs"></span>
+            </div>
+
+            <div>
+                <label asp-for="Grade.StageId" class="block mb-2 text-sm font-medium">المرحلة الدراسية</label>
+                <div class="flex items-center space-x-2 space-x-reverse">
+                    <select asp-for="Grade.StageId" id="Grade_StageId" class="input-style w-full p-2.5" asp-items="@Model.Stages">
+                        <option value="">-- اختر المرحلة --</option>
+                    </select>
+                </div>
+                <span asp-validation-for="Grade.StageId" class="text-red-400 mt-2 text-xs"></span>
+            </div>
+
+            <div class="flex items-center justify-end space-x-4 space-x-reverse pt-4">
+                <input type="submit" value="إنشاء" class="primary-btn px-6 py-2 rounded-lg cursor-pointer" />
+                <a asp-action="Index" class="secondary-btn px-6 py-2 rounded-lg">العودة للقائمة</a>
+            </div>
+        </div>
+    </form>
+</div>

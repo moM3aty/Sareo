@@ -1,0 +1,45 @@
+﻿@model Sareoo.Areas.Admin.Models.ViewModels.BlogPostFormViewModel
+
+@{
+    ViewData["Title"] = "إضافة مقال جديد";
+}
+
+<div class="max-w-4xl mx-auto">
+    <h2 class="text-3xl font-bold mb-6">إضافة مقال جديد</h2>
+    <form asp-action="Create" enctype="multipart/form-data">
+        <div class="card-bg p-6 rounded-lg space-y-4">
+            <div asp-validation-summary="ModelOnly" class="text-red-400 mb-4"></div>
+
+            <input type="hidden" asp-for="BlogPost.PublishDate" />
+
+            <div>
+                <label asp-for="BlogPost.Title" class="block mb-2 text-sm font-medium">عنوان المقال</label>
+                <input asp-for="BlogPost.Title" class="input-style w-full p-2.5" />
+                <span asp-validation-for="BlogPost.Title" class="text-red-400 mt-2 text-xs"></span>
+            </div>
+
+            <div>
+                <label asp-for="BlogPost.Content" class="block mb-2 text-sm font-medium">محتوى المقال (الوصف)</label>
+                <textarea asp-for="BlogPost.Content" class="input-style w-full p-2.5" rows="8"></textarea>
+                <span asp-validation-for="BlogPost.Content" class="text-red-400 mt-2 text-xs"></span>
+            </div>
+
+            <div>
+                <label asp-for="PostImage" class="block mb-2 text-sm font-medium"></label>
+                <input asp-for="PostImage" type="file" class="input-style w-full p-2.5" accept="image/*" />
+                <span asp-validation-for="PostImage" class="text-red-400 mt-2 text-xs"></span>
+            </div>
+
+            <div>
+                <label asp-for="BlogPost.Keywords" class="block mb-2 text-sm font-medium">الكلمات المفتاحية (افصل بينها بفاصلة)</label>
+                <input asp-for="BlogPost.Keywords" class="input-style w-full p-2.5" />
+                <span asp-validation-for="BlogPost.Keywords" class="text-red-400 mt-2 text-xs"></span>
+            </div>
+
+            <div class="flex items-center justify-end space-x-4 space-x-reverse pt-4">
+                <input type="submit" value="نشر المقال" class="primary-btn px-6 py-2 rounded-lg cursor-pointer" />
+                <a asp-action="Index" class="secondary-btn px-6 py-2 rounded-lg">العودة للمدونة</a>
+            </div>
+        </div>
+    </form>
+</div>

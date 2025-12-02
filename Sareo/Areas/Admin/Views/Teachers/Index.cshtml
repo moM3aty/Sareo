@@ -1,0 +1,56 @@
+﻿@model IEnumerable<Sareoo.Areas.Admin.Models.ViewModels.TeacherIndexViewModel>
+
+@{
+    ViewData["Title"] = "فريق المعلمين";
+}
+
+<div id="teachers">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold">إدارة فريق المعلمين</h2>
+        <a asp-action="Create" class="primary-btn px-5 py-2 rounded-lg flex items-center">
+            <i class="fas fa-user-plus ml-2"></i> إضافة معلم جديد
+        </a>
+    </div>
+
+    <div class="card-bg p-4 rounded-lg mb-6">
+        <form asp-action="Index" method="get" class="flex items-center gap-4">
+            <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" placeholder="ابحث بالاسم أو المسمى الوظيفي..." class="input-style w-full p-2.5" />
+            <button type="submit" class="primary-btn px-5 py-2.5 rounded-lg">بحث</button>
+            <a asp-action="Index" class="secondary-btn px-5 py-2.5 rounded-lg">مسح</a>
+        </form>
+    </div>
+
+    <div class="card-bg rounded-lg overflow-hidden">
+        <table class="w-full text-right">
+            <thead class="bg-[#2a3a50]">
+                <tr>
+                    <th class="p-4 font-semibold">الصورة</th>
+                    <th class="p-4 font-semibold">الاسم الكامل</th>
+                    <th class="p-4 font-semibold">المسمى الوظيفي</th>
+                    <th class="p-4 font-semibold">سنوات الخبرة</th>
+                    <th class="p-4 font-semibold">إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var teacher in Model)
+                {
+                    <tr class="border-b border-gray-700 hover:bg-[#2a3a50]/50 transition-colors">
+                        <td class="p-2">
+                            <img src="@(string.IsNullOrEmpty(teacher.ProfileImageUrl) ? "https://placehold.co/100x100/1b263b/e0e1dd?text=NA" : teacher.ProfileImageUrl)"
+                                 onerror="this.src='https://placehold.co/100x100/1b263b/e0e1dd?text=Err'"
+                                 class="w-12 h-12 rounded-full object-cover">
+                        </td>
+                        <td class="p-4 font-semibold">@teacher.FullName</td>
+                        <td class="p-4 text-gray-400">@teacher.JobTitle</td>
+                        <td class="p-4">@teacher.ExperienceYears سنة</td>
+                        <td class="p-4 space-x-2 space-x-reverse">
+                            <a asp-action="Details" asp-route-id="@teacher.Id" class="text-blue-400 hover:text-blue-300" title="عرض الملف الشخصي"><i class="fas fa-user"></i></a>
+                            <a asp-action="Edit" asp-route-id="@teacher.Id" class="text-yellow-400 hover:text-yellow-300" title="تعديل"><i class="fas fa-edit"></i></a>
+                            <a asp-action="Delete" asp-route-id="@teacher.Id" class="text-red-400 hover:text-red-300" title="حذف"><i class="fas fa-trash"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

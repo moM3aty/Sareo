@@ -1,0 +1,209 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="وسارعو التعليمية - منصة تعليمية تقدم دورات مسجلة ودروس مباشرة وشهادات معتمدة في مختلف المجالات.">
+    <meta name="keywords" content="وسارعو التعليمية, منصة تعليمية, دورات تعليمية, دورات مباشرة, دورات مسجلة, شهادات تعليمية">
+    <meta name="author" content="وسارعو التعليمية">
+    <link rel="icon" href="~/images/logo.png" type="image/x-icon">
+    <meta property="og:title" content="وسارعو التعليمية">
+    <meta property="og:description" content="منصة تعليمية متكاملة تقدم دورات مسجلة ودروس مباشرة مع شهادات معتمدة.">
+    <meta property="og:image" content="https://www.yoursite.com/images/og-image.png">
+    <meta property="og:url" content="https://www.yoursite.com">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="وسارعو التعليمية">
+    <meta name="twitter:description" content="منصة تعليمية متكاملة تقدم دورات مسجلة ودروس مباشرة مع شهادات معتمدة.">
+    <meta name="twitter:image" content="https://www.yoursite.com/images/twitter-image.png">
+    <link rel="stylesheet" href="~/css/all.min.css">
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/css/main.css">
+    @await RenderSectionAsync("Styles", required: false)
+
+    <title> Educational Platform</title>
+</head>
+<body data-bs-spy="scroll" data-bs-target="#navbar-example" data-bs-offset="100" tabindex="0">
+
+    <nav id="navbar-example" class="navbar navbar-expand-xl bg-white py-1 sticky-top shadow-lg">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="index">
+                <div class="logo-icon">
+                    <img src="~/images/logo.png" height="100" alt="logo" style="border-radius:50%;">
+                </div>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="fas fa-bars" aria-hidden="true"></i>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav d-flex justify-content-center text-center mx-auto align-items-center d-flex gap-3">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">الرئيسية</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="about">من نحن</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="stages">المراحل الدراسية</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="teachers">المعلمون</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="statements">سلسلة وسارعو</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Blog" asp-action="Index">المدونة</a>
+                    </li>
+                </ul>
+
+
+                <div class="d-flex justify-content-center align-items-center mt-2 mt-xl-0">
+                @if (SignInManager.IsSignedIn(User))
+                {
+                   
+                        <div class="d-flex justify-content-center align-items-center me-3 mt-3">
+                            <a class="nav-link fs-1" asp-controller="Profile" asp-action="index" ><i class="fas fa-user-circle"></i></a>
+                        </div>
+                    <form class="m-2" asp-controller="Account" asp-action="Logout" method="post">
+                            <button type="submit" class="btn btn-login">تسجيل الخروج</button>
+                        </form>
+                }
+                else
+                {
+                        <a class="btn btn-login" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path"><i class="fas fa-user-graduate me-1"></i> تسجيل دخول </a>
+                    }
+                </div>
+                
+            </div>
+        </div>
+    </nav>
+    @if (ViewData["Title"] == "الصفحة الرئيسيه"){
+    <header id="home">
+
+        <div class="container hero-container">
+            <div class="row g-4">
+                <div class="col-lg-6 d-flex flex-column justify-content-center align-items-center text-center">
+                    <div class="content py-5 py-lg-0 d-flex flex-column justify-content-center align-items-center text-center">
+                        <h1>
+                            منصة
+                            <span>
+                                وسارعو
+                            </span>
+                            التعليمية
+                        </h1>
+                        <p>تعلم وتطور مع أفضل المعلمين في جميع المواد الدراسية من الصف الأول حتى  الجامعة</p>
+                        <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
+
+                                <a class="gradient-btn text-decoration-none" href="~/Account/Login">
+                                <i class="fas fa-play play-icon"></i>
+                                <span>ابدأ التعلم الآن</span>
+                            </a>
+
+                            <a class="outline-btn text-decoration-none" href="#statements">
+                                تصفح المقررات
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-image">
+                        <img src="~/images/header1.png" alt="Graduate Student">
+                        <img class="hero-bottom " src="https://cdn.prod.website-files.com/66b9438575655d43afbfb651/66baff1b30cd4df12398d271_Overlay%20Down%20Author.svg" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </header>
+
+    }
+    <main>
+            @RenderBody()
+    </main>
+
+    <footer class="footer text-white">
+        <div class="container">
+            <div class="row g-4 align-items-center">
+                <div class="col-md-4 mb-4 mb-lg-0">
+                    <a class="navbar-brand d-flex justify-content-center align-items-center justify-content-lg-start fw-bold text-center" href="index.html" title="العودة للصفحة الرئيسية">
+                        <img src="~/images/logo.png" alt="logo image" style="border-radius:50%;">
+                    </a>
+                </div>
+                <div class=" col-md-8 mb-6 mb-md-0 ">
+                    <div class="footer-content d-flex flex-column justify-content-center align-items-center text-center">
+                        <h3>روابط سريعة</h3>
+                        <ul class="footer-links d-flex flex-wrap gap-4 justify-content-center">
+                            <li><a href="#home">الرئيسية</a></li>
+                            <li><a href="#about">من نحن</a></li>
+                            <li><a href="#stages">المراحل الدراسية</a></li>
+                            <li><a href="#teachers">المعلمون</a></li>
+                            <li><a href="#statements">سلسلة وسارعو</a></li>
+                            <li><a asp-controller="Blog" asp-action="index">المدونة</a></li>
+                            
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <hr class="footer-divider">
+            <div class="row footer-bottom justify-content-center align-items-center">
+                <div class="col-md-6">
+                    <p class="text-center">جميع الحقوق محفوظة لمنصة وسارعو التعليمية &copy; لعام  ٢٠٢٥. </p>
+                </div>
+                <div class="col-md-6 end-text">
+                    <div class="d-flex justify-content-center align-items-center gap-2">
+                        <span class="text-center">تصميم وبرمجه </span>
+                        <div class="gmt-logo">
+                            <a href="https://gmtweb.online/" target="_blank" class="gmt-text" style="font-size:x-large">GMT WEB</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <div class="fixed-contact-buttons">
+        <button id="scrollToTopBtn" title="Go to top" aria-label="Scroll to top" class="scroll-top">
+            <i class="fa-solid fa-angle-up"></i>
+        </button>
+    </div>
+    <script src="~/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
+    <script>
+        @if (User.Identity.IsAuthenticated)
+        {
+                <text>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const connection = new signalR.HubConnectionBuilder()
+                        .withUrl("/presenceHub")
+                        .withAutomaticReconnect()
+                        .build();
+
+                    function start() {
+                        connection.start().catch(err => {
+                            console.error('SignalR Connection Error: ', err);
+                            setTimeout(start, 5000); 
+                        });
+                    }
+
+                    connection.onclose(async () => {
+                        await start();
+                    });
+
+                    start();
+                });
+                </text>
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+﻿@model Sareoo.Areas.Admin.Models.Entities.Course
+
+@{
+    ViewData["Title"] = "الاختبار غير متاح";
+    Layout = "_Layout";
+}
+
+<style>
+    :root {
+        --dark-bg: #0b261d; /* Very Dark Green */
+        --panel-bg: #154734; /* Brand Green */
+        --text-primary: #e6f2eb; /* Light Greenish White */
+        --text-secondary: #c9d6d1;
+        --brand-gold: #d4af37; /* Gold */
+        --brand-gold-dark: #b08d26;
+    }
+
+    body {
+        background-color: var(--dark-bg);
+        color: var(--text-primary);
+    }
+
+    .no-exam-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 60vh;
+        text-align: center;
+    }
+
+    .no-exam-card {
+        background-color: var(--panel-bg);
+        border-radius: 12px;
+        padding: 40px;
+        max-width: 500px;
+        border: 1px solid var(--brand-gold);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .no-exam-icon {
+        font-size: 4rem;
+        color: var(--brand-gold);
+        margin-bottom: 1.5rem;
+        text-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+    }
+
+    .no-exam-title {
+        color: var(--brand-gold);
+        font-weight: 600;
+        font-size: 1.8rem;
+    }
+
+    .no-exam-text {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+    }
+
+    /* Button */
+    .btn-primary {
+        background-color: var(--brand-gold);
+        border-color: var(--brand-gold);
+        color: #0b261d;
+        font-weight: bold;
+        padding: 10px 30px;
+        border-radius: 50px;
+        transition: all 0.3s;
+    }
+
+        .btn-primary:hover {
+            background-color: var(--brand-gold-dark);
+            border-color: var(--brand-gold-dark);
+            color: #fff;
+        }
+</style>
+
+<div class="section-padding">
+    <div class="container">
+        <div class="no-exam-container">
+            <div class="no-exam-card">
+                <div class="no-exam-icon">
+                    <i class="fas fa-file-excel"></i>
+                </div>
+                <h2 class="no-exam-title">الاختبار غير متاح حالياً</h2>
+                <p class="no-exam-text mt-3">
+                    لم يتم إضافة اختبار نهائي لدورة "@Model.Title" حتى الآن. يرجى المحاولة مرة أخرى في وقت لاحق.
+                </p>
+                <a asp-controller="Profile" asp-action="Index" class="btn btn-primary mt-4">العودة إلى الملف الشخصي</a>
+            </div>
+        </div>
+    </div>
+</div>

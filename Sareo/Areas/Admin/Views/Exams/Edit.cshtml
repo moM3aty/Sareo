@@ -1,0 +1,32 @@
+﻿@model Sareoo.Areas.Admin.Models.Entities.Exam
+
+@{
+    ViewData["Title"] = "تعديل الاختبار";
+}
+
+<div class="max-w-4xl mx-auto">
+    <h2 class="text-3xl font-bold mb-6">تعديل اختبار دورة: @ViewBag.CourseTitle</h2>
+    <form asp-action="Edit">
+        <input type="hidden" asp-for="CourseId" />
+        <div class="card-bg p-6 rounded-lg space-y-4">
+            <div asp-validation-summary="ModelOnly" class="text-red-400 mb-4"></div>
+
+            <div>
+                <label asp-for="Title" class="block mb-2 text-sm font-medium">عنوان الاختبار</label>
+                <input asp-for="Title" class="input-style w-full p-2.5" />
+                <span asp-validation-for="Title" class="text-red-400 mt-2 text-xs"></span>
+            </div>
+
+            <div>
+                <label asp-for="PassPercentage" class="block mb-2 text-sm font-medium">نسبة النجاح (%)</label>
+                <input asp-for="PassPercentage" class="input-style w-full p-2.5" type="number" min="0" max="100" />
+                <span asp-validation-for="PassPercentage" class="text-red-400 mt-2 text-xs"></span>
+            </div>
+
+            <div class="flex items-center justify-end space-x-4 space-x-reverse pt-4">
+                <input type="submit" value="حفظ التعديلات" class="primary-btn px-6 py-2 rounded-lg cursor-pointer" />
+                <a asp-action="Index" asp-route-courseId="@Model.CourseId" class="secondary-btn px-6 py-2 rounded-lg">إلغاء</a>
+            </div>
+        </div>
+    </form>
+</div>

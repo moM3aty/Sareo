@@ -1,0 +1,58 @@
+﻿@model IEnumerable<Sareoo.Areas.Admin.Models.ViewModels.GradeGroupedViewModel>
+
+@{
+    ViewData["Title"] = "الصفوف الدراسية";
+}
+
+<div id="grades">
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div id="error-alert" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
+            <strong class="font-bold"><i class="fas fa-exclamation-triangle"></i> خطأ!</strong>
+            <span class="block sm:inline">@TempData["ErrorMessage"]</span>
+            <span class="absolute top-0 bottom-0 left-0 px-4 py-3" onclick="this.parentElement.style.display='none';" style="cursor: pointer;">
+                <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>إغلاق</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" /></svg>
+            </span>
+        </div>
+    }
+
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold">إدارة الصفوف الدراسية</h2>
+        <a asp-action="Create" class="primary-btn px-5 py-2 rounded-lg flex items-center">
+            <i class="fas fa-plus ml-2"></i> إضافة صف جديد
+        </a>
+    </div>
+
+    <div class="space-y-6">
+        @foreach (var stageGroup in Model)
+        {
+            <div class="card-bg rounded-lg overflow-hidden">
+                <div class="p-4 ">
+                    <h3 class="text-xl font-semibold " style="color:#d4af37;">@stageGroup.StageName</h3>
+                </div>
+                <div class="p-4">
+                    @if (stageGroup.Grades.Any())
+                    {
+                        <ul class="space-y-2">
+                            @foreach (var grade in stageGroup.Grades)
+                            {
+                                <li class="flex justify-between items-center bg-gray-900/50 p-3 rounded-md">
+                                    <span class="font-semibold">@grade.Name</span>
+                                    <div class="space-x-2 space-x-reverse">
+                                        <a asp-action="Details" asp-route-id="@grade.Id" class="text-blue-400 hover:text-blue-300" title="تفاصيل الصف"><i class="fas fa-info-circle"></i></a>
+                                        <a asp-action="Edit" asp-route-id="@grade.Id" class="text-yellow-400 hover:text-yellow-300" title="تعديل"><i class="fas fa-edit"></i></a>
+                                        <a asp-action="Delete" asp-route-id="@grade.Id" class="text-red-400 hover:text-red-300" title="حذف"><i class="fas fa-trash"></i></a>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="text-gray-500 text-center py-4">لا توجد صفوف مضافة لهذه المرحلة بعد.</p>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>

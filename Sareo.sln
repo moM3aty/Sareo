@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36109.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sareo", "Sareo\Sareo.csproj", "{41BDCA2A-63E9-4078-B10C-2183A77612DC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{41BDCA2A-63E9-4078-B10C-2183A77612DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41BDCA2A-63E9-4078-B10C-2183A77612DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41BDCA2A-63E9-4078-B10C-2183A77612DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41BDCA2A-63E9-4078-B10C-2183A77612DC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9B21975F-BF56-4F4E-AFCF-56FF2750F2A9}
+	EndGlobalSection
+EndGlobal

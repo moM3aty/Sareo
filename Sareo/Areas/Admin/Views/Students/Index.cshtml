@@ -1,0 +1,88 @@
+﻿@model IEnumerable<Sareoo.Areas.Admin.Models.ViewModels.StudentIndexViewModel>
+
+@{
+    ViewData["Title"] = "إدارة الطلاب";
+}
+
+<div id="students">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold">إدارة الطلاب</h2>
+        <a asp-action="Create" class="primary-btn px-5 py-2 rounded-lg flex items-center">
+            <i class="fas fa-user-plus ml-2"></i> إضافة طالب جديد
+        </a>
+    </div>
+
+    <div class="card-bg p-4 rounded-lg mb-6">
+        <form asp-action="Index" method="get" class="flex items-center gap-4">
+            <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" placeholder="ابحث بالاسم أو البريد الإلكتروني..." class="input-style w-full p-2.5" />
+            <button type="submit" class="primary-btn px-5 py-2.5 rounded-lg">بحث</button>
+            <a asp-action="Index" class="secondary-btn px-5 py-2.5 rounded-lg">مسح</a>
+        </form>
+    </div>
+
+    <div class="card-bg rounded-lg overflow-hidden">
+        <table class="w-full text-right">
+            <thead class="bg-[#2a3a50]">
+                <tr>
+                    <th class="p-4 font-semibold">الاسم الكامل</th>
+                    <th class="p-4 font-semibold">البريد الإلكتروني</th>
+                    <th class="p-4 font-semibold">الصف الدراسي</th>
+                    <th class="p-4 font-semibold">تاريخ التسجيل</th>
+                    <th class="p-4 font-semibold">حالة الاتصال</th>
+                    <th class="p-4 font-semibold">الحالة</th>
+                    <th class="p-4 font-semibold">إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="border-b border-gray-700 hover:bg-[#2a3a50]/50 transition-colors">
+                        <td class="p-4">@item.FullName</td>
+                        <td class="p-4">@item.Email</td>
+                        <td class="p-4">@item.GradeName</td>
+                        <td class="p-4">@item.RegistrationDate.ToString("yyyy/MM/dd")</td>
+                        <td class="p-4">
+                            @if (item.IsOnline)
+                            {
+                                <span class="flex items-center text-green-400">
+                                    <span class="h-2.5 w-2.5 bg-green-500 rounded-full mr-2"></span>
+                                    متصل الآن
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="flex items-center text-gray-500">
+                                    <span class="h-2.5 w-2.5 bg-gray-600 rounded-full mr-2"></span>
+                                    غير متصل
+                                </span>
+                            }
+                        </td>
+                        <td class="p-4">
+                            @if (item.IsActive)
+                            {
+                                <span class="px-2 py-1 font-semibold text-xs leading-tight text-green-100 bg-green-700 rounded-full">مفعل</span>
+                            }
+                            else
+                            {
+                                <span class="px-2 py-1 font-semibold text-xs leading-tight text-red-100 bg-red-700 rounded-full">معطل</span>
+                            }
+                        </td>
+                        <td class="p-4 space-x-2 space-x-reverse">
+                            <form asp-action="ToggleStatus" asp-route-id="@item.Id" method="post" class="inline-block">
+                                @Html.AntiForgeryToken() 
+                                <button type="submit"
+                                        class="@(item.IsActive ? "text-red-400 hover:text-red-300" : "text-green-400 hover:text-green-300")"
+                                        title="@(item.IsActive ? "تعطيل الحساب" : "تفعيل الحساب")">
+                                    <i class="fas fa-power-off"></i>
+                                </button>
+                            </form>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="text-yellow-400 hover:text-yellow-300" title="تعديل"><i class="fas fa-edit"></i></a>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="text-blue-400 hover:text-blue-300" title="عرض الملف الشخصي"><i class="fas fa-user"></i></a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="text-red-400 hover:text-red-300" title="حذف"><i class="fas fa-trash"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

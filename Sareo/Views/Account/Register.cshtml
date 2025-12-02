@@ -1,0 +1,144 @@
+﻿@model Sareoo.ViewModels.RegisterViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/main.css" />
+    <link rel="icon" href="~/images/logo.png" type="image/x-icon">
+
+    <title>إنشاء حساب</title>
+</head>
+<body>
+    <section class="section-padding">
+        <div class="container">
+            <div class="row g-4 justify-content-center align-items-center">
+                <div class="col-md-6">
+                    <div class="login-card shadow shadow-sm">
+                        <div class="heading text-center mb-4">
+                            <h2 class="title">انشاء حساب</h2>
+                            <p class="description"> من فضلك أدخل بياناتك لإنشاء حساب جديد.</p>
+                        </div>
+                        <form asp-action="Register" method="post">
+                            <div asp-validation-summary="All" class="text-danger"></div>
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label asp-for="FullName"></label>
+                                    <input asp-for="FullName" class="w-100" placeholder="ادخل اسمك الكامل" />
+                                    <span asp-validation-for="FullName" class="error-msg text-danger"></span>
+                                </div>
+                                <div class="col-12">
+                                    <label asp-for="Email"></label>
+                                    <input asp-for="Email" class="w-100" placeholder="ادخل بريدك الإلكتروني" />
+                                    <span asp-validation-for="Email" class="error-msg text-danger"></span>
+                                </div>
+                                <div class="col-12">
+                                    <label asp-for="PhoneNumber"></label>
+                                    <input asp-for="PhoneNumber" class="w-100" placeholder="ادخل رقم الهاتف" />
+                                    <span asp-validation-for="PhoneNumber" class="error-msg text-danger"></span>
+                                </div>
+                                <div class="col-12">
+                                    <label asp-for="GradeId"></label>
+                                    <select asp-for="GradeId" asp-items="@Model.Grades" class="w-100 form-select">
+                                        <option value="">-- اختر صفك الدراسي --</option>
+                                    </select>
+                                    <span asp-validation-for="GradeId" class="error-msg text-danger"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="City"></label>
+                                    <input asp-for="City" class="w-100" placeholder="المدينة" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="Country"></label>
+                                    <input asp-for="Country" class="w-100" placeholder="الدولة" />
+                                </div>
+                                <div class="col-12">
+                                    <div class="password-field position-relative">
+                                        <label asp-for="Password"></label>
+                                        <input asp-for="Password" class="w-100" placeholder="ادخل الرقم السري" />
+                                        <i class="fas fa-eye toggle-password"></i>
+                                        <span asp-validation-for="Password" class="error-msg text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="password-field position-relative">
+                                        <label asp-for="ConfirmPassword"></label>
+                                        <input asp-for="ConfirmPassword" class="w-100" placeholder="تأكيد الرقم السري" />
+                                        <i class="fas fa-eye toggle-password"></i>
+                                        <span asp-validation-for="ConfirmPassword" class="error-msg text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-login w-100">انشئ حسابك</button>
+                                </div>
+                                <div class="col-12">
+                                    <div class="d-flex justify-content-center align-items-center p-1">
+                                        <a class="create-account" asp-action="Login">لدي حساب بالفعل؟</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-login w-100 my-5">العوده الى الرئيسية</a>
+                </div>
+                <div class="col-md-6">
+                    <div class="img">
+                        <img src="~/images/signup.webp" class="w-100" alt="signup" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="~/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const togglePasswordIcons = document.querySelectorAll('.toggle-password');
+            togglePasswordIcons.forEach(icon => {
+                icon.addEventListener('click', function() {
+                    const passwordInput = this.closest('.password-field').querySelector('input');
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        this.classList.remove('fa-eye');
+                        this.classList.add('fa-eye-slash');
+                    } else {
+                        passwordInput.type = 'password';
+                        this.classList.remove('fa-eye-slash');
+                        this.classList.add('fa-eye');
+                    }
+                });
+            });
+
+            function toArabicNumerals(str) {
+                if (str === null || str === undefined) return '';
+                return str.toString()
+                    .replace(/0/g, '٠')
+                    .replace(/1/g, '١')
+                    .replace(/2/g, '٢')
+                    .replace(/3/g, '٣')
+                    .replace(/4/g, '٤')
+                    .replace(/5/g, '٥')
+                    .replace(/6/g, '٦')
+                    .replace(/7/g, '٧')
+                    .replace(/8/g, '٨')
+                    .replace(/9/g, '٩');
+            }
+
+            const elementsToConvert = document.querySelectorAll('h1, h2, h3, h4, h5, p, span, a, li, button, label, option');
+            elementsToConvert.forEach(el => {
+                Array.from(el.childNodes).forEach(node => {
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        if (/\d/.test(node.textContent)) {
+                            node.textContent = toArabicNumerals(node.textContent);
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

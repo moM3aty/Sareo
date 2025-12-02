@@ -1,0 +1,168 @@
+﻿@model Sareoo.ViewModels.TeacherProfileViewModel
+@using Sareoo.Helpers
+@using Microsoft.AspNetCore.Identity
+@using Sareoo.Models
+@inject SignInManager<ApplicationUser> SignInManager
+
+@{
+    ViewData["Title"] = $"الملف الشخصي للمعلم: {Model.Teacher.FullName}";
+    Layout = "_Layout";
+}
+
+@functions {
+    public Microsoft.AspNetCore.Html.IHtmlContent RenderStars(double rating)
+    {
+        var starsHtml = new System.Text.StringBuilder();
+        for (int i = 1; i <= 5; i++)
+        {
+            if (i <= rating) { starsHtml.Append("<i class='fas fa-star'></i>"); }
+            else if (i - 0.5 <= rating) { starsHtml.Append("<i class='fas fa-star-half-alt'></i>"); }
+            else { starsHtml.Append("<i class='far fa-star'></i>"); }
+        }
+        return new Microsoft.AspNetCore.Html.HtmlString(starsHtml.ToString());
+    }
+}
+
+<section class="profile text-center ">
+    <div class="">
+        <div class="teacher-info d-flex flex-wrap justify-content-center justify-content-md-start align-items-center gap-4 ">
+            <div class="img">
+                <img src="@(string.IsNullOrEmpty(Model.Teacher.ProfileImageUrl) ? "https://placehold.co/160x160/ffffff/0d6efd?text=Teacher" : Model.Teacher.ProfileImageUrl)" class="teacher-img" alt="Profile">
+            </div>
+            <div class="teacher-content">
+                <h3 class="mb-1">@Model.Teacher.FullName</h3>
+                <p class="mb-2">@Model.Teacher.JobTitle</p>
+                <div class="d-flex justify-content-center align-items-center gap-1">
+                    @RenderStars(Model.AverageRating)
+                    <span> (@ArabicNumberHelper.ToArabicNumerals(Model.RatingsCount)) تقييم</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row g-4 justify-content-center align-items-center mb-5">
+            <div class="col-md-6 col-lg-3">
+                <div class="card p-3 d-flex flex-column justify-content-center align-items-center gap-2">
+                    <div class="icon"><i class="fas fa-star"></i></div>
+                    <h3 class="mb-0">@ArabicNumberHelper.ToArabicNumerals(Model.AverageRating.ToString("0"))  , @ArabicNumberHelper.ToArabicNumerals(0)</h3>
+                    <p>متوسط التقييم</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card p-3 d-flex flex-column justify-content-center align-items-center gap-2">
+                    <div class="icon"><i class="fas fa-briefcase"></i></div>
+                    <h3 class="mb-0">@ArabicNumberHelper.ToArabicNumerals(Model.Teacher.ExperienceYears)</h3>
+                    <p>سنة خبرة</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card p-3 d-flex flex-column justify-content-center align-items-center gap-2">
+                    <div class="icon"><i class="fas fa-video"></i></div>
+                    <h3 class="mb-0">@ArabicNumberHelper.ToArabicNumerals(Model.TotalCourses)</h3>
+                    <p>دورة</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card p-3 d-flex flex-column justify-content-center align-items-center gap-2">
+                    <div class="icon"><i class="fas fa-users"></i></div>
+                    <h3 class="mb-0">@ArabicNumberHelper.ToArabicNumerals(Model.TotalStudents)</h3>
+                    <p>طالب</p>
+                </div>
+            </div>
+        </div>
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-tabs justify-content-evenly mb-5" role="tablist">
+            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#about">نبذة عني</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#courses">الدورات</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#reviews">التقييمات</button></li>
+        </ul>
+
+        <!-- Tabs Content -->
+        <div class="tab-content">
+            <div class="tab-pane fade show active py-4 " id="about">
+                <div class="about-teacher"><div class="text-end"><h4>ملخص الخبرة</h4><p>@Model.Teacher.ExperienceSummary</p></div></div>
+            </div>
+            <div class="tab-pane fade py-4" id="courses">
+                <div class="row g-4 justify-content-center ">
+                    @foreach (var course in Model.Courses)
+                    {
+                        <div class="col-md-6 col-lg-4">
+                            <div class="course-card overflow-hidden h-100 mb-3 shadow-sm">
+                                <div class="course-img"><img src="@(string.IsNullOrEmpty(course.CoverImageUrl) ? "https://placehold.co/600x400/0d6efd/ffffff?text=Course" : course.CoverImageUrl)" class="card-img-top" alt="@course.Title"></div>
+                                <div class="card-body p-3 text-end">
+                                    <p class="mb-1 text-blue fs-4">@course.SubjectName</p>
+                                    <h5 class="text-white fs-5 mb-3">@course.Title</h5>
+                                    <div class="d-flex justify-content-between">
+                                        <div class="text-white fs-5"><i class="fas fa-clock ms-1"></i> @ArabicNumberHelper.ToArabicNumerals(course.TotalHours) ساعة</div>
+                                        <div class="text-blue fs-5"><i class="fas fa-book-open ms-1"></i> @ArabicNumberHelper.ToArabicNumerals(course.LessonsCount) درس</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    @if (!Model.Courses.Any())
+                    {
+                        <p class="text-white">لا توجد دورات مقدمة من هذا المعلم حالياً.</p>
+                    }
+                </div>
+            </div>
+            <div class="tab-pane fade py-4" id="reviews">
+                <div class="text-center my-3">
+                    <h2 class="title">أحدث التقييمات</h2>
+                    <div class="col-lg-8 m-auto">
+                        <!-- --- قسم التقييم المحدث --- -->
+                        @if (SignInManager.IsSignedIn(User) && User.IsInRole("Student"))
+                        {
+                            <div class="rating-card mx-auto mb-4">
+                                <h3 class="mb-3">أضف تقييمك</h3>
+                                <form asp-action="SubmitRating" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" asp-for="NewRating.TeacherId" value="@Model.Teacher.Id" />
+                                    <div class="rating-stars mb-3">
+                                        <input type="radio" id="star5" asp-for="NewRating.Rating" value="5" /><label for="star5" title="5 نجوم">★</label>
+                                        <input type="radio" id="star4" asp-for="NewRating.Rating" value="4" /><label for="star4" title="4 نجوم">★</label>
+                                        <input type="radio" id="star3" asp-for="NewRating.Rating" value="3" /><label for="star3" title="3 نجوم">★</label>
+                                        <input type="radio" id="star2" asp-for="NewRating.Rating" value="2" /><label for="star2" title="2 نجوم">★</label>
+                                        <input type="radio" id="star1" asp-for="NewRating.Rating" value="1" /><label for="star1" title="1 نجمة">★</label>
+                                    </div>
+                                    <span asp-validation-for="NewRating.Rating" class="text-danger small d-block text-center mb-3"></span>
+                                    <input asp-for="NewRating.Comment" type="text" class="form-control mb-3" placeholder="أضف تعليقك (اختياري)">
+                                    <button type="submit" class="btn btn-send w-100">إرسال التقييم</button>
+                                </form>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-info mb-4">
+                                <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path">الرجاء تسجيل الدخول كطالب</a> لتتمكن من إضافة تقييم.
+                            </div>
+                        }
+                        <div class="vstack gap-3">
+                                @foreach (var rating in Model.RecentRatings)
+                                {
+                                    <div class="d-flex bg-white p-3 rounded shadow-sm border-0">
+                                    <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0" style="width: 50px; height: 50px; background-color: #0d6efd; color: white; font-size: 1.5rem;">
+                                        <i class="fas fa-star"></i>
+                                    </div>                                        <div class="me-3">
+                                            <p class="fw-bold mb-0">@rating.Student.FullName</p>
+                                            <div class="text-warning my-1">@RenderStars(rating.Rating)</div>
+                                            <p class="text-muted mb-0">@rating.Comment</p>
+                                            <small class="text-muted">@ArabicNumberHelper.ToArabicNumerals(rating.RatingDate.ToShortDateString())</small>
+                                        </div>
+                                    </div>
+                                }
+                            @if (!Model.RecentRatings.Any())
+                            {
+                                <p class="description">لا توجد تقييمات لهذا المعلم حالياً.</p>
+                            }
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+}

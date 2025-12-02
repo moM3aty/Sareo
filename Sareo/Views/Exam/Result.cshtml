@@ -1,0 +1,173 @@
+﻿@model Sareoo.ViewModels.ExamResultViewModel
+
+@{
+    ViewData["Title"] = "نتيجة الاختبار";
+    Layout = "_Layout";
+}
+
+<style>
+    :root {
+        --dark-bg: #0b261d; /* Very Dark Green */
+        --panel-bg: #154734; /* Brand Green */
+        --text-primary: #e6f2eb; /* Light Greenish White */
+        --brand-gold: #d4af37; /* Gold */
+        --brand-gold-dark: #b08d26;
+        --success-text: #d4af37; /* Gold for success elements */
+        --danger-text: #f87171; /* Soft Red for failure */
+    }
+
+    body {
+        background-color: var(--dark-bg);
+        color: var(--text-primary);
+        font-family: 'Cairo', sans-serif;
+    }
+
+    .section-padding {
+        padding: 60px 0;
+    }
+
+    .card {
+        background-color: var(--panel-bg);
+        border: 1px solid var(--brand-gold);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-title {
+        font-weight: 800;
+        margin-bottom: 1rem;
+    }
+
+    .lead {
+        color: var(--text-primary);
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+
+    hr {
+        border-top: 1px solid var(--brand-gold);
+        opacity: 0.3;
+        margin: 1.5rem 0;
+    }
+
+    h4 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Success State */
+    .text-success {
+        color: var(--success-text) !important;
+    }
+
+        .text-success i {
+            color: var(--brand-gold);
+            filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.4));
+        }
+
+    /* Failure State */
+    .text-danger {
+        color: var(--danger-text) !important;
+    }
+
+        .text-danger i {
+            filter: drop-shadow(0 0 5px rgba(248, 113, 113, 0.4));
+        }
+
+    /* Buttons */
+    .btn-gold {
+        background-color: var(--brand-gold);
+        border: 1px solid var(--brand-gold);
+        color: #0b261d; /* Dark text for contrast */
+        font-weight: bold;
+        padding: 10px 30px;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+        .btn-gold:hover {
+            background-color: var(--brand-gold-dark);
+            border-color: var(--brand-gold-dark);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+    .btn-outline-gold {
+        background-color: transparent;
+        border: 1px solid var(--brand-gold);
+        color: var(--brand-gold);
+        font-weight: bold;
+        padding: 10px 30px;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+        .btn-outline-gold:hover {
+            background-color: var(--brand-gold);
+            color: #0b261d;
+        }
+</style>
+
+<section class="section-padding">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card text-center p-5 shadow-lg">
+                    @if (Model.Passed)
+                    {
+                        <div class="mb-4">
+                            <div class="text-success mb-3">
+                                <i class="fas fa-check-circle fa-5x"></i>
+                            </div>
+                            <h2 class="card-title text-success">تهانينا! لقد اجتزت الاختبار بنجاح</h2>
+                            <p class="lead">دورة: @Model.CourseTitle</p>
+                            <hr />
+                            <h4>درجتك النهائية: <span style="color: var(--brand-gold); font-weight: bold;">@Model.Score%</span></h4>
+                            <p class="small text-muted" style="color: #a3b8b0 !important;">درجة النجاح المطلوبة: @Model.PassPercentage%</p>
+
+                            @if (!string.IsNullOrEmpty(Model.CertificateGuid) && Model.CertificateGuid != Guid.Empty.ToString())
+                            {
+                                <a asp-controller="Certificate" asp-action="Details" asp-route-id="@Model.CertificateGuid" target="_blank" class="btn btn-gold mt-4 w-100">
+                                    <i class="fas fa-certificate"></i> عرض الشهادة
+                                </a>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="mb-4">
+                            <div class="text-danger mb-3">
+                                <i class="fas fa-times-circle fa-5x"></i>
+                            </div>
+                            <h2 class="card-title text-danger">للأسف، لم تجتز الاختبار</h2>
+                            <p class="lead">دورة: @Model.CourseTitle</p>
+                            <hr />
+                            <h4 style="color:#EEE !important;">درجتك النهائية: <span class="text-danger font-weight-bold">@Model.Score%</span></h4>
+                            <p class="small text-muted" style="color: #a3b8b0 !important;">درجة النجاح المطلوبة: @Model.PassPercentage%</p>
+                            <p class="mt-3 text-white">لا تقلق، يمكنك مراجعة الدورة والمحاولة مرة أخرى!</p>
+                        </div>
+                    }
+
+                    <div class="card-footer bg-transparent border-0 mt-2 d-flex flex-column gap-3">
+                        <a asp-action="Review" asp-route-attemptId="@Model.AttemptId" class="btn btn-outline-gold w-100">
+                            <i class="fas fa-list-alt"></i> عرض الإجابات
+                        </a>
+                        <a asp-controller="Profile" asp-action="Index" class="btn btn-outline-gold w-100" style="border-color: #a3b8b0; color: #a3b8b0;">
+                            <i class="fas fa-arrow-right"></i> العودة إلى الملف الشخصي
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

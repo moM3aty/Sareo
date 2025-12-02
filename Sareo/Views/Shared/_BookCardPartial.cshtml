@@ -1,0 +1,13 @@
+﻿@model Sareoo.Areas.Admin.Models.Entities.Book
+
+<div class="card course-card h-100">
+    <img src="@(string.IsNullOrEmpty(Model.CoverImageUrl) ? "https://placehold.co/600x400/0d1117/e6edf3?text=Book" : Url.Content(Model.CoverImageUrl))" class="card-img-top" alt="@Model.Title">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Title</h5>
+        <p class="card-text text-white small">@Model.Subject.Name</p>
+        <p class="card-text text-blue small"><i class="fas fa-chalkboard-teacher me-2"></i>@Model.Teacher.FullName</p>
+    </div>
+    <div class="card-footer" style="border-top: 1px solid white;">
+        <a href="@Url.Content(Model.PdfFilePath)" target="_blank" class="btn see-btn w-100">عرض الكتاب</a>
+    </div>
+</div>

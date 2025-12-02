@@ -1,0 +1,101 @@
+﻿@model Sareoo.Areas.Admin.Models.ViewModels.GradeDetailsViewModel
+
+@{
+    ViewData["Title"] = "تفاصيل الصف: " + Model.Grade.Name;
+}
+
+<div class="space-y-8">
+    <div>
+        <a asp-action="Index" class="secondary-btn px-4 py-2 rounded-lg mb-6 inline-block">
+            <i class="fas fa-arrow-right ml-2"></i> العودة لقائمة الصفوف
+        </a>
+        <h2 class="text-3xl font-bold">تفاصيل الصف: @Model.Grade.Name</h2>
+    </div>
+
+    <!-- Courses Section -->
+    <div class="card-bg p-6 rounded-lg">
+        <h3 class="text-xl font-semibold mb-4">الدورات المسجلة</h3>
+        @if (Model.Courses.Any())
+        {
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                @foreach (var course in Model.Courses)
+                {
+                    <div class="bg-gray-900/50 p-4 rounded-lg">
+                        <p class="font-bold">@course.Title</p>
+                        <p class="text-sm text-gray-400">المعلم: @course.Teacher.FullName</p>
+                        <a asp-controller="Lessons" asp-action="Index" asp-route-courseId="@course.Id" class="text-blue-400 hover:underline mt-2 inline-block">إدارة الدروس</a>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-gray-500">لا توجد دورات مسجلة لهذا الصف.</p>
+        }
+    </div>
+
+    <!-- Books Section -->
+    <div class="card-bg p-6 rounded-lg">
+        <h3 class="text-xl font-semibold mb-4">الكتب</h3>
+        @if (Model.Books.Any())
+        {
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                @foreach (var book in Model.Books)
+                {
+                    <div class="bg-gray-900/50 p-4 rounded-lg">
+                        <p class="font-bold">@book.Title</p>
+                        <p class="text-sm text-gray-400">المادة: @book.Subject.Name</p>
+                        <a href="@Url.Content(book.PdfFilePath)" target="_blank" class="text-blue-400 hover:underline mt-2 inline-block">عرض الكتاب</a>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-gray-500">لا توجد كتب مضافة لهذا الصف.</p>
+        }
+    </div>
+
+    <!-- Educational Materials Section -->
+    <div class="card-bg p-6 rounded-lg">
+        <h3 class="text-xl font-semibold mb-4">سلسلة وسارعو</h3>
+        @if (Model.EducationalMaterials.Any())
+        {
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                @foreach (var material in Model.EducationalMaterials)
+                {
+                    <div class="bg-gray-900/50 p-4 rounded-lg">
+                        <p class="font-bold">@material.Title</p>
+                        <p class="text-sm text-gray-400">المادة: @material.Subject.Name</p>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-gray-500">لا توجد مواد من سلسلة وسارعو لهذا الصف.</p>
+        }
+    </div>
+
+    <!-- Live Lessons Section -->
+    <div class="card-bg p-6 rounded-lg">
+        <h3 class="text-xl font-semibold mb-4">الدروس المباشرة</h3>
+        @if (Model.LiveLessons.Any())
+        {
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                @foreach (var liveLesson in Model.LiveLessons)
+                {
+                    <div class="bg-gray-900/50 p-4 rounded-lg">
+                        <p class="font-bold">@liveLesson.Title</p>
+                        <p class="text-sm text-gray-400">المعلم: @liveLesson.Teacher.FullName</p>
+                        <p class="text-xs text-gray-500">@liveLesson.StartTime.ToLocalTime().ToString("g")</p>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-gray-500">لا توجد دروس مباشرة مجدولة لهذا الصف.</p>
+        }
+    </div>
+</div>

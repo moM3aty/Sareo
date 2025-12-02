@@ -1,0 +1,66 @@
+﻿@model Sareoo.Areas.Admin.Models.ViewModels.BookFormViewModel
+
+@{
+    ViewData["Title"] = "تعديل الكتاب";
+}
+
+<div class="max-w-4xl mx-auto">
+    <h2 class="text-3xl font-bold mb-6">تعديل: @Model.Book.Title</h2>
+    <form asp-action="Edit" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Book.Id" />
+        <input type="hidden" asp-for="Book.CoverImageUrl" />
+        <input type="hidden" asp-for="Book.PdfFilePath" />
+        <div class="card-bg p-6 rounded-lg space-y-4">
+            <div asp-validation-summary="ModelOnly" class="text-red-400 mb-4"></div>
+
+            <div>
+                <label asp-for="Book.Title" class="block mb-2 text-sm font-medium"></label>
+                <input asp-for="Book.Title" class="input-style w-full p-2.5" />
+                <span asp-validation-for="Book.Title" class="text-red-400 mt-2 text-xs"></span>
+            </div>
+            <div>
+                <label asp-for="Book.Description" class="block mb-2 text-sm font-medium"></label>
+                <textarea asp-for="Book.Description" class="input-style w-full p-2.5" rows="4"></textarea>
+                <span asp-validation-for="Book.Description" class="text-red-400 mt-2 text-xs"></span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="Book.GradeId" class="block mb-2 text-sm font-medium"></label>
+                    <select asp-for="Book.GradeId" class="input-style w-full p-2.5" asp-items="@Model.Grades"><option value="">-- اختر الصف --</option></select>
+                    <span asp-validation-for="Book.GradeId" class="text-red-400 mt-2 text-xs"></span>
+                </div>
+                <div>
+                    <label asp-for="Book.SubjectId" class="block mb-2 text-sm font-medium"></label>
+                    <select asp-for="Book.SubjectId" class="input-style w-full p-2.5" asp-items="@Model.Subjects"><option value="">-- اختر المادة --</option></select>
+                    <span asp-validation-for="Book.SubjectId" class="text-red-400 mt-2 text-xs"></span>
+                </div>
+                <div>
+                    <label asp-for="Book.TeacherId" class="block mb-2 text-sm font-medium"></label>
+                    <select asp-for="Book.TeacherId" class="input-style w-full p-2.5" asp-items="@Model.Teachers"><option value="">-- اختر المدرس --</option></select>
+                    <span asp-validation-for="Book.TeacherId" class="text-red-400 mt-2 text-xs"></span>
+                </div>
+                <div>
+                    <label asp-for="CoverImage" class="block mb-2 text-sm font-medium">تغيير صورة الغلاف (اختياري)</label>
+                    <input asp-for="CoverImage" type="file" class="input-style w-full p-2.5" accept="image/*" />
+                    <span asp-validation-for="CoverImage" class="text-red-400 mt-2 text-xs"></span>
+                </div>
+                <div>
+                    <label asp-for="PdfFile" class="block mb-2 text-sm font-medium">تغيير ملف الكتاب (اختياري)</label>
+                    <input asp-for="PdfFile" type="file" class="input-style w-full p-2.5" accept=".pdf" />
+                    <span asp-validation-for="PdfFile" class="text-red-400 mt-2 text-xs"></span>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end space-x-4 space-x-reverse pt-4">
+                <input type="submit" value="حفظ التعديلات" class="primary-btn px-6 py-2 rounded-lg cursor-pointer" />
+                <a asp-action="Index" class="secondary-btn px-6 py-2 rounded-lg">العودة للقائمة</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

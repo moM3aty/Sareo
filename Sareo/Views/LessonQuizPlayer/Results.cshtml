@@ -1,0 +1,208 @@
+﻿@model Sareoo.ViewModels.QuizResultViewModel
+@using Sareoo.Helpers
+
+@{
+    ViewData["Title"] = "نتيجة اختبار: " + Model.Attempt.LessonQuiz.Lesson.Title;
+    Layout = "_Layout";
+}
+
+<style>
+    :root {
+        --dark-bg: #0b261d; /* Very Dark Green */
+        --panel-bg: #154734; /* Brand Green */
+        --text-primary: #e6f2eb; /* Light Greenish White */
+        --brand-gold: #d4af37; /* Gold */
+        --brand-gold-dark: #b08d26;
+        --success-bg: #1f5c42;
+        --success-border: #4ade80;
+        --error-bg: rgba(248, 81, 73, 0.15);
+        --error-border: #f87171;
+    }
+
+    body {
+        background-color: var(--dark-bg);
+        color: var(--text-primary);
+    }
+
+    .result-container {
+        background-color: var(--panel-bg);
+        border: 1px solid var(--brand-gold);
+        border-radius: 12px;
+        padding: 2rem;
+        max-width: 800px;
+        margin: 2rem auto;
+        color: var(--text-primary);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    h1, h2 {
+        color: var(--brand-gold);
+    }
+
+    .lead {
+        font-size: 1.2rem;
+    }
+
+    /* Override bootstrap text colors to match theme */
+    .text-success {
+        color: var(--brand-gold) !important; /* Gold for score */
+        text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+    }
+
+    .text-info {
+        color: #e6f2eb !important; /* Light text for total points */
+    }
+
+    .question-block {
+        background-color: var(--dark-bg);
+        border: 1px solid var(--brand-gold);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Badges */
+    .badge {
+        font-size: 0.9rem;
+        padding: 0.5em 0.8em;
+    }
+
+    .bg-success {
+        background-color: var(--success-bg) !important;
+        color: #fff;
+        border: 1px solid var(--success-border);
+    }
+
+    .bg-danger {
+        background-color: var(--error-bg) !important;
+        color: var(--error-border);
+        border: 1px solid var(--error-border);
+    }
+
+    .option-label {
+        background-color: #0e2e23; /* Darker option bg */
+        border: 1px solid var(--brand-gold);
+        padding: 0.75rem 1rem;
+        border-radius: 6px;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        transition: all 0.3s ease;
+    }
+
+        .option-label.correct {
+            border-color: var(--success-border);
+            background-color: var(--success-bg);
+            box-shadow: 0 0 5px rgba(74, 222, 128, 0.2);
+        }
+
+        .option-label.incorrect {
+            border-color: var(--error-border);
+            background-color: var(--error-bg);
+        }
+
+        .option-label .icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: bold;
+            color: #0b261d;
+        }
+
+        .option-label.correct .icon {
+            background-color: var(--success-border);
+            color: #000;
+        }
+
+        .option-label.incorrect .icon {
+            background-color: var(--error-border);
+            color: #fff;
+        }
+
+    /* Button */
+    .btn-primary {
+        background-color: var(--brand-gold);
+        border-color: var(--brand-gold);
+        color: #0b261d;
+        font-weight: bold;
+        padding: 10px 30px;
+        border-radius: 50px;
+        transition: all 0.3s;
+    }
+
+        .btn-primary:hover {
+            background-color: var(--brand-gold-dark);
+            border-color: var(--brand-gold-dark);
+            color: #fff;
+        }
+</style>
+
+<div class="result-container">
+    <div class="text-center mb-5">
+        <h1>نتيجة الاختبار</h1>
+        <h2>الدرس: @Model.Attempt.LessonQuiz.Lesson.Title</h2>
+        <p class="lead mt-3">لقد حصلت على: <strong class="text-success" style="font-size: 1.8rem;">@ArabicNumberHelper.ToArabicNumerals(Model.Attempt.Score)</strong> من <strong class="text-info" style="font-size: 1.8rem;">@ArabicNumberHelper.ToArabicNumerals(Model.Attempt.TotalPoints)</strong></p>
+    </div>
+
+    @foreach (var (question, index) in Model.Questions.Select((q, i) => (q, i)))
+    {
+        var studentAnswer = Model.StudentAnswers[question.Id];
+        var isCorrect = studentAnswer.Equals(question.CorrectAnswer, StringComparison.OrdinalIgnoreCase);
+
+        <div class="question-block">
+            <h5 class="mb-3 d-flex justify-content-between align-items-center">
+                <span style="color: var(--brand-gold);">السؤال @ArabicNumberHelper.ToArabicNumerals(index + 1):</span>
+                <span class="badge @(isCorrect ? "bg-success" : "bg-danger")">
+                    @ArabicNumberHelper.ToArabicNumerals(isCorrect ? question.Points : 0) / @ArabicNumberHelper.ToArabicNumerals(question.Points) درجة
+                </span>
+            </h5>
+            @if (!string.IsNullOrEmpty(question.ImageUrl))
+            {
+                <img src="@Url.Content(question.ImageUrl)" class="img-fluid rounded mb-3 border border-[#d4af37]" style="max-width: 300px;" />
+            }
+            else
+            {
+                <p class="mb-3 font-bold" style="font-size: 1.1rem;">@question.QuestionText</p>
+            }
+
+            @{
+                var options = new Dictionary<string, string> { { "A", question.OptionA }, { "B", question.OptionB } };
+                if (question.NumberOfOptions >= 3) { options.Add("C", question.OptionC); }
+                if (question.NumberOfOptions >= 4) { options.Add("D", question.OptionD); }
+            }
+
+            @foreach (var option in options)
+            {
+                string cssClass = "";
+                string iconClass = "";
+
+                if (option.Key.Equals(question.CorrectAnswer, StringComparison.OrdinalIgnoreCase))
+                {
+                    cssClass = "correct";
+                    iconClass = "fas fa-check";
+                }
+                else if (option.Key.Equals(studentAnswer, StringComparison.OrdinalIgnoreCase))
+                {
+                    cssClass = "incorrect";
+                    iconClass = "fas fa-times";
+                }
+
+                <div class="option-label @cssClass">
+                    @if (!string.IsNullOrEmpty(iconClass))
+                    {
+                        <span class="icon"><i class="@iconClass"></i></span>
+                    }
+                    <span>@option.Value</span>
+                </div>
+            }
+        </div>
+    }
+
+    <div class="text-center mt-5">
+        <a asp-controller="CoursePlayer" asp-action="Index" asp-route-courseId="@Model.Attempt.LessonQuiz.Lesson.CourseId" asp-route-lessonId="@Model.Attempt.LessonQuiz.Lesson.Id" class="btn btn-primary">العودة إلى الدرس</a>
+    </div>
+</div>

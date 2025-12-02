@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Sareoo.Areas.Admin.Models.ViewModels.BlogPostIndexViewModel>
+
+@{
+    ViewData["Title"] = "إدارة المدونة";
+}
+
+<div id="blog-posts">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold">إدارة المدونة</h2>
+        <a asp-action="Create" class="primary-btn px-5 py-2 rounded-lg flex items-center">
+            <i class="fas fa-plus ml-2"></i> إضافة مقال جديد
+        </a>
+    </div>
+
+    <!-- Filter Form -->
+    <div class="card-bg p-4 rounded-lg mb-6">
+        <form asp-action="Index" method="get" class="flex items-center gap-4">
+            <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" placeholder="ابحث بعنوان المقال أو الكلمات المفتاحية..." class="input-style w-full p-2.5" />
+            <button type="submit" class="primary-btn px-5 py-2.5 rounded-lg">بحث</button>
+            <a asp-action="Index" class="secondary-btn px-5 py-2.5 rounded-lg">مسح</a>
+        </form>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @foreach (var item in Model)
+        {
+            <div class="card-bg rounded-lg overflow-hidden flex flex-col">
+                <a asp-action="Details" asp-route-id="@item.Id">
+                    <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "https://placehold.co/600x400/1b263b/e0e1dd?text=Blog" : item.ImageUrl)"
+                         onerror="this.src='https://placehold.co/600x400/1b263b/e0e1dd?text=Error'"
+                         class="w-full h-100 object-cover">
+                </a>
+                <div class="p-4 flex flex-col flex-grow">
+                    <h3 class="text-lg font-bold text-white flex-grow">
+                        <a asp-action="Details" asp-route-id="@item.Id" class="hover:text-blue-400 transition-colors">@item.Title</a>
+                    </h3>
+                    <div class="text-sm text-gray-400 mt-2 border-t border-gray-700 pt-3">
+                        <p><i class="fas fa-calendar-alt ml-2"></i>@item.PublishDate.ToString("yyyy/MM/dd")</p>
+                    </div>
+                    <div class="flex justify-end items-center mt-4 space-x-2 space-x-reverse">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="text-yellow-400 hover:text-yellow-300 p-2 rounded-lg bg-black/20" title="تعديل"><i class="fas fa-edit"></i></a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="text-red-400 hover:text-red-300 p-2 rounded-lg bg-black/20" title="حذف"><i class="fas fa-trash"></i></a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

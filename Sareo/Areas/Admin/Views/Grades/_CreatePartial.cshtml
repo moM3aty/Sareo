@@ -1,0 +1,34 @@
+﻿@model Sareoo.Areas.Admin.Models.ViewModels.GradeFormViewModel
+
+<form asp-action="Create" asp-controller="Grades" method="post">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="text-red-400 mb-4"></div>
+
+    <div>
+        <label asp-for="Grade.Name" class="block mb-2 text-sm font-medium text-gray-300">اسم الصف</label>
+        <input asp-for="Grade.Name" class="input-style w-full p-2.5" />
+        <span asp-validation-for="Grade.Name" class="text-red-400 mt-2 text-xs"></span>
+    </div>
+
+    <div class="mt-4">
+        <label asp-for="Grade.StageId" class="block mb-2 text-sm font-medium text-gray-300">المرحلة الدراسية</label>
+        <div class="flex items-center space-x-2 space-x-reverse">
+            <select asp-for="Grade.StageId" id="Modal_Grade_StageId" class="input-style w-full p-2.5" asp-items="@Model.Stages">
+                <option value="">-- اختر المرحلة --</option>
+            </select>
+            <button type="button"
+                    class="quick-add-btn primary-btn p-2.5 rounded-lg flex-shrink-0"
+                    data-modal-title="إضافة مرحلة جديدة"
+                    data-create-url="@Url.Action("CreatePartial", "Stages")"
+                    data-dropdown-id="Modal_Grade_StageId"
+                    title="إضافة مرحلة جديدة">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+        <span asp-validation-for="Grade.StageId" class="text-red-400 mt-2 text-xs"></span>
+    </div>
+
+    <div class="flex items-center justify-end pt-6">
+        <button type="submit" class="primary-btn px-6 py-2 rounded-lg cursor-pointer">إنشاء وحفظ</button>
+    </div>
+</form>

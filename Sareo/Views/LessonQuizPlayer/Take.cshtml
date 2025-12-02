@@ -1,0 +1,296 @@
+﻿@model Sareoo.ViewModels.TakeLessonQuizViewModel
+
+@{
+    ViewData["Title"] = "اختبار: " + Model.Quiz.Lesson.Title;
+    Layout = "_Layout";
+}
+
+<style>
+    :root {
+        --dark-bg: #0b261d; /* Very Dark Green */
+        --panel-bg: #154734; /* Brand Green */
+        --text-primary: #e6f2eb; /* Light Greenish White */
+        --brand-gold: #d4af37; /* Gold */
+        --brand-gold-dark: #b08d26;
+    }
+
+    /* Override body background if needed, though Layout handles it */
+    body {
+        color: var(--text-primary);
+    }
+
+    .quiz-container {
+        background-color: var(--panel-bg);
+        border: 1px solid var(--brand-gold);
+        border-radius: 12px;
+        padding: 2rem;
+        max-width: 800px;
+        margin: 3rem auto;
+        color: var(--text-primary);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+        color: var(--brand-gold);
+        font-weight: bold;
+    }
+
+    .text-muted {
+        color: #c9d6d1 !important;
+    }
+
+    .quiz-question {
+        display: none;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .quiz-question.active {
+        display: block;
+    }
+
+    .progress-bar-container {
+        background-color: var(--dark-bg);
+        border-radius: 50px;
+        padding: 3px;
+        margin-bottom: 2rem;
+        border: 1px solid var(--brand-gold);
+    }
+
+    .progress-bar-fill {
+        background: linear-gradient(to right, #d4af37, #b08d26); /* Gold Gradient */
+        height: 10px;
+        border-radius: 50px;
+        width: 0%;
+        transition: width 0.3s ease-in-out;
+    }
+
+    .quiz-options .form-check {
+        background-color: var(--dark-bg);
+        border: 1px solid var(--brand-gold);
+        padding: 1rem 1.2rem; /* Adjusted padding for better click area */
+        border-radius: 8px;
+        margin-bottom: 0.75rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex; /* Flex to align radio and label */
+        align-items: center;
+    }
+
+        .quiz-options .form-check:hover {
+            background-color: #1f5c42; /* Slightly lighter green on hover */
+            transform: translateX(-5px);
+        }
+
+    /* Hide default radio and style the container based on selection */
+    .quiz-options .form-check-input {
+        margin-left: 10px; /* Space between radio and text */
+        accent-color: var(--brand-gold); /* Gold radio button color */
+    }
+
+    /* Styling when an option is checked (using Javascript to add class or CSS has selector) */
+    .quiz-options .form-check:has(.form-check-input:checked) {
+        background-color: var(--brand-gold);
+        border-color: var(--brand-gold);
+    }
+
+        .quiz-options .form-check:has(.form-check-input:checked) .form-check-label {
+            color: #0b261d; /* Dark text on gold background */
+            font-weight: bold;
+        }
+
+    .form-check-label {
+        color: var(--text-primary);
+        width: 100%;
+        cursor: pointer;
+    }
+
+    .quiz-navigation {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2rem;
+    }
+
+    /* Buttons */
+    .btn-primary {
+        background-color: var(--brand-gold);
+        border-color: var(--brand-gold);
+        color: #0b261d;
+        font-weight: bold;
+        padding: 10px 30px;
+        border-radius: 50px;
+        transition: all 0.3s;
+    }
+
+        .btn-primary:hover {
+            background-color: var(--brand-gold-dark);
+            border-color: var(--brand-gold-dark);
+            color: #fff;
+        }
+
+    .btn-outline-secondary {
+        border-color: var(--brand-gold);
+        color: var(--brand-gold);
+        background: transparent;
+        padding: 10px 30px;
+        border-radius: 50px;
+        font-weight: bold;
+    }
+
+        .btn-outline-secondary:hover:not(:disabled) {
+            background-color: var(--brand-gold);
+            color: #0b261d;
+        }
+
+        .btn-outline-secondary:disabled {
+            border-color: #6c757d;
+            color: #6c757d;
+        }
+
+    .btn-success {
+        background-color: #1f5c42;
+        border-color: var(--brand-gold);
+        color: #fff;
+        font-weight: bold;
+        padding: 10px 30px;
+        border-radius: 50px;
+    }
+
+        .btn-success:hover {
+            background-color: var(--brand-gold);
+            color: #0b261d;
+            border-color: var(--brand-gold);
+        }
+</style>
+
+<div class="quiz-container">
+    <h1 class="text-center mb-2">@ViewData["Title"]</h1>
+    <p class="text-center text-muted mb-4">سؤال <span id="current-q-number" style="color: var(--brand-gold); font-weight: bold;">1</span> من @Model.Quiz.Questions.Count()</p>
+
+    <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="progress-bar"></div>
+    </div>
+
+    <form asp-controller="LessonQuizPlayer" asp-action="Submit" method="post" id="quiz-form">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Quiz.LessonId" />
+
+        <div id="questions-wrapper">
+            @foreach (var (question, index) in Model.Quiz.Questions.Select((q, i) => (q, i)))
+            {
+                <div class="quiz-question @(index == 0 ? "active" : "")" data-index="@index">
+                    <div class="mb-4 text-center">
+                        @if (!string.IsNullOrEmpty(question.ImageUrl))
+                        {
+                            <img src="@Url.Content(question.ImageUrl)" class="img-fluid rounded mb-3 border border-[#d4af37]" style="max-width: 400px;" />
+                        }
+                        <p class="lead fw-bold" style="font-size: 1.2rem;">@question.QuestionText</p>
+                    </div>
+
+                    <div class="quiz-options">
+                        <div class="form-check" onclick="document.getElementById('q@(question.Id)a').checked = true;">
+                            <input class="form-check-input" type="radio" name="Answers[@question.Id]" id="q@(question.Id)a" value="A" />
+                            <label class="form-check-label" for="q@(question.Id)a">@question.OptionA</label>
+                        </div>
+                        <div class="form-check" onclick="document.getElementById('q@(question.Id)b').checked = true;">
+                            <input class="form-check-input" type="radio" name="Answers[@question.Id]" id="q@(question.Id)b" value="B" />
+                            <label class="form-check-label" for="q@(question.Id)b">@question.OptionB</label>
+                        </div>
+                        @if (question.NumberOfOptions >= 3)
+                        {
+                            <div class="form-check" onclick="document.getElementById('q@(question.Id)c').checked = true;">
+                                <input class="form-check-input" type="radio" name="Answers[@question.Id]" id="q@(question.Id)c" value="C" />
+                                <label class="form-check-label" for="q@(question.Id)c">@question.OptionC</label>
+                            </div>
+                        }
+                        @if (question.NumberOfOptions >= 4)
+                        {
+                            <div class="form-check" onclick="document.getElementById('q@(question.Id)d').checked = true;">
+                                <input class="form-check-input" type="radio" name="Answers[@question.Id]" id="q@(question.Id)d" value="D" />
+                                <label class="form-check-label" for="q@(question.Id)d">@question.OptionD</label>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="quiz-navigation">
+            <button type="button" id="prev-btn" class="btn btn-outline-secondary" disabled>السابق</button>
+            <button type="button" id="next-btn" class="btn btn-primary">التالي</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const questions = document.querySelectorAll('.quiz-question');
+            const nextBtn = document.getElementById('next-btn');
+            const prevBtn = document.getElementById('prev-btn');
+            const progressBar = document.getElementById('progress-bar');
+            const currentQNumberSpan = document.getElementById('current-q-number');
+            const form = document.getElementById('quiz-form');
+            let currentQuestionIndex = 0;
+            const totalQuestions = questions.length;
+
+            function showQuestion(index) {
+                questions.forEach((q, i) => {
+                    q.classList.toggle('active', i === index);
+                });
+
+                // Update progress bar
+                const progress = ((index + 1) / totalQuestions) * 100;
+                progressBar.style.width = `${progress}%`;
+
+                // Update question number
+                currentQNumberSpan.textContent = index + 1;
+
+                // Update button states
+                prevBtn.disabled = index === 0;
+                if (index === totalQuestions - 1) {
+                    nextBtn.textContent = 'إنهاء وتسليم الإجابات';
+                    nextBtn.classList.remove('btn-primary');
+                    nextBtn.classList.add('btn-success');
+                } else {
+                    nextBtn.textContent = 'التالي';
+                    nextBtn.classList.remove('btn-success');
+                    nextBtn.classList.add('btn-primary');
+                }
+            }
+
+            nextBtn.addEventListener('click', function() {
+                if (currentQuestionIndex < totalQuestions - 1) {
+                    currentQuestionIndex++;
+                    showQuestion(currentQuestionIndex);
+                } else {
+                    form.submit();
+                }
+            });
+
+            prevBtn.addEventListener('click', function() {
+                if (currentQuestionIndex > 0) {
+                    currentQuestionIndex--;
+                    showQuestion(currentQuestionIndex);
+                }
+            });
+
+            // Initial setup
+            showQuestion(0);
+        });
+    </script>
+}

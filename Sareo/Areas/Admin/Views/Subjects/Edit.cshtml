@@ -1,0 +1,36 @@
+﻿@model Sareoo.Areas.Admin.Models.ViewModels.SubjectFormViewModel
+@{
+    ViewData["Title"] = "تعديل المادة";
+}
+<div class="max-w-4xl mx-auto">
+    <h2 class="text-3xl font-bold mb-6">تعديل: @Model.Subject.Name</h2>
+    <form asp-action="Edit">
+        <input type="hidden" asp-for="Subject.Id" />
+        <div class="card-bg p-6 rounded-lg space-y-4">
+            <div asp-validation-summary="ModelOnly" class="text-red-400 mb-4"></div>
+            <div>
+                <label asp-for="Subject.Name" class="block mb-2 text-sm font-medium"></label>
+                <input asp-for="Subject.Name" class="input-style w-full p-2.5" />
+                <span asp-validation-for="Subject.Name" class="text-red-400 mt-2 text-xs"></span>
+            </div>
+            <div class="border-t border-gray-700 pt-4">
+                <label class="block mb-3 text-sm font-medium">الصفوف الدراسية التي تتوفر بها هذه المادة</label>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    @for (int i = 0; i < Model.Grades.Count; i++)
+                    {
+                        <label class="flex items-center space-x-3 space-x-reverse bg-gray-900 p-3 rounded-lg hover:bg-gray-700 cursor-pointer">
+                            <input type="checkbox" asp-for="Grades[i].IsAssigned" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <span class="text-gray-300">@Model.Grades[i].Name</span>
+                            <input type="hidden" asp-for="Grades[i].GradeId" />
+                            <input type="hidden" asp-for="Grades[i].Name" />
+                        </label>
+                    }
+                </div>
+            </div>
+            <div class="flex items-center justify-end space-x-4 space-x-reverse pt-4">
+                <input type="submit" value="حفظ التعديلات" class="primary-btn px-6 py-2 rounded-lg cursor-pointer" />
+                <a asp-action="Index" class="secondary-btn px-6 py-2 rounded-lg">العودة للقائمة</a>
+            </div>
+        </div>
+    </form>
+</div>

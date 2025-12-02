@@ -1,0 +1,116 @@
+﻿@model Sareoo.Areas.Admin.Models.ViewModels.ExamViewModel
+
+@{
+    ViewData["Title"] = "إدارة الاختبار";
+}
+
+@functions {
+    string ToArabicLetter(string letter)
+    {
+        switch (letter?.ToUpper())
+        {
+            case "A": return "أ";
+            case "B": return "ب";
+            case "C": return "ج";
+            case "D": return "د";
+            default: return letter;
+        }
+    }
+}
+
+<div id="exams-management">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h2 class="text-3xl font-bold">إدارة اختبار دورة: @Model.CourseTitle</h2>
+        </div>
+        <a asp-controller="Courses" asp-action="Index" class="secondary-btn text-white px-4 py-2 rounded-lg text-sm ">
+            <i class="fas fa-arrow-right ml-1"></i> العودة لقائمة الدورات
+        </a>
+    </div>
+
+    <!-- Exam Details & Actions -->
+    <div class="card-bg p-6 rounded-lg mb-6">
+        <div class="flex justify-between items-start">
+            <div>
+                <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                    <div>
+                        <dt class="font-semibold text-gray-400">عنوان الاختبار</dt>
+                        <dd>@Model.Exam.Title</dd>
+                    </div>
+                    <div>
+                        <dt class="font-semibold text-gray-400">نسبة النجاح</dt>
+                        <dd>@Model.Exam.PassPercentage %</dd>
+                    </div>
+                </dl>
+            </div>
+            <div class="flex space-x-2 space-x-reverse">
+                <a asp-action="Edit" asp-route-id="@Model.Exam.CourseId" class="secondary-btn px-4 py-2 rounded-lg flex items-center">
+                    <i class="fas fa-edit ml-2"></i> تعديل بيانات الاختبار
+                </a>
+                <a asp-action="Delete" asp-route-id="@Model.Exam.CourseId" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center">
+                    <i class="fas fa-trash ml-2"></i> حذف الاختبار
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Questions Section -->
+    <div class="flex justify-between items-center mb-4">
+        <h3 class="text-2xl font-bold">أسئلة الاختبار</h3>
+        <a asp-controller="Questions" asp-action="Create" asp-route-examId="@Model.Exam.CourseId" class="primary-btn px-5 py-2 rounded-lg flex items-center">
+            <i class="fas fa-plus ml-2"></i> إضافة سؤال جديد
+        </a>
+    </div>
+
+    <!-- Filter Form for Questions -->
+    <div class="card-bg p-4 rounded-lg mb-6">
+        <form asp-action="Index" method="get" class="flex items-center gap-4">
+            <input type="hidden" name="courseId" value="@ViewBag.CourseId" />
+            <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" placeholder="ابحث في نص السؤال..." class="input-style w-full p-2.5" />
+            <button type="submit" class="primary-btn px-5 py-2.5 rounded-lg">بحث</button>
+            <a asp-action="Index" asp-route-courseId="@ViewBag.CourseId" class="secondary-btn px-5 py-2.5 rounded-lg">مسح</a>
+        </form>
+    </div>
+
+    <div class="card-bg rounded-lg overflow-hidden">
+        <table class="w-full text-right">
+            <thead class="bg-[#2a3a50]">
+                <tr>
+                    <th class="p-4 font-semibold">السؤال</th>
+                    <th class="p-4 font-semibold">الإجابة الصحيحة</th>
+                    <th class="p-4 font-semibold">الدرجة</th>
+                    <th class="p-4 font-semibold">إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Questions.Any())
+                {
+                    @foreach (var item in Model.Questions)
+                    {
+                        <tr class="border-b border-gray-700 hover:bg-[#2a3a50]/50 transition-colors">
+                            <td class="p-4">
+                                @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                {
+                                    <img src="@Url.Content(item.ImageUrl)" class="max-w-[150px] rounded-lg mb-2" />
+                                }
+                                @item.QuestionText
+                            </td>
+                            <td class="p-4 text-green-400 font-bold">@ToArabicLetter(item.CorrectAnswer)</td>
+                            <td class="p-4">@item.Points</td>
+                            <td class="p-4 space-x-2 space-x-reverse">
+                                <a asp-controller="Questions" asp-action="Edit" asp-route-id="@item.Id" class="text-yellow-400 hover:text-yellow-300" title="تعديل"><i class="fas fa-edit"></i></a>
+                                <a asp-controller="Questions" asp-action="Delete" asp-route-id="@item.Id" class="text-red-400 hover:text-red-300" title="حذف"><i class="fas fa-trash"></i></a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" class="p-6 text-center text-gray-500">لا توجد أسئلة مضافة لهذا الاختبار بعد.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

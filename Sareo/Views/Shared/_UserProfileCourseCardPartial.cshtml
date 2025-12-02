@@ -1,0 +1,33 @@
+﻿@model Sareoo.ViewModels.UserCourseViewModel
+@using Sareoo.Helpers
+
+<div class="course-card h-100 shadow-sm">
+    <div class="img">
+        <img src="@(string.IsNullOrEmpty(Model.CoverImageUrl) ? $"https://placehold.co/600x400/1b263b/e0e1dd?text={Model.Title}" : Model.CoverImageUrl)" class="card-img-top" alt="@Model.Title">
+    </div>
+    <div class="card-body p-4 d-flex flex-column">
+        <h3 class="mb-0">@Model.Title</h3>
+        <p class="text-blue fs-5 mb-2">@Model.TeacherName</p>
+
+        <div class="mt-auto">
+            <div class="d-flex justify-content-between small mb-1">
+                <span class="text-white">@ArabicNumberHelper.ToArabicNumerals(Model.ProgressPercentage)%</span>
+                <span class="text-white">التقدم</span>
+            </div>
+            <div class="progress mb-2" style="height: 10px;">
+                <div class="progress-bar bg-blue" style="width: @Model.ProgressPercentage%;"></div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="text-blue fw-bold fs-5">@Model.Grade</span>
+                @if (Model.ProgressPercentage >= 100)
+                {
+                    <a asp-controller="CoursePlayer" asp-action="Index" asp-route-courseId="@Model.Id" class="btn btn-complete btn-sm">مكتمل</a>
+                }
+                else
+                {
+                    <a asp-controller="CoursePlayer" asp-action="Index" asp-route-courseId="@Model.Id" class="btn btn-outline-in-progress">أكمل التعلم</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

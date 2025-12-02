@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Sareoo.Areas.Admin.Models.ViewModels.SalesOutletGroupedViewModel>
+
+@{
+    ViewData["Title"] = "إدارة منافذ البيع";
+}
+
+<div id="sales-outlets">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold">إدارة منافذ البيع (المكتبات)</h2>
+        <a asp-action="Create" class="primary-btn px-5 py-2 rounded-lg flex items-center">
+            <i class="fas fa-plus ml-2"></i> إضافة منفذ جديد
+        </a>
+    </div>
+
+    <!-- Filter Form -->
+    <div class="card-bg p-4 rounded-lg mb-6">
+        <form asp-action="Index" method="get" class="flex items-center gap-4">
+            <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" placeholder="ابحث باسم المكتبة أو المحافظة..." class="input-style w-full p-2.5" />
+            <button type="submit" class="primary-btn px-5 py-2.5 rounded-lg">بحث</button>
+            <a asp-action="Index" class="secondary-btn px-5 py-2.5 rounded-lg">مسح</a>
+        </form>
+    </div>
+
+    <div class="space-y-6">
+        @foreach (var group in Model)
+        {
+            <div class="card-bg rounded-lg overflow-hidden">
+                <div class="p-4">
+                    <h3 class="text-xl font-semibold" style="color:#d4af37;">@group.Governorate</h3>
+                </div>
+                <div class="p-4">
+                    @if (group.Outlets.Any())
+                    {
+                        <ul class="space-y-2">
+                            @foreach (var outlet in group.Outlets)
+                            {
+                                <li class="flex justify-between items-center bg-gray-900/50 p-3 rounded-md">
+                                    <span class="font-semibold">@outlet.BookstoreName</span>
+                                    <div class="space-x-2 space-x-reverse">
+                                        <a asp-action="Edit" asp-route-id="@outlet.Id" class="text-yellow-400 hover:text-yellow-300" title="تعديل"><i class="fas fa-edit"></i></a>
+                                        <a asp-action="Delete" asp-route-id="@outlet.Id" class="text-red-400 hover:text-red-300" title="حذف"><i class="fas fa-trash"></i></a>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,23 @@
+﻿@model Sareoo.Areas.Admin.Models.Entities.Course
+
+@{
+    ViewData["Title"] = "لا يوجد اختبار";
+}
+
+<div class="max-w-4xl mx-auto text-center">
+    <div class="card-bg p-8 rounded-lg">
+        <i class="fas fa-file-excel text-5xl text-gray-500 mb-4"></i>
+        <h2 class="text-3xl font-bold mb-4">لا يوجد اختبار لهذه الدورة</h2>
+        <p class="text-gray-400 mb-6">
+            لا يوجد اختبار مرتبط بدورة "@Model.Title" حتى الآن.
+            <br />
+            يمكنك إنشاء اختبار جديد من الزر أدناه.
+        </p>
+        <div class="flex items-center justify-center space-x-4 space-x-reverse">
+            <a asp-action="Create" asp-route-courseId="@Model.Id" class="primary-btn px-6 py-2 rounded-lg">
+                <i class="fas fa-plus ml-2"></i> إنشاء اختبار جديد
+            </a>
+            <a asp-controller="Courses" asp-action="Index" class="secondary-btn px-6 py-2 rounded-lg">العودة للدورات</a>
+        </div>
+    </div>
+</div>

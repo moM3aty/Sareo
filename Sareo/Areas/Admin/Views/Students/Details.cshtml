@@ -1,0 +1,216 @@
+﻿@model Sareoo.Areas.Admin.Models.ViewModels.StudentProfileViewModel
+
+@{
+    ViewData["Title"] = "الملف الشخصي للطالب";
+}
+
+<div class="max-w-5xl mx-auto">
+    <!-- Header Profile -->
+    <div class="card-bg p-6 rounded-lg mb-6">
+        <div class="flex items-center">
+            <div class="ml-5">
+                <h2 class="text-3xl font-bold text-white">@Model.Student.FullName</h2>
+                <p class="text-gray-400">@Model.Student.Email</p>
+                <p class="text-gray-400 mt-1">الصف: @Model.Student.Grade.Name</p>
+                <p class="text-gray-400 mt-1">تاريخ التسجيل: @Model.Student.RegistrationDate.ToString("yyyy/MM/dd")</p>
+                <p class="text-gray-400 mt-1">المدينة: @Model.Student.City</p>
+                <p class="text-gray-400 mt-1">الدولة: @Model.Student.Country</p>
+                <p class="text-sm text-gray-300 mt-1">
+                    الحالة:
+                    <span class="font-semibold @(Model.Student.IsActive ? "text-green-400" : "text-red-400")">
+                        @(Model.Student.IsActive ? "نشط" : "غير نشط")
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <div class="card-bg p-6 rounded-lg text-center">
+            <i class="fas fa-book-open text-3xl accent-color mb-2"></i>
+            <p class="text-2xl font-bold">@Model.CompletedCourses</p>
+            <p class="text-gray-400">دورات مكتملة</p>
+        </div>
+        <div class="card-bg p-6 rounded-lg text-center">
+            <i class="fas fa-certificate text-3xl accent-color mb-2"></i>
+            <p class="text-2xl font-bold">@Model.CertificatesCount</p>
+            <p class="text-gray-400">شهادات محصلة</p>
+        </div>
+        <div class="card-bg p-6 rounded-lg text-center">
+            <i class="fas fa-clock text-3xl accent-color mb-2"></i>
+            <p class="text-2xl font-bold">@Model.TotalLearningHours</p>
+            <p class="text-gray-400">ساعة تعلم</p>
+        </div>
+        <div class="card-bg p-6 rounded-lg text-center">
+            <i class="fas fa-percentage text-3xl accent-color mb-2"></i>
+            <p class="text-2xl font-bold">@Model.AverageGrade%</p>
+            <p class="text-gray-400">متوسط الدرجات</p>
+        </div>
+
+        @if (Model.TotalRatings > 0)
+        {
+            <div class="card-bg p-6 rounded-lg text-center">
+                <i class="fas fa-star text-3xl accent-color mb-2"></i>
+                <p class="text-2xl font-bold">@Model.AverageRating</p>
+                <p class="text-gray-400">معدل التقييمات</p>
+            </div>
+        }
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Courses Progress -->
+        <div class="card-bg p-6 rounded-lg">
+            <h3 class="text-xl font-semibold mb-4">الدورات المسجلة</h3>
+            <div class="space-y-4">
+                @if (Model.CoursesProgress.Any())
+                {
+                    var lastCourse = Model.CoursesProgress.OrderByDescending(c => c.LastAccessDate).FirstOrDefault();
+                    @if (lastCourse?.LastAccessDate != null)
+                    {
+                        <p class="text-sm text-gray-400 mb-3">
+                            آخر دورة نشطة:
+                            <strong>@lastCourse.CourseTitle</strong>
+                            (@lastCourse.LastAccessDate.Value.ToString("yyyy/MM/dd"))
+                        </p>
+                    }
+
+                    @foreach (var course in Model.CoursesProgress)
+                    {
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-base font-medium text-white">@course.CourseTitle</span>
+                                <span class="text-sm font-medium text-white">@course.ProgressPercentage%</span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2.5">
+                                <div class="bg-blue-600 h-2.5 rounded-full" style="width: @course.ProgressPercentage%"></div>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">الحالة: @course.Status</p>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-gray-500">الطالب لم يسجل في أي دورات بعد.</p>
+                }
+            </div>
+        </div>
+
+        <!-- Certificates -->
+        <div class="card-bg p-6 rounded-lg">
+            <h3 class="text-xl font-semibold mb-4">الشهادات ونتائج الاختبارات</h3>
+            <div class="space-y-3">
+                @if (Model.Certificates.Any())
+                {
+                    @foreach (var cert in Model.Certificates)
+                    {
+                        <div class="flex justify-between items-center bg-gray-800/50 p-3 rounded-lg">
+                            <div>
+                                <p class="font-semibold text-white">@cert.CourseTitle</p>
+                                <p class="text-xs text-gray-400">تاريخ الإصدار: @cert.IssueDate.ToString("yyyy/MM/dd")</p>
+                            </div>
+                            <div>
+                                <a asp-controller="Certificates" asp-action="Details" asp-route-id="@cert.CertificateId" target="_blank" class="secondary-btn px-3 py-1 text-sm rounded-md">عرض الشهادة</a>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-gray-500">لا توجد شهادات محصلة لهذا الطالب.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="card-bg p-6 rounded-lg lg:col-span-2 my-5">
+        <h3 class="text-xl font-semibold mb-4">نتائج اختبارات الدروس</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-right">
+                <thead class="bg-[#2a3a50]">
+                    <tr>
+                        <th class="p-4 font-semibold">الدورة</th>
+                        <th class="p-4 font-semibold">الدرس</th>
+                        <th class="p-4 font-semibold">النتيجة</th>
+                        <th class="p-4 font-semibold">تاريخ المحاولة</th>
+                        <th class="p-4 font-semibold">إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.QuizAttempts.Any())
+                    {
+                        @foreach (var attempt in Model.QuizAttempts)
+                        {
+                            <tr class="border-b border-gray-700">
+                                <td class="p-4">@attempt.CourseTitle</td>
+                                <td class="p-4">@attempt.LessonTitle</td>
+                                <td class="p-4">@attempt.Score / @attempt.TotalPoints</td>
+                                <td class="p-4">@attempt.AttemptDate.ToLocalTime().ToString("g")</td>
+                                <td class="p-4">
+                                    <a asp-action="ViewQuizAttempt" asp-route-attemptId="@attempt.AttemptId" class="text-blue-400 hover:text-blue-300" title="عرض الإجابات">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center p-6 text-gray-500">
+                                لم يقم الطالب بأي اختبارات دروس بعد.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-bg p-6 rounded-lg lg:col-span-2 my-5">
+        <h3 class="text-xl font-semibold mb-4">نتائج الاختبارات النهائية</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-right">
+                <thead class="bg-[#2a3a50]">
+                    <tr>
+                        <th class="p-4 font-semibold">الدورة</th>
+                        <th class="p-4 font-semibold">النتيجة</th>
+                        <th class="p-4 font-semibold">تاريخ المحاولة</th>
+                        <th class="p-4 font-semibold">إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.FinalExamAttempts.Any())
+                    {
+                        @foreach (var attempt in Model.FinalExamAttempts)
+                        {
+                            <tr class="border-b border-gray-700">
+                                <td class="p-4">@attempt.CourseTitle</td>
+                                <td class="p-4">@attempt.Score %</td>
+                                <td class="p-4">@attempt.AttemptDate.ToLocalTime().ToString("g")</td>
+                                <td class="p-4">
+                                    <a asp-action="ViewExamAttempt" asp-route-attemptId="@attempt.AttemptId" class="text-blue-400 hover:text-blue-300" title="عرض الإجابات">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center p-6 text-gray-500">
+                                لم يقم الطالب بأي اختبارات نهائية بعد.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="flex items-center justify-end space-x-4 space-x-reverse pt-6">
+        <a asp-action="Edit" asp-route-id="@Model.Student.Id" class="primary-btn px-6 py-2 rounded-lg">تعديل بيانات الطالب</a>
+        <a asp-action="Index" class="secondary-btn px-6 py-2 rounded-lg">العودة للقائمة</a>
+    </div>
+
+</div>

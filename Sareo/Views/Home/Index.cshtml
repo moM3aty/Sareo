@@ -1,0 +1,388 @@
+﻿@using Sareoo.ViewModels
+@using Sareoo.Helpers
+@model HomeViewModel
+@{
+    ViewData["Title"] = "الصفحة الرئيسيه";
+}
+<section class="section-padding about-us" id="about">
+    <div class="container">
+        <div class="heading text-center mb-5">
+            <h2 class="title ">من نحن</h2>
+            <p class="description about-us-p">منصة وسارعو التعليمية التعليمية هي منصة رائدة في مجال التعليم الإلكتروني في مصر، تأسست بهدف تطوير التعليم وتقديم أفضل الخدمات التعليمية للطلاب في جميع المراحل الدراسية</p>
+        </div>
+        <div class="row g-4 justify-content-center align-items-center mt-5">
+            <div class="col-lg-5">
+                <div class="right">
+                    <h3>قصة النجاح</h3>
+                    <p class="mb-4">
+                        منصة تعليمية رقمية شاملة تخدم الطلبة والمعلمين في جميع المراحل الدراسيه ، وطلبة الدراسات العليا.
+                    </p>
+                    <p class="mb-4">تقدم المنصة محتوىً مكتوبًا وفيديوهات تعليمية، اختبارات تفاعلية، تعليمًا مباشرًا ومسجلًا، وموارد مهنية للمعلمين، وكل ذلك وفق المناهج المصرية ووثائق التقويم الحديثة.</p>
+                    <p>
+                        وسارعو التعليمية… تعلم أصيل، تعليم متجدد، رؤية تواكب المستقبل.
+                    </p>
+                    <div class="row g-4 mt-5 mb-4 mb-lg-0">
+                        <div class="col-4">
+                            <div class="img">
+                                <img src="~/images/about.png" class="w-100 rounded-2" alt="about-1">
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="img">
+                                <img src="~/images/about-2.jpg" class="w-100 rounded-2" alt="about-2">
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="img">
+                                <img src="~/images/about-3.jpg" class="w-100 rounded-2" alt="about-3">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="left d-flex justify-content-center align-items-center">
+                    <img src="~/images/aboutus.png" alt="aboutus">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="vision section-padding" id="vision">
+    <div class="container">
+        <div class="heading text-center mb-5">
+            <h2 class="title">رؤيتنا ورسالتنا</h2>
+            <p class="description">نسعى لأن نكون المنصة التعليمية الرائدة في المنطقة العربية، ونساهم في بناء جيل متعلم ومبدع</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="heading d-flex gap-4 align-items-center mb-4">
+                        <div class="icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <h3>رؤيتنا</h3>
+                    </div>
+                    <p>أن نكون المرجع العربي الأول للتعليم الرقمي المتكامل، الذي يجمع بين الأصالة التربوية والحداثة التقنية، ويخدم جميع أطراف العملية التعليمية.</p>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="heading d-flex gap-4 align-items-center mb-4">
+                        <div class="icon">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <h3>رسالتنا</h3>
+                    </div>
+                    <p>تقديم خدمات تعليمية متميزة ومبتكرة تلبي احتياجات الطلاب في جميع المراحل الدراسية، من خلال استخدام أحدث التقنيات التعليمية وتوفير بيئة تعليمية تفاعلية تحفز على الإبداع والتفوق الأكاديمي.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="stage section-padding" id="stages">
+    <div class="container">
+        <div class="heading text-center mb-5">
+            <h2 class="title">المراحل الدراسية</h2>
+            <p class="description">نغطي جميع المراحل الدراسية من الصف الأول حتى الدراسات العليا</p>
+        </div>
+        <div class="row g-4 mt-5">
+            @foreach (var stage in Model.Stages)
+            {
+                <div class="col-md-6">
+                    <div class="glass-card h-100 p-4">
+                        <div class="header d-flex justify-content-between align-items-center">
+                            <div class="content">
+                                <h3 class="mb-0">@stage.Name</h3>
+                                <span>@ArabicNumberHelper.ToArabicNumerals(stage.GradeRange)</span>
+                            </div>
+                            <div class="icon"></div>
+                        </div>
+                        <div class="body mb-5 mt-5">
+                            <p>المواد الدراسية:</p>
+                            <div class="lang">
+                                <ul class="list-unstyled d-flex flex-wrap row-gap-3 column-gap-3">
+                                    @if (stage.SubjectNames != null && stage.SubjectNames.Any())
+                                    {
+                                        foreach (var subjectName in stage.SubjectNames)
+                                        {
+                                            <li>@subjectName</li>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <li>لا توجد مواد مضافة بعد</li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="footer d-flex justify-content-between align-items-center">
+                            <div class="num">
+                                <i class="fas fa-users ms-1"></i>
+                                <span>@ArabicNumberHelper.ToArabicNumerals(stage.StudentCount) طالب</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+@functions {
+    public Microsoft.AspNetCore.Html.IHtmlContent RenderStars(double rating)
+    {
+        var starsHtml = new System.Text.StringBuilder();
+        for (int i = 1; i <= 5; i++)
+        {
+            if (i <= rating)
+            {
+                starsHtml.Append("<i class=\"fas fa-star text-warning\"></i>");
+            }
+            else if (i - 0.5 <= rating)
+            {
+                starsHtml.Append("<i class=\"fas fa-star-half-alt text-warning\"></i>");
+            }
+            else
+            {
+                starsHtml.Append("<i class=\"far fa-star text-warning\"></i>");
+            }
+        }
+        return new Microsoft.AspNetCore.Html.HtmlString(starsHtml.ToString());
+    }
+}
+
+<section class="teachers section-padding" id="teachers">
+    <div class="container">
+        <div class="heading text-center mb-5">
+            <h2 class="title">فريق المعلمين المتميز</h2>
+            <p class="description">نخبة من أفضل المعلمين المتخصصين في جميع المواد الدراسية</p>
+        </div>
+        <div class="row g-4 mt-4">
+            @foreach (var teacher in Model.Teachers)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="inner">
+                        <div class="img">
+                            <img src="@(string.IsNullOrEmpty(teacher.ProfileImageUrl) ? "https://placehold.co/600x400/1b263b/e0e1dd?text=Teacher" : teacher.ProfileImageUrl)" alt="@teacher.FullName">
+                            <div class="badge">@ArabicNumberHelper.ToArabicNumerals(teacher.AverageRating.ToString("0")) , @ArabicNumberHelper.ToArabicNumerals(0) <i class="fas fa-star text-warning me-2"></i></div>
+                        </div>
+                        <div class="content">
+                            <h3>@teacher.FullName</h3>
+                            <p class="p1">@teacher.JobTitle</p>
+                            <p class="p2">@teacher.ExperienceSummary</p>
+                            <div class="d-flex justify-content-between mb-3 align-items-center">
+                                <div>
+                                    <i class="fas fa-book-open ms-2"></i>
+                                    <span>@teacher.SubjectsSummary</span>
+                                </div>
+                                <div class="year">
+                                    @ArabicNumberHelper.ToArabicNumerals(teacher.ExperienceYears)+ سنة
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-4">
+                                <div>
+                                    <i class="fas fa-users ms-2"></i>
+                                    <span>@ArabicNumberHelper.ToArabicNumerals(teacher.TotalStudents) طالب</span>
+                                </div>
+                                <div class="rating">
+                                    <div class="icons">
+                                        @RenderStars(teacher.AverageRating)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="button">
+                                <a asp-controller="TeacherProfile" asp-action="Index" asp-route-id="@teacher.Id">عرض الملف الشخصي</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+<section class="section-padding statement" id="statements">
+    <div class="container">
+        <div class="heading text-center mb-5">
+            <h2 class="title">سلسلة وسارعو التعليمية</h2>
+            <p class="description">مجموعة شاملة من الكتب التعليمية المطبوعة والرقمية لجميع المراحل الدراسية</p>
+            <div class="bgde">
+                <i class="fas fa-star text-warning me-2"></i> متوفرة في مصر
+            </div>
+        </div>
+        <div class="row g-4">
+            @if (Model.EducationalMaterials.Any())
+            {
+                @foreach (var material in Model.EducationalMaterials)
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card card-border-0 shadow rounded-4 overflow-hidden h-100">
+                            <div class="image-section">
+                                <img src="@(string.IsNullOrEmpty(material.CoverImageUrl) ? $"https://placehold.co/600x400/0d6efd/ffffff?text={material.Title}" : material.CoverImageUrl)" class="image" alt="@material.Title">
+                                <span class="bdge1">@material.GradeName</span>
+                            </div>
+                            <div class="card-body text-end d-flex flex-column">
+                                <h3 class="fw-medium">@material.Title</h3>
+                                <p class="text-blue">@material.SubjectName</p>
+                                <p class="text-white">@material.Description</p>
+                                <div class="d-flex justify-content-between text-muted small">
+                                    <div class="text-blue"><i class="fas fa-book-open ms-2"></i>@ArabicNumberHelper.ToArabicNumerals(material.PageCount) صفحة</div>
+                                </div>
+                                <div class="d-flex flex-wrap gap-2 mt-3">
+                                    <button class="btn see-btn d-flex justify-content-center flex-fill align-items-center preview-btn"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#infoModal"
+                                            data-id="@material.Id">
+                                        <i class="fas fa-eye ms-1"></i>معاينة
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-center text-white">لا توجد مواد تعليمية متاحة حالياً.</p>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Modal -->
+<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content text-end">
+            <div class="modal-header">
+                <h2 class="modal-title" id="infoModalLabel">معلومات الكتاب</h2>
+                <button style="background:transparent;border: none;" type="button" class="fa-solid fa-xmark fs-4 ms-2" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-4 align-items-start">
+                    <div class="col-lg-5 text-center">
+                        <img id="modalCoverImage" src="" alt="Book Cover" class="img-fluid rounded shadow">
+                    </div>
+                    <div class="col-lg-7">
+                        <h3 id="modalBookTitle" class="fw-bold mb-2"></h3>
+                        <p id="modalDescription" class="text-white"></p>
+                        <h3 class="fw-bold mt-4">المحافظات المتاحة:</h3>
+                        <ul id="modalGovernorates" class="list-unstyled mb-4"></ul>
+                        <h3 class="fw-bold">منافذ البيع:</h3>
+                        <ul id="modalOutlets" class="list-unstyled"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="why-us section-padding">
+    <div class="container">
+        <div class="heading text-center mb-5">
+            <h2 class="title">لماذا تختار منصتنا؟</h2>
+            <p class="description">نوفر تجربة تعليمية متكاملة تجمع بين التعليم المباشر والتعليم المسجل مع أفضل المعلمين</p>
+        </div>
+        <div class="row g-4 mt-5">
+            <div class="col-md-6 col-lg-4">
+                <div class="box">
+                    <div class="icon icon1"><i class="fas fa-chalkboard-teacher"></i></div>
+                    <h3>دروس مباشرة تفاعلية</h3>
+                    <p>دروس مباشرة عبر Zoom و Google Meet مع إمكانية التفاعل المباشر مع المعلمين</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="box">
+                    <div class="icon icon2"><i class="fas fa-video"></i></div>
+                    <h3>دروس مسجلة</h3>
+                    <p>مكتبة شاملة من الدروس المسجلة المتاحة على مدار الساعة لجميع المواد</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="box">
+                    <div class="icon icon3"><i class="fas fa-user-graduate"></i></div>
+                    <h3>معلمون متخصصون</h3>
+                    <p>فريق من أفضل المعلمين المتخصصين في جميع المواد الدراسية</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="box">
+                    <div class="icon icon4"><i class="fas fa-file-alt"></i></div>
+                    <h3>اختبارات وتقييمات</h3>
+                    <p>اختبارات دورية وواجبات منزلية لتقييم مستوى الطلاب</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="box">
+                    <div class="icon icon5"><i class="fas fa-clock"></i></div>
+                    <h3> متاح ٢٤ / ٧</h3>
+                    <p>الوصول إلى المحتوى التعليمي في أي وقت ومن أي مكان</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="box">
+                    <div class="icon icon6"><i class="fas fa-map-marker-alt"></i></div>
+                    <h3>للطلاب في مصر</h3>
+                    <p>منصة تعليمية مخصصة للطلاب في مصر بمناهج محلية</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<section class="section-padding">
+    <div class="container d-flex flex-column justify-content-center align-items-center text-center">
+        <p class="text-white fs-5">جميع كتب سلسلة وسارعو التعليمية متوفرة للشراء في مصر</p>
+        <button class="gradient-btn">اطلب نسختك الآن</button>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const detailsModal = new bootstrap.Modal(document.getElementById('infoModal'));
+            const previewButtons = document.querySelectorAll('.preview-btn');
+
+            const modalTitle = document.getElementById('modalBookTitle');
+            const modalDesc = document.getElementById('modalDescription');
+            const modalImg = document.getElementById('modalCoverImage');
+            const modalGovs = document.getElementById('modalGovernorates');
+            const modalOutlets = document.getElementById('modalOutlets');
+
+            previewButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const materialId = this.dataset.id;
+
+                    // Clear previous data
+                    modalTitle.textContent = 'جار التحميل...';
+                    modalDesc.textContent = '';
+                    modalImg.src = 'https://placehold.co/400x600/111827/e0e1dd?text=Loading...';
+                    modalGovs.innerHTML = '';
+                    modalOutlets.innerHTML = '';
+
+                    fetch(`/EducationalMaterials/GetMaterialDetails/${materialId}`)
+                        .then(response => {
+                            if (!response.ok) { throw new Error('Network response was not ok'); }
+                            return response.json();
+                        })
+                        .then(data => {
+                            modalTitle.textContent = data.title;
+                            modalDesc.textContent = data.description;
+                            modalImg.src = data.coverImageUrl;
+
+                            data.governorates.forEach(gov => {
+                                modalGovs.innerHTML += `<li><i class="fas fa-map-marker-alt me-2"></i>${gov}</li>`;
+                            });
+
+                            data.outlets.forEach(outlet => {
+                                modalOutlets.innerHTML += `<li><i class="fas fa-store me-2"></i>${outlet}</li>`;
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error fetching material details:', error);
+                            modalTitle.textContent = 'خطأ';
+                            modalDesc.textContent = 'لا يمكن تحميل وسارعوات في الوقت الحالي.';
+                        });
+                });
+            });
+        });
+    </script>
+}

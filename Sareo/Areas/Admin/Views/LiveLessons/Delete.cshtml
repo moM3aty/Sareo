@@ -1,0 +1,29 @@
+﻿@model Sareoo.Areas.Admin.Models.Entities.LiveLesson
+
+@{
+    ViewData["Title"] = "حذف الدرس المباشر";
+}
+<div class="max-w-4xl mx-auto">
+    <h2 class="text-3xl font-bold mb-6">تأكيد الحذف</h2>
+    <div class="card-bg p-6 rounded-lg">
+        <h3 class="text-xl text-red-400">هل أنت متأكد من أنك تريد حذف هذا الدرس المباشر؟</h3>
+        <div class="mt-4 border-t border-gray-700 pt-4">
+            <dl class="space-y-2">
+                <dt class="font-semibold">عنوان الدرس</dt>
+                <dd class="text-gray-300">@Model.Title</dd>
+                <dt class="font-semibold">المعلم</dt>
+                <dd class="text-gray-300">@Model.Teacher.FullName</dd>
+                <dt class="font-semibold">الموعد</dt>
+                <dd class="text-gray-300">@Model.StartTime.ToString("g")</dd>
+            </dl>
+        </div>
+
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <div class="flex items-center justify-end space-x-4 space-x-reverse pt-6">
+                <input type="submit" value="تأكيد الحذف" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg cursor-pointer" />
+                <a asp-action="Index" class="secondary-btn px-6 py-2 rounded-lg">العودة للقائمة</a>
+            </div>
+        </form>
+    </div>
+</div>

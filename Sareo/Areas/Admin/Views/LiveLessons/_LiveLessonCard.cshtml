@@ -1,0 +1,60 @@
+﻿@model Sareoo.Areas.Admin.Models.ViewModels.LiveLessonListItemViewModel
+
+@{
+    var jordanTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Jordan Standard Time");
+    var nowInJordan = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, jordanTimeZone);
+    var localStartTime = Model.StartTime;
+    bool isLive = nowInJordan >= localStartTime && nowInJordan < localStartTime.AddMinutes(Model.DurationMinutes);
+    bool isUpcoming = nowInJordan < localStartTime;
+}
+
+<div class="card-bg rounded-lg overflow-hidden flex flex-col group">
+    <div class="relative">
+        <img src="@(string.IsNullOrEmpty(Model.CoverImageUrl) ? "https://placehold.co/600x400/1b263b/e0e1dd?text=Lesson" : Model.CoverImageUrl)"
+             onerror="this.src='https://placehold.co/600x400/1b263b/e0e1dd?text=Error'"
+             class="w-full h-100 object-fit">
+        @if (isLive)
+        {
+            <span class="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full animate-pulse">مباشر الآن</span>
+        }
+        else if (isUpcoming)
+        {
+            <span class="absolute top-2 right-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-full">قادم</span>
+        }
+        else
+        {
+            <span class="absolute top-2 right-2 bg-gray-600 text-white text-xs font-bold px-2 py-1 rounded-full">مسجل</span>
+        }
+    </div>
+    <div class="p-4 flex flex-col flex-grow">
+        <h3 class="text-lg font-bold text-white flex-grow">@Model.Title</h3>
+        <div class="text-sm text-gray-400 mt-2 border-t border-gray-700 pt-3">
+            <p><i class="fas fa-chalkboard-teacher ml-2"></i>@Model.TeacherName</p>
+            <p class="mt-1"><i class="fas fa-book ml-2"></i>@Model.SubjectName</p>
+            @if (isUpcoming || isLive)
+            {
+                <p class="mt-1 text-yellow-400"><i class="fas fa-clock ml-2"></i>@Model.StartTimeFormatted</p>
+            }
+            else
+            {
+                <p class="mt-1 text-gray-500"><i class="fas fa-clock ml-2"></i>@Model.StartTimeFormatted</p>
+            }
+        </div>
+        <div class="flex justify-between items-center mt-4">
+            @if (isLive)
+            {
+                <a href="@Model.MeetingUrl" target="_blank" class="primary-btn w-full block text-center py-2 rounded-lg mx-2">
+                    <i class="fas fa-video ml-2"></i> الانضمام الآن
+                </a>
+            }
+            else
+            {
+                <div class="flex-grow"></div>
+            }
+            <div class="flex space-x-2 space-x-reverse">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="text-yellow-400 hover:text-yellow-300 p-2 rounded-lg bg-black/20" title="تعديل"><i class="fas fa-edit"></i></a>
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="text-red-400 hover:text-red-300 p-2 rounded-lg bg-black/20" title="حذف"><i class="fas fa-trash"></i></a>
+            </div>
+        </div>
+    </div>
+</div>

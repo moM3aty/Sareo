@@ -1,0 +1,41 @@
+﻿@model Sareoo.Areas.Admin.Models.Entities.BlogPost
+
+@{
+    ViewData["Title"] = "تفاصيل المقال";
+}
+
+<div class="max-w-4xl mx-auto">
+    <div class="card-bg rounded-lg overflow-hidden">
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <img src="@Model.ImageUrl" alt="صورة المقال" class="w-full h-100 object-fit">
+        }
+        <div class="p-6">
+            <h2 class="text-3xl font-bold mb-2 text-white">@Model.Title</h2>
+            <p class="text-sm text-gray-400 mb-4">
+                <i class="fas fa-calendar-alt ml-2"></i> تاريخ النشر: @Model.PublishDate.ToString("yyyy/MM/dd")
+            </p>
+            <div class="prose prose-invert max-w-none text-gray-300">
+                @Html.Raw(Model.Content)
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.Keywords))
+            {
+                <div class="mt-6 border-t border-gray-700 pt-4">
+                    <h4 class="font-semibold mb-2">الكلمات المفتاحية:</h4>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach (var keyword in Model.Keywords.Split(','))
+                        {
+                            <span class="bg-gray-700 text-gray-200 px-3 py-1 rounded-full text-sm">@keyword.Trim()</span>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="flex items-center justify-end space-x-4 space-x-reverse pt-6">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="primary-btn px-6 py-2 rounded-lg">تعديل المقال</a>
+        <a asp-action="Index" class="secondary-btn px-6 py-2 rounded-lg">العودة للمدونة</a>
+    </div>
+</div>

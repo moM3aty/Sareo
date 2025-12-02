@@ -1,0 +1,78 @@
+﻿@model Sareoo.Areas.Admin.Models.ViewModels.SalesOutletFormViewModel
+
+@{
+    ViewData["Title"] = "إضافة منفذ بيع جديد";
+}
+
+<div class="max-w-4xl mx-auto">
+    <h2 class="text-3xl font-bold mb-6">إضافة منفذ بيع جديد</h2>
+    <form asp-action="Create">
+        <div class="card-bg p-6 rounded-lg space-y-4">
+            <div asp-validation-summary="ModelOnly" class="text-red-400 mb-4"></div>
+
+            <div>
+                <label asp-for="SalesOutlet.BookstoreName" class="block mb-2 text-sm font-medium"></label>
+                <input asp-for="SalesOutlet.BookstoreName" class="input-style w-full p-2.5" />
+                <span asp-validation-for="SalesOutlet.BookstoreName" class="text-red-400 mt-2 text-xs"></span>
+            </div>
+
+            <div>
+                <label asp-for="SalesOutlet.Governorate" class="block mb-2 text-sm font-medium"></label>
+                <div class="flex items-center gap-2">
+                    <div id="governorate-select-container" class="flex-grow">
+                        <select asp-for="SalesOutlet.Governorate" asp-items="@Model.Governorates" class="input-style w-full p-2.5">
+                            <option value="">-- اختر محافظة --</option>
+                        </select>
+                    </div>
+                    <div id="governorate-input-container" class="flex-grow hidden">
+                        <input asp-for="NewGovernorate" class="input-style w-full p-2.5" placeholder="أدخل اسم المحافظة الجديدة" />
+                    </div>
+                    <button type="button" id="toggle-governorate-btn" class="secondary-btn p-2.5 rounded-lg" title="إضافة محافظة جديدة">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                <span asp-validation-for="SalesOutlet.Governorate" class="text-red-400 mt-2 text-xs"></span>
+                <span asp-validation-for="NewGovernorate" class="text-red-400 mt-2 text-xs"></span>
+            </div>
+
+            <div class="flex items-center justify-end space-x-4 space-x-reverse pt-4">
+                <input type="submit" value="إنشاء" class="primary-btn px-6 py-2 rounded-lg cursor-pointer" />
+                <a asp-action="Index" class="secondary-btn px-6 py-2 rounded-lg">العودة للقائمة</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleBtn = document.getElementById('toggle-governorate-btn');
+            const selectContainer = document.getElementById('governorate-select-container');
+            const inputContainer = document.getElementById('governorate-input-container');
+            const selectInput = document.querySelector('[name="SalesOutlet.Governorate"]');
+            const textInput = document.querySelector('[name="NewGovernorate"]');
+            const icon = toggleBtn.querySelector('i');
+
+            toggleBtn.addEventListener('click', function () {
+                const isInputVisible = !inputContainer.classList.contains('hidden');
+                if (isInputVisible) {
+                    // Switch back to select
+                    inputContainer.classList.add('hidden');
+                    selectContainer.classList.remove('hidden');
+                    textInput.value = ''; // Clear input
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-plus');
+                    toggleBtn.title = 'إضافة محافظة جديدة';
+                } else {
+                    // Switch to input
+                    selectContainer.classList.add('hidden');
+                    inputContainer.classList.remove('hidden');
+                    selectInput.value = ''; // Clear select
+                    icon.classList.remove('fa-plus');
+                    icon.classList.add('fa-times');
+                    toggleBtn.title = 'إلغاء';
+                }
+            });
+        });
+    </script>
+}

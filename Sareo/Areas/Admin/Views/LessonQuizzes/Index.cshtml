@@ -1,0 +1,106 @@
+﻿@model Sareoo.Areas.Admin.Models.ViewModels.LessonQuizViewModel
+
+@{
+    ViewData["Title"] = "إدارة اختبار الدرس";
+}
+
+@functions {
+    string ToArabicLetter(string letter)
+    {
+        switch (letter?.ToUpper())
+        {
+            case "A": return "أ";
+            case "B": return "ب";
+            case "C": return "ج";
+            case "D": return "د";
+            default: return letter;
+        }
+    }
+}
+
+<div id="lesson-quiz-management">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h2 class="text-3xl font-bold">إدارة اختبار درس: @Model.Lesson.Title</h2>
+            <a asp-controller="Lessons" asp-action="Index" asp-route-courseId="@Model.Lesson.CourseId" class="text-sm text-blue-400 hover:underline">
+                <i class="fas fa-arrow-right ml-1"></i> العودة لقائمة الدروس
+            </a>
+        </div>
+    </div>
+
+    @if (Model.Quiz == null)
+    {
+        <div class="card-bg p-6 rounded-lg text-center">
+            <h3 class="text-xl font-semibold mb-4">لا يوجد اختبار لهذا الدرس</h3>
+            <p class="text-gray-400 mb-4">يمكنك إنشاء اختبار جديد من هنا.</p>
+            <form asp-action="CreateQuiz" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="lessonId" value="@Model.Lesson.Id" />
+                <div class="max-w-md mx-auto">
+                    <input type="text" name="title" class="input-style w-full p-2.5 mb-3" placeholder="عنوان الاختبار" required />
+                    <button type="submit" class="primary-btn px-6 py-2 rounded-lg">إنشاء اختبار</button>
+                </div>
+            </form>
+        </div>
+    }
+    else
+    {
+        <div class="card-bg p-6 rounded-lg">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+                <h3 class="text-xl font-semibold">أسئلة الاختبار (@(Model.Quiz.Questions?.Count ?? 0))</h3>
+                <div class="flex items-center gap-4 w-full md:w-auto">
+                    <form asp-action="Index" method="get" class="flex-grow">
+                        <input type="hidden" name="lessonId" value="@Model.Lesson.Id" />
+                        <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" placeholder="ابحث في نص السؤال..." class="input-style w-full p-2" />
+                    </form>
+                    <a asp-action="Create" asp-route-lessonQuizId="@Model.Quiz.LessonId" class="primary-btn px-5 py-2 rounded-lg flex items-center flex-shrink-0">
+                        <i class="fas fa-plus ml-2"></i> إضافة سؤال
+                    </a>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-right">
+                    <thead class="bg-[#2a3a50]">
+                        <tr>
+                            <th class="p-4 font-semibold">السؤال</th>
+                            <th class="p-4 font-semibold">الإجابة الصحيحة</th>
+                            <th class="p-4 font-semibold">الدرجة</th>
+                            <th class="p-4 font-semibold">إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Quiz.Questions != null && Model.Quiz.Questions.Any())
+                        {
+                            @foreach (var q in Model.Quiz.Questions)
+                            {
+                                <tr class="border-b border-gray-700 hover:bg-[#2a3a50]/50 transition-colors">
+                                    <td class="p-4">
+                                        @if (!string.IsNullOrEmpty(q.ImageUrl))
+                                        {
+                                            <img src="@Url.Content(q.ImageUrl)" class="max-w-[150px] rounded-lg mb-2" />
+                                        }
+                                        <p class="font-semibold">@q.QuestionText</p>
+                                    </td>
+                                    <td class="p-4 text-green-400 font-bold">@ToArabicLetter(q.CorrectAnswer)</td>
+                                    <td class="p-4">@q.Points</td>
+                                    <td class="p-4 space-x-4 space-x-reverse">
+                                        <a asp-action="Edit" asp-route-id="@q.Id" class="text-yellow-400 hover:text-yellow-300" title="تعديل"><i class="fas fa-edit"></i></a>
+                                        <a asp-action="Delete" asp-route-id="@q.Id" class="text-red-400 hover:text-red-300" title="حذف"><i class="fas fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center p-6 text-gray-500">
+                                    لا توجد أسئلة مضافة لهذا الاختبار بعد.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

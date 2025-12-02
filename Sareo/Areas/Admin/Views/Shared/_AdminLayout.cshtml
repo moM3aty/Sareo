@@ -1,0 +1,420 @@
+﻿@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString().ToLowerInvariant();
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - لوحة تحكم المنصة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="~/images/logo.png" rel="icon" type="image/x-icon" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* --- Core Theme Colors --- */
+        :root {
+            --brand-green-dark: #0b261d;
+            --brand-green: #154734;
+            --brand-green-light: #1f5c42;
+            --brand-gold: #d4af37;
+            --brand-gold-dark: #b08d26;
+            --text-light: #e6f2eb;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--brand-green-dark);
+            color: var(--text-light);
+        }
+
+        .main-bg {
+            background-color: var(--brand-green-dark);
+        }
+
+        .sidebar-bg {
+            background-color: var(--brand-green);
+            border-left: 1px solid var(--brand-gold);
+        }
+
+        .card-bg {
+            background-color: var(--brand-green);
+            border: 1px solid var(--brand-gold);
+        }
+
+        /* --- Buttons --- */
+        .primary-btn {
+            background-color: var(--brand-gold);
+            color: #000;
+            transition: all .2s;
+            font-weight: bold;
+        }
+
+            .primary-btn:hover {
+                background-color: var(--brand-gold-dark);
+                color: #fff;
+            }
+
+        .secondary-btn {
+            background-color: #0e2e23;
+            color: var(--brand-gold);
+            border: 1px solid var(--brand-gold);
+            transition: background-color .2s;
+        }
+
+            .secondary-btn:hover {
+                background-color: var(--brand-green);
+                color: #fff;
+            }
+
+        .accent-color {
+            color: var(--brand-gold);
+        }
+
+        /* --- Inputs --- */
+        .input-style {
+            background-color: var(--brand-green-dark);
+            border: 1px solid var(--brand-gold);
+            color: #fff;
+            border-radius: .5rem;
+        }
+
+            .input-style:focus {
+                outline: 0;
+                border-color: var(--brand-gold);
+                box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.3);
+            }
+
+            .input-style::placeholder {
+                color: #8da399;
+            }
+
+        /* --- Sidebar Links --- */
+        .sidebar-link {
+            transition: all .2s ease-in-out;
+            color: var(--text-light);
+        }
+
+            .sidebar-link:hover, .sidebar-link.active {
+                background-color: var(--brand-green-dark);
+                color: var(--brand-gold);
+            }
+
+            .sidebar-link.active {
+                border-right: 3px solid var(--brand-gold);
+                padding-right: calc(0.75rem - 3px);
+                font-weight: bold;
+            }
+
+        /* --- Scrollbar --- */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--brand-green-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--brand-green);
+            border: 1px solid var(--brand-gold);
+            border-radius: 10px;
+        }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: var(--brand-gold);
+            }
+
+        /* --- Modals --- */
+        .modal-overlay {
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-content {
+            transform: translateY(-20px) scale(0.95);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            background-color: var(--brand-green);
+            border: 1px solid var(--brand-gold);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--brand-gold);
+        }
+
+        .modal-overlay.opacity-100 .modal-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .text-gray-400 {
+            color: #a3b8b0 !important;
+        }
+
+        /* --- GLOBAL OVERRIDES FOR BLUE HEADERS/CARDS (The Fix) --- */
+
+        /* 1. Force generic Table Headers */
+        thead, th {
+            background-color: var(--brand-green) !important;
+            color: var(--brand-gold) !important;
+            border-color: var(--brand-gold) !important;
+        }
+
+        /* 2. Force Table Rows */
+        tbody tr {
+            background-color: var(--brand-green-dark) !important;
+            color: var(--text-light) !important;
+            border-bottom: 1px solid var(--brand-green) !important;
+        }
+            /* Hover Effect */
+            tbody tr:hover, tbody tr:hover td {
+                background-color: var(--brand-green-light) !important;
+                color: #fff !important;
+            }
+
+        table, td {
+            border-color: var(--brand-green) !important;
+        }
+
+        /* 3. AGGRESSIVE OVERRIDE for Blue/Slate/Gray Backgrounds
+                   This targets the specific blue headers shown in your images (likely bg-slate-800 or similar) */
+
+        .bg-slate-700, .bg-slate-800, .bg-slate-900,
+        .bg-gray-700, .bg-gray-800, .bg-gray-900,
+        .bg-zinc-700, .bg-zinc-800, .bg-zinc-900,
+        .bg-neutral-700, .bg-neutral-800, .bg-neutral-900,
+        .bg-blue-900, .bg-blue-800,
+        /* Arbitrary values often used by Tailwind JIT */
+        [class*="bg-[#1e293b]"], [class*="bg-[#0f172a]"],
+        [class*="bg-[#1f2937]"], [class*="bg-[#111827]"],
+        [class*="bg-[#1e1b4b]"] {
+            background-color: var(--brand-green) !important;
+            color: var(--brand-gold) !important;
+            border-color: var(--brand-gold) !important;
+        }
+
+        /* 4. Fix specific light blue backgrounds to be dark green */
+        .bg-gray-50, .bg-gray-100, .bg-gray-200, .bg-blue-50, .bg-blue-100 {
+            background-color: var(--brand-green) !important;
+            color: var(--brand-gold) !important;
+        }
+
+        /* 5. Pagination & Bootstrap Buttons Override */
+        .page-link, .btn-primary, .btn-info {
+            background-color: var(--brand-green) !important;
+            border-color: var(--brand-gold) !important;
+            color: var(--brand-gold) !important;
+        }
+
+            .page-link:hover, .btn-primary:hover, .btn-info:hover {
+                background-color: var(--brand-gold) !important;
+                color: #000 !important;
+            }
+    </style>
+</head>
+<body class="main-bg">
+    <div class="flex h-screen">
+        <aside class="sidebar-bg w-64 h-screen flex flex-col p-4 overflow-y-auto">
+            <div class="text-center mb-10">
+                <a asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/logo.png" style="background-color:#fff;border-radius:25px;width:150px;padding:5px;margin:5px auto;" alt="Sareoo" />
+                </a>
+                <p class="text-gray-400 mt-2 text-sm font-bold" style="color:#d4af37 !important;">لوحة التحكم</p>
+            </div>
+            <nav class="flex-grow">
+                <ul class="space-y-2">
+                    <li><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="sidebar-link flex items-center justify-between p-3 rounded-lg @(currentController == "dashboard" ? "active" : "")"><span>الرئيسية</span><i class="fas fa-tachometer-alt fa-fw"></i></a></li>
+                    <li><a asp-area="Admin" asp-controller="Stages" asp-action="Index" class="sidebar-link flex items-center justify-between p-3 rounded-lg @(currentController == "stages" ? "active" : "")"><span>المراحل الدراسية</span><i class="fas fa-layer-group fa-fw"></i></a></li>
+                    <li><a asp-area="Admin" asp-controller="Grades" asp-action="Index" class="sidebar-link flex items-center justify-between p-3 rounded-lg @(currentController == "grades" ? "active" : "")"><span>الصفوف الدراسية</span><i class="fas fa-graduation-cap fa-fw"></i></a></li>
+                    <li><a asp-area="Admin" asp-controller="Subjects" asp-action="Index" class="sidebar-link flex items-center justify-between p-3 rounded-lg @(currentController == "subjects" ? "active" : "")"><span>المواد الدراسية</span><i class="fas fa-book fa-fw"></i></a></li>
+                    <li><a asp-area="Admin" asp-controller="Books" asp-action="Index" class="sidebar-link flex items-center justify-between p-3 rounded-lg @(currentController == "books" ? "active" : "")"><span>الكتب</span><i class="fas fa-book-open fa-fw"></i></a></li>
+                    <li><a asp-area="Admin" asp-controller="EducationalMaterials" asp-action="Index" class="sidebar-link flex items-center justify-between p-3 rounded-lg @(currentController == "educationalmaterials" ? "active" : "")"><span>سلسلة وسارعو</span><i class="fas fa-book-reader fa-fw"></i></a></li>
+                    <li><a asp-area="Admin" asp-controller="SalesOutlets" asp-action="Index" class="sidebar-link flex items-center justify-between p-3 rounded-lg @(currentController == "salesoutlets" ? "active" : "")"><span>منافذ البيع</span><i class="fas fa-store fa-fw"></i></a></li>
+                    <li><a asp-area="Admin" asp-controller="Teachers" asp-action="Index" class="sidebar-link flex items-center justify-between p-3 rounded-lg @(currentController == "teachers" ? "active" : "")"><span>المعلمون</span><i class="fas fa-chalkboard-teacher fa-fw"></i></a></li>
+                    <li><a asp-area="Admin" asp-controller="Students" asp-action="Index" class="sidebar-link flex items-center justify-between p-3 rounded-lg @(currentController == "students" ? "active" : "")"><span>الطلاب</span><i class="fas fa-user-graduate fa-fw"></i></a></li>
+                    <li><a asp-area="Admin" asp-controller="Courses" asp-action="Index" class="sidebar-link flex items-center justify-between p-3 rounded-lg @(currentController == "courses" || new[] { "lessons", "exams", "questions", "lessonquizzes" }.Contains(currentController) ? "active" : "")"><span>الدورات المسجلة</span><i class="fas fa-video fa-fw"></i></a></li>
+                    <li><a asp-area="Admin" asp-controller="LiveLessons" asp-action="Index" class="sidebar-link flex items-center justify-between p-3 rounded-lg @(currentController == "livelessons" ? "active" : "")"><span>الدروس المباشرة</span><i class="fas fa-broadcast-tower fa-fw"></i></a></li>
+                    <li><a asp-area="Admin" asp-controller="BlogPosts" asp-action="Index" class="sidebar-link flex items-center justify-between p-3 rounded-lg @(currentController == "blogposts" ? "active" : "")"><span>المدونة</span><i class="fas fa-blog fa-fw"></i></a></li>
+                    <li><a asp-area="Admin" asp-controller="Certificates" asp-action="Index" class="sidebar-link flex items-center justify-between p-3 rounded-lg @(currentController == "certificates" ? "active" : "")"><span>الشهادات</span><i class="fas fa-certificate fa-fw"></i></a></li>
+                </ul>
+            </nav>
+            <div class="mt-auto">
+                <form asp-area="Admin" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm">
+                    <a href="#" onclick="document.getElementById('logoutForm').submit();" class="sidebar-link flex items-center justify-between p-3 rounded-lg">
+                        <span>تسجيل الخروج</span> <i class="fas fa-sign-out-alt fa-fw"></i>
+                    </a>
+                </form>
+            </div>
+        </aside>
+        <main class="flex-1 p-8 overflow-y-auto">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Quick Add Modal -->
+    <div id="quickAddModal" class="modal-overlay fixed inset-0 z-50 hidden opacity-0 flex items-center justify-center bg-black bg-opacity-70 p-4" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="modal-content w-full max-w-lg rounded-lg shadow-xl opacity-100">
+            <div class="modal-header flex items-center justify-between p-4">
+                <h3 class="text-xl font-semibold text-white" id="quickAddModalTitle"></h3>
+                <button type="button" class="text-gray-300 bg-transparent hover:bg-[#0b261d] hover:text-white rounded-lg text-sm p-1.5 mr-auto inline-flex items-center" data-modal-hide="quickAddModal">
+                    <i class="fas fa-times w-5 h-5"></i>
+                </button>
+            </div>
+            <div id="quickAddModalBody" class="p-6">
+                <!-- AJAX content will be loaded here -->
+            </div>
+        </div>
+    </div>
+    <script src="~/js/admin-main.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('quickAddModal');
+            if (!modal) return;
+
+            const modalTitle = document.getElementById('quickAddModalTitle');
+            const modalBody = document.getElementById('quickAddModalBody');
+            let sourceButton = null;
+
+            const openModal = (title, url, button) => {
+                sourceButton = button;
+                modalTitle.textContent = title;
+                modal.classList.remove('hidden');
+                setTimeout(() => modal.classList.add('opacity-100'), 10);
+
+                fetch(url)
+                    .then(response => response.text())
+                    .then(html => modalBody.innerHTML = html)
+                    .catch(error => modalBody.innerHTML = '<p class="text-red-400">Error loading content.</p>');
+            };
+
+            const closeModal = () => {
+                modal.classList.remove('opacity-100');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modalBody.innerHTML = '';
+                    sourceButton = null;
+                }, 300);
+            };
+
+            const displayValidationErrors = (form, errors) => {
+                form.querySelectorAll('.field-validation-error').forEach(el => el.textContent = '');
+                for (const key in errors) {
+                    const el = form.querySelector(`[data-valmsg-for="${key}"]`);
+                    if (el) {
+                        el.textContent = errors[key];
+                    }
+                }
+            };
+
+            document.body.addEventListener('click', function(event) {
+                const button = event.target.closest('.quick-add-btn');
+                if (button) {
+                    openModal(button.dataset.modalTitle, button.dataset.createUrl, button);
+                }
+                if (event.target.closest('[data-modal-hide="quickAddModal"]')) {
+                    closeModal();
+                }
+            });
+
+            modal.addEventListener('click', (event) => {
+                if (event.target === modal) closeModal();
+            });
+
+            modalBody.addEventListener('submit', function(event) {
+                const form = event.target.closest('form');
+                if (form) {
+                    event.preventDefault();
+                    const submitButton = form.querySelector('button[type="submit"]');
+                    const originalButtonText = submitButton.innerHTML;
+                    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جار الحفظ...';
+                    submitButton.disabled = true;
+
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: new FormData(form),
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'RequestVerificationToken': form.querySelector('input[name="__RequestVerificationToken"]').value
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                           throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            const dropdownId = sourceButton.dataset.dropdownId;
+                            const dropdown = document.getElementById(dropdownId);
+                            if (dropdown) {
+                                const newOption = new Option(data.text, data.id, true, true);
+                                dropdown.add(newOption);
+                            }
+                            closeModal();
+                        } else {
+                            displayValidationErrors(form, data.errors);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error submitting form:', error);
+                        alert('حدث خطأ غير متوقع. يرجى مراجعة الـ console لمزيد من التفاصيل.');
+                    })
+                    .finally(() => {
+                        submitButton.innerHTML = originalButtonText;
+                        submitButton.disabled = false;
+                    });
+                }
+            });
+             const pdfModal = document.getElementById('quickAddModal');
+             const pdfModalTitle = document.getElementById('quickAddModalTitle');
+             const pdfModalBody = document.getElementById('quickAddModalBody');
+
+             document.body.addEventListener('click', function(event) {
+             const previewButton = event.target.closest('button[title="معاينة PDF"]');
+                 if (previewButton) {
+                     event.preventDefault();
+                     const title = previewButton.dataset.modalTitle;
+                     const pdfUrl = previewButton.dataset.createUrl;
+
+                     pdfModalTitle.textContent = title;
+                     pdfModalBody.innerHTML = `<iframe src="${pdfUrl}" style="width: 100%; height: 75vh;" frameborder="0"></iframe>`;
+
+                     pdfModal.classList.remove('hidden');
+                     setTimeout(() => pdfModal.classList.add('opacity-100'), 10);
+                 }
+             });
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
+    <script>
+        @if (User.Identity.IsAuthenticated)
+        {
+                    <text>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const connection = new signalR.HubConnectionBuilder()
+                            .withUrl("/presenceHub")
+                            .withAutomaticReconnect()
+                            .build();
+
+                        function start() {
+                            connection.start().catch(err => {
+                                console.error('SignalR Connection Error: ', err);
+                                setTimeout(start, 5000);
+                            });
+                        }
+
+                        connection.onclose(async () => {
+                            await start();
+                        });
+
+                        start();
+                    });
+                    </text>
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+﻿@model Sareoo.Areas.Admin.Models.ViewModels.CertificateFormViewModel
+
+@{
+    ViewData["Title"] = "تعديل الشهادة";
+}
+
+<div class="max-w-4xl mx-auto">
+    <h2 class="text-3xl font-bold mb-6">تعديل بيانات الشهادة</h2>
+    <form asp-action="Edit">
+        <input type="hidden" asp-for="Certificate.Id" />
+        <input type="hidden" asp-for="Certificate.IssueDate" />
+        <input type="hidden" asp-for="Certificate.CertificateGuid" />
+        <div class="card-bg p-6 rounded-lg space-y-4">
+            <div asp-validation-summary="ModelOnly" class="text-red-400 mb-4"></div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="Certificate.StudentId" class="block mb-2 text-sm font-medium"></label>
+                    <select asp-for="Certificate.StudentId" class="input-style w-full p-2.5" asp-items="@Model.Students">
+                        <option value="">-- اختر الطالب --</option>
+                    </select>
+                    <span asp-validation-for="Certificate.StudentId" class="text-red-400 mt-2 text-xs"></span>
+                </div>
+                <div>
+                    <label asp-for="Certificate.CourseId" class="block mb-2 text-sm font-medium"></label>
+                    <select asp-for="Certificate.CourseId" class="input-style w-full p-2.5" asp-items="@Model.Courses">
+                        <option value="">-- اختر الدورة --</option>
+                    </select>
+                    <span asp-validation-for="Certificate.CourseId" class="text-red-400 mt-2 text-xs"></span>
+                </div>
+            </div>
+
+            <div>
+                <label asp-for="Certificate.GradePercentage" class="block mb-2 text-sm font-medium">النسبة المئوية للنجاح</label>
+                <input asp-for="Certificate.GradePercentage" class="input-style w-full p-2.5" type="number" min="0" max="100" />
+                <span asp-validation-for="Certificate.GradePercentage" class="text-red-400 mt-2 text-xs"></span>
+            </div>
+
+            <div class="flex items-center justify-end space-x-4 space-x-reverse pt-4">
+                <input type="submit" value="حفظ التعديلات" class="primary-btn px-6 py-2 rounded-lg cursor-pointer" />
+                <a asp-action="Index" class="secondary-btn px-6 py-2 rounded-lg">العودة للقائمة</a>
+            </div>
+        </div>
+    </form>
+</div>

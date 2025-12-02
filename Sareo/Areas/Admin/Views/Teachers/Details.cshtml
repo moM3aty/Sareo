@@ -1,0 +1,151 @@
+﻿@model Sareoo.Areas.Admin.Models.ViewModels.TeacherProfileViewModel
+
+@{
+    ViewData["Title"] = "الملف الشخصي للمعلم";
+}
+
+<div class="max-w-6xl mx-auto">
+    <!-- Header Profile -->
+    <div class="card-bg p-6 rounded-lg mb-6 flex items-center">
+        <img src="@(string.IsNullOrEmpty(Model.Teacher.ProfileImageUrl) ? "https://placehold.co/100x100/1b263b/e0e1dd?text=NA" : Model.Teacher.ProfileImageUrl)"
+             onerror="this.src='https://placehold.co/100x100/1b263b/e0e1dd?text=Err'"
+             class="w-24 h-24 rounded-full object-cover ml-5 border-2 border-blue-400">
+        <div>
+            <h2 class="text-3xl font-bold text-white">@Model.Teacher.FullName</h2>
+            <p class="text-gray-400">@Model.Teacher.JobTitle</p>
+            <p class="text-gray-400 mt-1">البريد الإلكتروني: @Model.Email</p>
+            <p class="text-gray-400 mt-1">سنوات الخبرة: @Model.Teacher.ExperienceYears</p>
+            <div class="flex items-center mt-2 text-yellow-400">
+                <i class="fas fa-star"></i>
+                <span class="mr-1">@Model.AverageRating.ToString("0.0")</span>
+                <span class="text-xs text-gray-400 mr-1">(@Model.TotalRatings تقييم)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Left Column: Info -->
+        <div class="lg:col-span-1 space-y-6">
+            <div class="card-bg p-6 rounded-lg">
+                <h3 class="text-xl font-semibold mb-4">ملخص الخبرة</h3>
+                <p class="text-gray-300">@Model.Teacher.ExperienceSummary</p>
+            </div>
+            <div class="card-bg p-6 rounded-lg">
+                <h3 class="text-xl font-semibold mb-4">المواد التي يدرسها</h3>
+                @if (Model.Teacher.Subjects != null && Model.Teacher.Subjects.Any())
+                {
+                    <div class="flex flex-wrap gap-2">
+                        @foreach (var subject in Model.Teacher.Subjects)
+                        {
+                            <span class="bg-gray-700 text-gray-200 px-3 py-1 rounded-full text-sm">@subject.Name</span>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-gray-500">لم يتم إسناد أي مواد لهذا المعلم بعد.</p>
+                }
+            </div>
+        </div>
+
+        <!-- Right Column: Tabs -->
+        <div class="lg:col-span-2">
+            <div class="card-bg p-6 rounded-lg">
+                <div class="mb-4 border-b border-gray-700">
+                    <nav class="-mb-px flex space-x-4 space-x-reverse" aria-label="Tabs">
+                        <a href="#courses" class="tab-link active-tab whitespace-nowrap py-4 px-3 border-b-2 font-medium text-lg">الدورات (@Model.Courses.Count())</a>
+                        <a href="#books" class="tab-link text-gray-400 hover:text-white hover:border-gray-500 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-lg">الكتب (@Model.Books.Count())</a>
+                        <a href="#live" class="tab-link text-gray-400 hover:text-white hover:border-gray-500 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-lg">الدروس المباشرة (@Model.LiveLessons.Count())</a>
+                    </nav>
+                </div>
+                <div>
+                    <div id="courses" class="tab-pane space-y-3">
+                        @if (Model.Courses.Any())
+                        {
+                            @foreach (var item in Model.Courses)
+                            {
+                                <div class="bg-gray-900/50 p-3 rounded-md">
+                                    <p class="font-semibold">@item.Title</p>
+                                    <p class="text-sm text-gray-400">الصف: @item.Grade.Name</p>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-gray-500">لا توجد دورات مسجلة لهذا المعلم.</p>
+                        }
+                    </div>
+                    <div id="books" class="tab-pane hidden space-y-3">
+                        @if (Model.Books.Any())
+                        {
+                            @foreach (var item in Model.Books)
+                            {
+                                <div class="bg-gray-900/50 p-3 rounded-md">
+                                    <p class="font-semibold">@item.Title</p>
+                                    <p class="text-sm text-gray-400">الصف: @item.Grade.Name</p>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-gray-500">لا توجد كتب لهذا المعلم.</p>
+                        }
+                    </div>
+                    <div id="live" class="tab-pane hidden space-y-3">
+                        @if (Model.LiveLessons.Any())
+                        {
+                            @foreach (var item in Model.LiveLessons)
+                            {
+                                <div class="bg-gray-900/50 p-3 rounded-md">
+                                    <p class="font-semibold">@item.Title</p>
+                                    <p class="text-sm text-gray-400">الصف: @item.Grade.Name</p>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-gray-500">لا توجد دروس مباشرة لهذا المعلم.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex items-center justify-end space-x-4 space-x-reverse pt-6">
+        <a asp-action="Edit" asp-route-id="@Model.Teacher.Id" class="primary-btn px-6 py-2 rounded-lg">تعديل بيانات المعلم</a>
+        <a asp-action="Index" class="secondary-btn px-6 py-2 rounded-lg">العودة للقائمة</a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabs = document.querySelectorAll('.tab-link');
+            const panes = document.querySelectorAll('.tab-pane');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    tabs.forEach(t => t.classList.remove('active-tab', 'text-white', 'border-blue-500'));
+                    tabs.forEach(t => t.classList.add('text-gray-400', 'hover:text-white', 'hover:border-gray-500'));
+
+                    panes.forEach(p => p.classList.add('hidden'));
+
+                    tab.classList.add('active-tab', 'text-white', 'border-blue-500');
+                    tab.classList.remove('text-gray-400', 'hover:text-white', 'hover:border-gray-500');
+
+                    const targetPane = document.querySelector(tab.getAttribute('href'));
+                    if(targetPane) targetPane.classList.remove('hidden');
+                });
+            });
+        });
+    </script>
+    <style>
+        .active-tab {
+            color: white !important;
+            border-bottom-color: #3a86ff !important;
+        }
+    </style>
+}

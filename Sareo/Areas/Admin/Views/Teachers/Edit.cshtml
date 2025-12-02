@@ -1,0 +1,93 @@
+﻿@model Sareoo.Areas.Admin.Models.ViewModels.TeacherFormViewModel
+
+@{
+    ViewData["Title"] = "تعديل بيانات المعلم";
+}
+
+<div class="max-w-4xl mx-auto">
+    <h2 class="text-3xl font-bold mb-6">تعديل: @Model.Teacher.FullName</h2>
+    <form asp-action="Edit" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Teacher.Id" />
+        <div class="card-bg p-6 rounded-lg space-y-4">
+            <div asp-validation-summary="All" class="text-red-400 mb-4"></div>
+
+            <!-- Teacher Info -->
+            <h3 class="text-lg font-semibold">وسارعوات الشخصية</h3>
+            <div>
+                <label asp-for="Teacher.FullName" class="block mb-2 text-sm font-medium"></label>
+                <input asp-for="Teacher.FullName" class="input-style w-full p-2.5" />
+                <span asp-validation-for="Teacher.FullName" class="text-red-400 mt-2 text-xs"></span>
+            </div>
+            <div>
+                <label asp-for="Teacher.JobTitle" class="block mb-2 text-sm font-medium"></label>
+                <input asp-for="Teacher.JobTitle" class="input-style w-full p-2.5" />
+                <span asp-validation-for="Teacher.JobTitle" class="text-red-400 mt-2 text-xs"></span>
+            </div>
+            <div>
+                <label asp-for="Teacher.ExperienceYears" class="block mb-2 text-sm font-medium"></label>
+                <input asp-for="Teacher.ExperienceYears" class="input-style w-full p-2.5" type="number" />
+                <span asp-validation-for="Teacher.ExperienceYears" class="text-red-400 mt-2 text-xs"></span>
+            </div>
+            <div>
+                <label asp-for="Teacher.ExperienceSummary" class="block mb-2 text-sm font-medium"></label>
+                <textarea asp-for="Teacher.ExperienceSummary" class="input-style w-full p-2.5" rows="3"></textarea>
+                <span asp-validation-for="Teacher.ExperienceSummary" class="text-red-400 mt-2 text-xs"></span>
+            </div>
+            <div>
+                <label asp-for="ProfileImage" class="block mb-2 text-sm font-medium">تغيير صورة الملف الشخصي (اختياري)</label>
+                <input asp-for="ProfileImage" type="file" class="input-style w-full p-2.5" accept="image/*" />
+                <span asp-validation-for="ProfileImage" class="text-red-400 mt-2 text-xs"></span>
+                @if (!string.IsNullOrEmpty(Model.Teacher.ProfileImageUrl))
+                {
+                    <div class="mt-4">
+                        <p class="text-sm text-gray-400">الصورة الحالية:</p>
+                        <img src="@Url.Content(Model.Teacher.ProfileImageUrl)" class="w-40 h-auto rounded-lg mt-2" />
+                    </div>
+                }
+            </div>
+
+            <!-- Login Info Section -->
+            <div class="border-t border-gray-700 pt-4">
+                <h3 class="text-lg font-semibold mb-3">بيانات تسجيل الدخول</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label asp-for="Email" class="block mb-2 text-sm font-medium"></label>
+                        <input asp-for="Email" class="input-style w-full p-2.5" />
+                        <span asp-validation-for="Email" class="text-red-400 mt-2 text-xs"></span>
+                    </div>
+                    <div>
+                        <label asp-for="NewPassword" class="block mb-2 text-sm font-medium"></label>
+                        <input asp-for="NewPassword" type="password" class="input-style w-full p-2.5" placeholder="اتركه فارغاً لعدم التغيير" />
+                        <span asp-validation-for="NewPassword" class="text-red-400 mt-2 text-xs"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-700 pt-4">
+                <label class="block mb-3 text-sm font-medium">المواد التي يدرسها</label>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    @for (int i = 0; i < Model.Subjects.Count; i++)
+                    {
+                        <label class="flex items-center space-x-3 space-x-reverse">
+                            <input type="checkbox" asp-for="Subjects[i].IsAssigned" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                            <span class="text-gray-300">@Model.Subjects[i].Name</span>
+                            <input type="hidden" asp-for="Subjects[i].SubjectId" />
+                            <input type="hidden" asp-for="Subjects[i].Name" />
+                        </label>
+                    }
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end space-x-4 space-x-reverse pt-4">
+                <input type="submit" value="حفظ التعديلات" class="primary-btn px-6 py-2 rounded-lg cursor-pointer" />
+                <a asp-action="Index" class="secondary-btn px-6 py-2 rounded-lg">العودة للقائمة</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

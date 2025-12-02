@@ -1,0 +1,382 @@
+﻿@model Sareoo.ViewModels.CoursePlayerViewModel
+@using Sareoo.Helpers
+
+@{
+    ViewData["Title"] = Model.CourseTitle;
+    Layout = "_Layout";
+}
+
+<style>
+    :root {
+        --dark-bg: #0b261d; /* Very Dark Green */
+        --panel-bg: #154734; /* Brand Green */
+        --text-primary: #e6f2eb; /* Light Greenish White */
+        --text-secondary: #c9d6d1;
+        --accent: #d4af37; /* Gold */
+        --border: #d4af37; /* Gold Border */
+        --danger: #ff7b72;
+        --success: #1f5c42;
+    }
+
+    body {
+        background-color: var(--dark-bg);
+        color: var(--text-primary);
+    }
+
+    .course-layout {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        min-height: calc(100vh - 80px); /* Adjust based on navbar height if needed */
+    }
+
+    .sidebar {
+        background-color: var(--panel-bg);
+        border-left: 1px solid var(--border);
+        padding: 1.5rem;
+        overflow-y: auto;
+        height: 100%;
+    }
+
+        .sidebar h2 {
+            color: var(--accent);
+            font-size: 1.4rem;
+            margin-bottom: 1.5rem;
+            font-weight: bold;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+    .lesson-item {
+        background-color: transparent;
+        border: 1px solid var(--border); /* Gold Border */
+        padding: 0.8rem 1rem;
+        border-radius: 8px;
+        margin-bottom: 0.6rem;
+        color: var(--text-primary);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+
+        .lesson-item:hover,
+        .lesson-item.active {
+            background-color: var(--accent);
+            color: #0b261d; /* Dark text for contrast on Gold */
+            font-weight: bold;
+            transform: translateX(-5px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+    .main-content {
+        padding: 2rem;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        background-color: var(--dark-bg);
+    }
+
+    .video-wrapper {
+        position: relative;
+        padding-top: 56.25%;
+        border-radius: 15px;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        box-shadow: 0 0 20px rgba(21, 71, 52, 0.5); /* Green glow */
+        border: 2px solid var(--border);
+    }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+    .nav-controls {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        gap: 10px;
+    }
+
+        .nav-controls a,
+        .nav-controls button {
+            padding: 0.6rem 1.5rem;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+    /* Button Overrides for this page */
+    .btn-primary {
+        background-color: var(--accent);
+        border-color: var(--accent);
+        color: #0b261d;
+    }
+
+        .btn-primary:hover {
+            background-color: #b08d26;
+            border-color: #b08d26;
+            color: #fff;
+        }
+
+    .btn-outline-light {
+        color: var(--accent);
+        border-color: var(--accent);
+    }
+
+        .btn-outline-light:hover {
+            background-color: var(--accent);
+            color: #0b261d;
+            border-color: var(--accent);
+        }
+
+    .section-box {
+        background-color: var(--panel-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        transition: transform 0.3s;
+    }
+
+        .section-box:hover {
+            transform: translateY(-5px);
+        }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        color: var(--accent);
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .text-muted {
+        color: var(--text-secondary) !important;
+    }
+
+    .section-header i {
+        color: var(--accent);
+    }
+
+    .section-body {
+        color: var(--text-primary);
+    }
+
+    .attachments-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+        .attachments-list li {
+            margin-bottom: 0.75rem;
+            background-color: rgba(0,0,0,0.2);
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .attachments-list a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+            .attachments-list a:hover {
+                text-decoration: underline;
+                color: #fff;
+            }
+
+    .back-button {
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-back {
+        background-color: transparent;
+        border: 1px solid var(--border);
+        color: var(--accent);
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+
+        .btn-back:hover {
+            background-color: var(--accent);
+            color: #0b261d;
+        }
+
+    /* Quiz Button Style */
+    .btn-info {
+        background-color: transparent;
+        border: 2px solid var(--accent);
+        color: var(--accent);
+    }
+
+        .btn-info:hover {
+            background-color: var(--accent);
+            color: #0b261d;
+            border-color: var(--accent);
+        }
+
+    .text-info {
+        color: var(--accent) !important;
+    }
+
+    /* Exam Button Style */
+    .btn-success {
+        background-color: #0e2e23;
+        border: 2px solid var(--accent);
+        color: #fff;
+    }
+
+        .btn-success:hover {
+            background-color: var(--accent);
+            color: #0b261d;
+            border-color: var(--accent);
+        }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--dark-bg);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--panel-bg);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+    }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+
+    @@media (max-width: 768px) {
+        .course-layout {
+            display: block;
+        }
+
+        .sidebar {
+            width: 100%;
+            max-height: 250px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border-left: none;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .main-content {
+            padding: 1rem;
+        }
+    }
+</style>
+
+<div class="course-layout">
+    <div class="sidebar">
+        <h2>@Model.CourseTitle</h2>
+        @foreach (var lesson in Model.AllLessons)
+        {
+            <div class="lesson-item @(lesson.Id == Model.CurrentLesson.Id ? "active" : "")"
+                 onclick="window.location.href='/CoursePlayer/Index/@Model.CourseId?lessonId=@lesson.Id'">
+                <i class="fas fa-play-circle me-2"></i> @lesson.Title
+            </div>
+        }
+    </div>
+
+    <div class="main-content">
+        <div class="back-button">
+            <a href="/Profile" style="display:flex; align-items:center; gap:5px;width:fit-content" class="btn-back"><i class="fas fa-arrow-right"></i> العودة إلى الملف الشخصي</a>
+        </div>
+
+        <div class="video-wrapper">
+            <iframe src="@YouTubeHelper.GetEmbedUrl(Model.CurrentLesson.VideoUrl)"
+                    title="YouTube video player" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+
+        <div class="nav-controls">
+            @if (Model.PreviousLessonId.HasValue)
+            {
+                <a asp-action="Index" asp-route-courseId="@Model.CourseId" asp-route-lessonId="@Model.PreviousLessonId" class="btn btn-outline-light">الدرس السابق</a>
+            }
+            else
+            {
+                <button class="btn btn-outline-light" disabled style="opacity: 0.5; cursor: not-allowed;">الدرس السابق</button>
+            }
+
+            <div class="sidebar-footer-pro" id="exam-button-container" style="display: @(Model.IsCourseCompleted ? "block" : "none");">
+                <a asp-controller="Exam" asp-action="Take" asp-route-id="@Model.CourseId" class="btn btn-success fw-bold"><i class="fas fa-file-alt me-2"></i> ابدأ الاختبار النهائي</a>
+            </div>
+            @if (Model.NextLessonId.HasValue)
+            {
+                <a asp-action="Index" asp-route-courseId="@Model.CourseId" asp-route-lessonId="@Model.NextLessonId" class="btn btn-primary">الدرس التالي</a>
+            }
+            else
+            {
+                <p class="text-center text-white-50 small align-self-center m-0">لقد أكملت جميع دروس الدورة!</p>
+            }
+        </div>
+
+
+        <div class="row g-4">
+            <!-- Attachments Card -->
+            <div class="col-md-6">
+                <div class="section-box h-100">
+                    <div class="section-header">
+                        <i class="fas fa-paperclip"></i>
+                        <span>المرفقات</span>
+                    </div>
+                    <div class="section-body">
+                        @if (Model.LessonDetails.Attachments.Any())
+                        {
+                            <ul class="attachments-list">
+                                @foreach (var attachment in Model.LessonDetails.Attachments)
+                                {
+                                    <li>
+                                        <i class="fas fa-file-alt me-2 text-info"></i>
+                                        <a href="@Url.Content(attachment.FilePath)" download>@attachment.FileName</a>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <p class="text-muted">لا توجد مرفقات لهذا الدرس.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lesson Quiz Card -->
+            <div class="col-md-6">
+                <div class="section-box h-100 d-flex flex-column">
+                    <div class="section-header">
+                        <i class="fas fa-question-circle"></i>
+                        <span>اختبار الدرس</span>
+                    </div>
+                    <div class="section-body flex-grow-1 d-flex flex-column justify-content-center align-items-center">
+                        @if (Model.CurrentLesson.LessonQuiz != null)
+                        {
+                            <p class="text-center mb-3 text-white">اختبر فهمك للدرس من خلال هذا الاختبار القصير.</p>
+                            <a asp-controller="LessonQuizPlayer" asp-action="Take" asp-route-lessonId="@Model.CurrentLesson.Id" class="btn btn-info w-75 fw-bold">
+                                <i class="fas fa-pencil-alt me-2"></i> ابدأ الاختبار
+                            </a>
+                        }
+                        else
+                        {
+                            <p class="text-muted text-center">لا يوجد اختبار لهذا الدرس.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

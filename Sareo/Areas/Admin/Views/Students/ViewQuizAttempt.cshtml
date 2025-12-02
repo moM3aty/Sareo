@@ -1,0 +1,178 @@
+﻿@model Sareoo.ViewModels.QuizResultViewModel
+@using Sareoo.Helpers
+
+@{
+    ViewData["Title"] = "نتائج اختبار الطالب";
+}
+
+<style>
+    .result-container {
+        max-width: 900px;
+        margin: 2rem auto;
+        color: #e0e1dd;
+    }
+
+    .result-header {
+        background-color: #1b263b;
+        border: 1px solid #415a77;
+        border-radius: 8px;
+        padding: 2rem;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+        .result-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .result-header h2 {
+            font-size: 1.1rem;
+            color: #8b949e;
+        }
+
+        .result-header .score {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+    .question-block {
+        background-color: #1b263b;
+        border: 1px solid #415a77;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .question-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #415a77;
+    }
+
+    .question-title {
+        font-weight: 600;
+    }
+
+    .question-points {
+        font-size: 0.9rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+    }
+
+    .option-label {
+        background-color: #0d1b2a;
+        border: 1px solid #415a77;
+        padding: 0.75rem 1rem;
+        border-radius: 6px;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+        .option-label.correct {
+            border-color: #2ea043;
+            background-color: rgba(46, 160, 67, 0.15);
+        }
+
+        .option-label.incorrect {
+            border-color: #f85149;
+            background-color: rgba(248, 81, 73, 0.15);
+        }
+
+        .option-label .icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .option-label.correct .icon {
+            background-color: #2ea043;
+        }
+
+        .option-label.incorrect .icon {
+            background-color: #f85149;
+        }
+</style>
+
+<div class="result-container">
+    <div class="result-header">
+        <h1>نتائج اختبار الطالب: @Model.StudentName</h1>
+        <h2>الدرس: @Model.Attempt.LessonQuiz.Lesson.Title</h2>
+        <p class="lead mt-3">
+            النتيجة النهائية:
+            <span class="score text-success">@ArabicNumberHelper.ToArabicNumerals(Model.Attempt.Score)</span>
+            <span class="text-info">/ @ArabicNumberHelper.ToArabicNumerals(Model.Attempt.TotalPoints)</span>
+        </p>
+    </div>
+
+    @foreach (var (question, index) in Model.Questions.Select((q, i) => (q, i)))
+    {
+        var studentAnswer = Model.StudentAnswers[question.Id];
+        var isCorrect = studentAnswer.Equals(question.CorrectAnswer, System.StringComparison.OrdinalIgnoreCase);
+
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-title">السؤال @ArabicNumberHelper.ToArabicNumerals(index + 1)</span>
+                <span class="question-points @(isCorrect ? "bg-success" : "bg-danger") text-white">
+                    @ArabicNumberHelper.ToArabicNumerals(isCorrect ? question.Points : 0) / @ArabicNumberHelper.ToArabicNumerals(question.Points)
+                </span>
+            </div>
+
+            @if (!string.IsNullOrEmpty(question.ImageUrl))
+            {
+                <img src="@Url.Content(question.ImageUrl)" class="img-fluid rounded mb-3" style="max-width: 300px;" />
+            }
+            <p class="mb-4">@question.QuestionText</p>
+
+            @{
+                var options = new Dictionary<string, string> { { "A", question.OptionA }, { "B", question.OptionB } };
+                if (question.NumberOfOptions >= 3 && !string.IsNullOrEmpty(question.OptionC)) { options.Add("C", question.OptionC); }
+                if (question.NumberOfOptions >= 4 && !string.IsNullOrEmpty(question.OptionD)) { options.Add("D", question.OptionD); }
+            }
+
+            @foreach (var option in options)
+            {
+                string cssClass = "";
+                string iconClass = "";
+
+                if (option.Key.Equals(question.CorrectAnswer, System.StringComparison.OrdinalIgnoreCase))
+                {
+                    cssClass = "correct";
+                    iconClass = "fas fa-check";
+                }
+                else if (option.Key.Equals(studentAnswer, System.StringComparison.OrdinalIgnoreCase))
+                {
+                    cssClass = "incorrect";
+                    iconClass = "fas fa-times";
+                }
+
+                <div class="option-label @cssClass">
+                    @if (!string.IsNullOrEmpty(iconClass))
+                    {
+                        <span class="icon"><i class="@iconClass"></i></span>
+                    }
+                    else
+                    {
+                        <span class="icon" style="background-color: #415a77;"></span>
+                    }
+                    <span>@option.Value</span>
+                </div>
+            }
+        </div>
+    }
+
+    <div class="text-center mt-5">
+        <a asp-action="Details" asp-route-id="@Model.Attempt.StudentId" class="secondary-btn px-6 py-2 rounded-lg">العودة لملف الطالب</a>
+    </div>
+</div>

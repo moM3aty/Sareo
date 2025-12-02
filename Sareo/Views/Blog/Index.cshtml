@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Sareoo.ViewModels.BlogPostViewModel>
+
+@{
+    ViewData["Title"] = "مدونة وسارعو التعليمية";
+}
+
+<section class="blog section-padding" id="blog">
+    <div class="container">
+        <div class="heading text-center mb-5">
+            <h2 class="title">مدونة وسارعو التعليميه</h2>
+            <p class="description">قصص نجاح ملهمة ومقالات تعليمية متنوعة لدعم رحلتك التعليمية</p>
+        </div>
+        <div class="row g-4">
+            @foreach (var post in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="blog-card shadow-lg">
+                        <div class="img">
+                            <img src="@(string.IsNullOrEmpty(post.ImageUrl) ? $"https://placehold.co/600x400/1b263b/e0e1dd?text={post.Title}" : post.ImageUrl)" alt="@post.Title">
+                        </div>
+                        <div class="content p-4">
+                            <h3>@post.Title</h3>
+                            <p>@post.ShortDescription</p>
+                            <a asp-controller="Blog" asp-action="Details" asp-route-id="@post.Id">اقرأ المزيد</a>
+
+                            @if (post.Keywords != null && post.Keywords.Any())
+                            {
+                                <ul class="list-unstyled d-flex flex-wrap gap-3 border-top border-secondary pt-4 px-4">
+                                    @foreach (var keyword in post.Keywords)
+                                    {
+                                        <li>#@keyword.Trim()</li>
+                                    }
+                                </ul>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

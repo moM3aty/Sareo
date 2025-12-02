@@ -1,0 +1,16 @@
+﻿@model Sareoo.Areas.Admin.Models.Entities.Stage
+
+<form asp-action="Create" asp-controller="Stages" method="post">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="text-red-400 mb-4"></div>
+
+    <div>
+        <label asp-for="Name" class="block mb-2 text-sm font-medium text-gray-300">اسم المرحلة</label>
+        <input asp-for="Name" class="input-style w-full p-2.5" />
+        <span asp-validation-for="Name" class="text-red-400 mt-2 text-xs"></span>
+    </div>
+
+    <div class="flex items-center justify-end pt-6">
+        <button type="submit" class="primary-btn px-6 py-2 rounded-lg cursor-pointer">إنشاء وحفظ</button>
+    </div>
+</form>

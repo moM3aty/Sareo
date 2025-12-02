@@ -1,0 +1,68 @@
+﻿@model IEnumerable<Sareoo.Areas.Admin.Models.ViewModels.CertificateIndexViewModel>
+
+@{
+    ViewData["Title"] = "إدارة الشهادات";
+}
+
+<div id="certificates">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div id="success-alert" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6" role="alert">
+            <strong class="font-bold"><i class="fas fa-check-circle"></i> نجاح!</strong>
+            <span class="block sm:inline">@TempData["SuccessMessage"]</span>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div id="error-alert" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
+            <strong class="font-bold"><i class="fas fa-exclamation-triangle"></i> خطأ!</strong>
+            <span class="block sm:inline">@TempData["ErrorMessage"]</span>
+        </div>
+    }
+
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold">إدارة الشهادات</h2>
+        <a asp-action="Create" class="primary-btn px-5 py-2 rounded-lg flex items-center">
+            <i class="fas fa-plus ml-2"></i> إصدار شهادة يدوياً
+        </a>
+    </div>
+
+    <!-- Filter Form -->
+    <div class="card-bg p-4 rounded-lg mb-6">
+        <form asp-action="Index" method="get" class="flex items-center gap-4">
+            <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" placeholder="ابحث باسم الطالب أو عنوان الدورة..." class="input-style w-full p-2.5" />
+            <button type="submit" class="primary-btn px-5 py-2.5 rounded-lg">بحث</button>
+            <a asp-action="Index" class="secondary-btn px-5 py-2.5 rounded-lg">مسح</a>
+        </form>
+    </div>
+
+    <div class="card-bg rounded-lg overflow-hidden">
+        <table class="w-full text-right">
+            <thead class="bg-[#2a3a50]">
+                <tr>
+                    <th class="p-4 font-semibold">الطالب</th>
+                    <th class="p-4 font-semibold">الدورة</th>
+                    <th class="p-4 font-semibold">الدرجة</th>
+                    <th class="p-4 font-semibold">تاريخ الإصدار</th>
+                    <th class="p-4 font-semibold">إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="border-b border-gray-700 hover:bg-[#2a3a50]/50 transition-colors">
+                        <td class="p-4">@item.StudentName</td>
+                        <td class="p-4">@item.CourseTitle</td>
+                        <td class="p-4">@item.GradePercentage %</td>
+                        <td class="p-4">@item.IssueDate.ToString("yyyy/MM/dd")</td>
+                        <td class="p-4 space-x-2 space-x-reverse">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="text-blue-400 hover:text-blue-300" title="عرض الشهادة" target="_blank"><i class="fas fa-eye"></i></a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="text-yellow-400 hover:text-yellow-300" title="تعديل"><i class="fas fa-edit"></i></a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="text-red-400 hover:text-red-300" title="حذف"><i class="fas fa-trash"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

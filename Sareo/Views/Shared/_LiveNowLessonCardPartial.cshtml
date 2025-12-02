@@ -1,0 +1,45 @@
+﻿@model Sareoo.ViewModels.UserLiveLessonViewModel
+@using Sareoo.Helpers
+
+<div class="live-card">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="live-badge">مباشر الآن</div>
+        <div class="right-badge d-flex justify-content-center align-items-center">
+            <p class="text-white mb-0"><i class="fas fa-users ms-2"></i> --/@ArabicNumberHelper.ToArabicNumerals(Model.MaxStudents)</p>
+        </div>
+    </div>
+    <div class="row g-4 align-items-center">
+        <div class="col-lg-4">
+            <div class="card-image">
+                <img src="@(string.IsNullOrEmpty(Model.CoverImageUrl) ? $"https://placehold.co/600x400/1b263b/e0e1dd?text={Model.SubjectName}" : Model.CoverImageUrl)" alt="@Model.Title">
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card-content">
+                <h5>@Model.Title</h5>
+                <div class="details mb-4">
+                    <span class="text-white fw-bold">@Model.TeacherName</span>
+                    <span class="badge-subject">@Model.SubjectName</span>
+                    <span class="small">@Model.GradeName</span>
+                </div>
+                <div class="fs-5 text-white mb-4">@Model.Description</div>
+                <div class="small d-flex justify-content-between">
+                    <div>
+                        <i class="fas fa-clock ms-2 text-blue"></i>@ArabicNumberHelper.ToArabicNumerals(Model.DurationMinutes) دقيقة
+                    </div>
+                    <div>
+                        <span class="ms-3"><i class="fas fa-video ms-1 video-icon"></i> Google Meet</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="left-box">
+                <a href="@Model.MeetingUrl" target="_blank" class="join-btn d-flex align-items-center justify-content-center gap-2">
+                    <i class="fas fa-video"></i> انضم الآن
+                </a>
+                <div class="time">بدأ في @ArabicNumberHelper.ToArabicNumerals(Model.StartTime.ToLocalTime().ToString("hh:mm tt"))</div>
+            </div>
+        </div>
+    </div>
+</div>

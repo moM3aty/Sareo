@@ -1,0 +1,231 @@
+﻿@model Sareoo.Areas.Admin.Models.ViewModels.DashboardViewModel
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "الرئيسية";
+}
+
+<div id="dashboard">
+    <h2 class="text-3xl font-bold mb-6" style="color: #d4af37;">لوحة التحكم الرئيسية</h2>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+        <div class="card-bg p-6 rounded-lg shadow-lg">
+            <div class="flex items-center">
+                <i class="fas fa-user-graduate text-3xl accent-color"></i>
+                <div class="mr-4">
+                    <p class="text-gray-400">إجمالي الطلاب</p>
+                    <p class="text-2xl font-bold text-white">@Model.TotalStudents</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-bg p-6 rounded-lg shadow-lg">
+            <div class="flex items-center">
+                <i class="fas fa-chalkboard-teacher text-3xl accent-color"></i>
+                <div class="mr-4">
+                    <p class="text-gray-400">إجمالي المعلمين</p>
+                    <p class="text-2xl font-bold text-white">@Model.TotalTeachers</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-bg p-6 rounded-lg shadow-lg">
+            <div class="flex items-center">
+                <i class="fas fa-video text-3xl accent-color"></i>
+                <div class="mr-4">
+                    <p class="text-gray-400">إجمالي الدورات</p>
+                    <p class="text-2xl font-bold text-white">@Model.TotalCourses</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card-bg p-4 rounded-lg mb-6 shadow-lg">
+        <h3 class="text-lg font-semibold mb-3 px-2 text-[#d4af37]">إجراءات سريعة</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <a asp-controller="Students" asp-action="Create" class="secondary-btn p-4 rounded-lg text-center hover:bg-[#154734] transition-colors border border-[#d4af37]">
+                <i class="fas fa-user-plus text-2xl mb-2 accent-color"></i>
+                <p class="text-[#e6f2eb]">إضافة طالب</p>
+            </a>
+            <a asp-controller="Courses" asp-action="Create" class="secondary-btn p-4 rounded-lg text-center hover:bg-[#154734] transition-colors border border-[#d4af37]">
+                <i class="fas fa-plus-circle text-2xl mb-2 accent-color"></i>
+                <p class="text-[#e6f2eb]">إضافة دورة</p>
+            </a>
+            <a asp-controller="LiveLessons" asp-action="Create" class="secondary-btn p-4 rounded-lg text-center hover:bg-[#154734] transition-colors border border-[#d4af37]">
+                <i class="fas fa-calendar-plus text-2xl mb-2 accent-color"></i>
+                <p class="text-[#e6f2eb]">جدولة درس مباشر</p>
+            </a>
+            <a asp-controller="BlogPosts" asp-action="Create" class="secondary-btn p-4 rounded-lg text-center hover:bg-[#154734] transition-colors border border-[#d4af37]">
+                <i class="fas fa-pen-square text-2xl mb-2 accent-color"></i>
+                <p class="text-[#e6f2eb]">كتابة مقال</p>
+            </a>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
+        <div class="card-bg p-6 rounded-lg lg:col-span-3 shadow-lg">
+            <h3 class="text-xl font-semibold mb-4 text-[#d4af37]">الطلاب الجدد (آخر ٦ أشهر)</h3>
+            <canvas id="newStudentsChart"></canvas>
+        </div>
+        <div class="card-bg p-6 rounded-lg lg:col-span-2 shadow-lg">
+            <h3 class="text-xl font-semibold mb-4 text-[#d4af37]">توزيع الطلاب على الصفوف</h3>
+            <canvas id="studentsByGradeChart"></canvas>
+        </div>
+    </div>
+
+
+    <!-- Latest Activity -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Latest Students -->
+        <div class="card-bg p-6 rounded-lg shadow-lg">
+            <h3 class="text-xl font-semibold mb-4 text-[#d4af37]">أحدث الطلاب المسجلين</h3>
+            <div class="space-y-4">
+                @if (Model.LatestStudents != null && Model.LatestStudents.Any())
+                {
+                    @foreach (var student in Model.LatestStudents)
+                    {
+                        <div class="flex items-center justify-between border-b border-[#154734] pb-2 last:border-0">
+                            <div>
+                                <p class="font-semibold text-white">@student.FullName</p>
+                                <p class="text-sm text-gray-400">@student.RegistrationDate.ToString("yyyy/MM/dd")</p>
+                            </div>
+                            <a asp-controller="Students" asp-action="Details" asp-route-id="@student.Id" class="text-[#d4af37] hover:text-white text-sm transition-colors">عرض</a>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-gray-500">لا يوجد طلاب مسجلون حديثاً.</p>
+                }
+            </div>
+        </div>
+
+        <!-- Popular Courses -->
+        <div class="card-bg p-6 rounded-lg shadow-lg">
+            <h3 class="text-xl font-semibold mb-4 text-[#d4af37]">الدورات الأكثر تسجيلاً</h3>
+            <div class="space-y-4">
+                @if (Model.PopularCourses != null && Model.PopularCourses.Any())
+                {
+                    @foreach (var course in Model.PopularCourses)
+                    {
+                        <div class="flex items-center justify-between border-b border-[#154734] pb-2 last:border-0">
+                            <div>
+                                <p class="font-semibold text-white">@course.Title</p>
+                                <p class="text-sm text-gray-400">@course.LessonsCount تسجيل</p>
+                            </div>
+                            <a asp-controller="Courses" asp-action="Edit" asp-route-id="@course.Id" class="text-[#d4af37] hover:text-white text-sm transition-colors">عرض</a>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-gray-500">لا توجد بيانات عن الدورات الأكثر تسجيلاً.</p>
+                }
+            </div>
+        </div>
+
+        <!-- Latest Blog Posts -->
+        <div class="card-bg p-6 rounded-lg lg:col-span-2 shadow-lg">
+            <h3 class="text-xl font-semibold mb-4 text-[#d4af37]">آخر مقالات المدونة</h3>
+            <ul class="space-y-3">
+                @if (Model.LatestBlogPosts != null && Model.LatestBlogPosts.Any())
+                {
+                    @foreach (var post in Model.LatestBlogPosts)
+                    {
+                        <li class="flex justify-between items-center text-sm border-b border-[#154734] pb-2 last:border-0">
+                            <a asp-controller="BlogPosts" asp-action="Details" asp-route-id="@post.Id" class="text-[#e6f2eb] hover:text-[#d4af37] transition-colors">@post.Title</a>
+                            <span class="text-gray-400">@post.PublishDate.ToString("yyyy/MM/dd")</span>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <p class="text-gray-500">لا توجد مقالات مضافة حديثاً.</p>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chartTextColor = '#e0e1dd';
+            const chartGridColor = 'rgba(212, 175, 55, 0.1)'; // Subtle Gold Grid
+
+            // New Students Line Chart
+            const ctxStudents = document.getElementById('newStudentsChart')?.getContext('2d');
+            if (ctxStudents) {
+                new Chart(ctxStudents, {
+                    type: 'line',
+                    data: {
+                        labels: @Html.Raw(JsonSerializer.Serialize(Model.NewStudentsChartLabels)),
+                        datasets: [{
+                            label: 'طلاب جدد',
+                            data: @Html.Raw(JsonSerializer.Serialize(Model.NewStudentsChartData)),
+                            fill: true,
+                            backgroundColor: 'rgba(212, 175, 55, 0.2)', // Gold with opacity
+                            borderColor: '#d4af37', // Solid Gold
+                            pointBackgroundColor: '#154734', // Green points
+                            pointBorderColor: '#d4af37', // Gold border for points
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: chartGridColor },
+                                ticks: { color: chartTextColor }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: chartTextColor }
+                            }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+
+            // Students by Grade Doughnut Chart
+            const ctxGrades = document.getElementById('studentsByGradeChart')?.getContext('2d');
+            if (ctxGrades) {
+                new Chart(ctxGrades, {
+                    type: 'doughnut',
+                    data: {
+                        labels: @Html.Raw(JsonSerializer.Serialize(Model.StudentsByGradeChartLabels)),
+                        datasets: [{
+                            label: 'عدد الطلاب',
+                            data: @Html.Raw(JsonSerializer.Serialize(Model.StudentsByGradeChartData)),
+                            backgroundColor: [
+                                '#d4af37', // Gold
+                                '#154734', // Dark Green
+                                '#b08d26', // Dark Gold
+                                '#1f5c42', // Lighter Green
+                                '#f0e68c', // Light Gold (Khaki)
+                                '#4a7c59'  // Medium Green
+                            ],
+                            borderColor: '#0b261d', // Dark Background Color
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    color: chartTextColor,
+                                    font: { family: 'Cairo' }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+}
