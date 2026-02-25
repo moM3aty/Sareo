@@ -70,7 +70,7 @@ namespace Sareoo.Controllers
                         ApplicationUserId = user.Id,
                         City = model.City,
                         Country = model.Country,
-                        IsActive = true 
+                        IsActive = false 
                     };
                     _context.Students.Add(student);
                     await _context.SaveChangesAsync();
@@ -100,35 +100,54 @@ namespace Sareoo.Controllers
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
+
             if (ModelState.IsValid)
             {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+
+                if (user != null)
+                {
+                    var isPasswordValid = await _userManager.CheckPasswordAsync(user, model.Password);
+
+                    if (isPasswordValid)
+                    {
+                        var isStudent = await _userManager.IsInRoleAsync(user, "Student");
+
+                        if (isStudent)
+                        {
+                            var student = await _context.Students
+                                                        .FirstOrDefaultAsync(s => s.ApplicationUserId == user.Id);
+
+                            if (student != null && !student.IsActive)
+                            {
+                                ModelState.AddModelError(string.Empty, "عذراً، حسابك غير مفعل بعد. يرجى انتظار تفعيل الحساب من قبل الإدارة.");
+                                return View(model);
+                            }
+                        }
+
+                    }
+                }
+
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+
                 if (result.Succeeded)
                 {
-                    var user = await _userManager.FindByEmailAsync(model.Email);
-                    if (user != null)
-                    {
-                        var roles = await _userManager.GetRolesAsync(user);
+                    var roles = await _userManager.GetRolesAsync(user);
 
-                        if (roles.Contains("Admin"))
-                        {
-                            return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
-                        }
-                        if (roles.Contains("Teacher"))
-                        {
-                            return RedirectToAction("Index", "Courses", new { area = "Admin" });
-                        }
-                        if (roles.Contains("Student"))
-                        {
-                            return RedirectToAction("Index", "Profile");
-                        }
+                    if (roles.Contains("Admin"))
+                    {
+                        return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
                     }
+                    if (roles.Contains("Teacher"))
+                    {
+                        return RedirectToAction("Index", "Courses", new { area = "Admin" });
+                    }
+                    if (roles.Contains("Student"))
+                    {
+                        return RedirectToAction("Index", "Profile");
+                    }
+
                     return RedirectToAction("Index", "Home");
-                }
-                if (result.IsLockedOut)
-                {
-                    ModelState.AddModelError(string.Empty, "الحساب مقفل مؤقتاً.");
-                    return View(model);
                 }
                 else
                 {

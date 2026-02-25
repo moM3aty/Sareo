@@ -147,6 +147,7 @@ namespace Sareoo.Areas.Admin.Controllers
             ModelState.Remove("Lesson.HomeworkTitle");
             ModelState.Remove("Lesson.HomeworkDescription");
             ModelState.Remove("Lesson.HomeworkSubmissions");
+            ModelState.Remove("Lesson.LessonQuiz");
             if (ModelState.IsValid)
             {
                 try
