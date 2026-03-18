@@ -1,0 +1,332 @@
+﻿@model Sareoo.Areas.Admin.Models.Entities.Course
+
+@{
+    ViewData["Title"] = Model.Title;
+    Layout = "_Layout";
+
+    // رقم الواتساب ورسالة مجهزة باسم الكورس
+    string whatsappNumber = "201094085110";
+    string whatsappMessage = Uri.EscapeDataString($"السلام عليكم، أريد الاشتراك في دورة: {Model.Title}");
+    string whatsappLink = $"https://wa.me/{whatsappNumber}?text={whatsappMessage}";
+}
+
+<style>
+    :root {
+        --dark-bg: #0b261d;
+        --panel-bg: #154734;
+        --text-primary: #e6f2eb;
+        --brand-gold: #d4af37;
+        --brand-gold-dark: #b08d26;
+        --whatsapp-green: #25D366;
+    }
+
+    .course-header {
+        background: linear-gradient(135deg, var(--dark-bg) 0%, var(--panel-bg) 100%);
+        padding: 60px 0;
+        border-bottom: 2px solid var(--brand-gold);
+    }
+
+    .course-title {
+        color: var(--brand-gold);
+        font-weight: 800;
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .course-meta {
+        color: #a3b8b0;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+
+        .course-meta span {
+            background-color: rgba(212, 175, 55, 0.1);
+            padding: 5px 15px;
+            border-radius: 50px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+    .course-image-container {
+        border-radius: 15px;
+        overflow: hidden;
+        border: 2px solid var(--brand-gold);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+        .course-image-container img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+
+    .btn-whatsapp {
+        background-color: var(--whatsapp-green);
+        color: white;
+        font-weight: bold;
+        font-size: 1.2rem;
+        padding: 15px 30px;
+        border-radius: 50px;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        box-shadow: 0 5px 15px rgba(37, 211, 102, 0.2);
+    }
+
+        .btn-whatsapp:hover {
+            background-color: #128C7E;
+            color: white;
+            transform: translateY(-3px);
+        }
+
+    .curriculum-section {
+        padding: 50px 0;
+        background-color: var(--dark-bg);
+    }
+
+    .lesson-list {
+        background-color: var(--panel-bg);
+        border: 1px solid var(--brand-gold);
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .lesson-item {
+        padding: 20px;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: var(--text-primary);
+        transition: all 0.3s;
+    }
+
+        .lesson-item:last-child {
+            border-bottom: none;
+        }
+
+        .lesson-item.free-preview {
+            cursor: pointer;
+        }
+
+            .lesson-item.free-preview:hover {
+                background-color: rgba(212, 175, 55, 0.1);
+            }
+
+    .lesson-title {
+        font-weight: 600;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .badge-free {
+        background-color: var(--brand-gold);
+        color: #0b261d;
+        font-size: 0.8rem;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-weight: bold;
+    }
+
+    /* Modal for Video Player */
+    .video-modal .modal-content {
+        background-color: var(--dark-bg);
+        border: 1px solid var(--brand-gold);
+    }
+
+    .video-modal .modal-header {
+        border-bottom: 1px solid var(--brand-gold);
+    }
+
+    .video-modal .modal-title {
+        color: var(--brand-gold);
+        font-weight: bold;
+    }
+
+    .video-modal .btn-close {
+        background-color: var(--brand-gold);
+    }
+
+    .bunny-video-wrapper {
+        position: relative;
+        padding-top: 56.25%;
+        background-color: #000;
+        border-radius: 0 0 10px 10px;
+        overflow: hidden;
+    }
+
+        .bunny-video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+</style>
+
+<section class="course-header">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-7">
+                <h1 class="course-title">@Model.Title</h1>
+                <div class="course-meta d-flex gap-3 flex-wrap">
+                    @if (Model.Teacher != null)
+                    {
+                        <span><i class="fas fa-chalkboard-teacher me-2 text-[#d4af37]"></i> أ. @Model.Teacher.FullName</span>
+                    }
+                    @if (Model.Subject != null)
+                    {
+                        <span><i class="fas fa-book-open me-2 text-[#d4af37]"></i> @Model.Subject.Name</span>
+                    }
+                    @if (Model.Grade != null)
+                    {
+                        <span><i class="fas fa-graduation-cap me-2 text-[#d4af37]"></i> @Model.Grade.Name</span>
+                    }
+                    <span><i class="fas fa-clock me-2 text-[#d4af37]"></i> @Model.TotalHours ساعة</span>
+                    <span><i class="fas fa-video me-2 text-[#d4af37]"></i> @(Model.Lessons?.Count ?? 0) درس</span>
+                </div>
+                <p class="text-white mb-5" style="line-height: 1.8; font-size: 1.1rem;">
+                    @Model.Description
+                </p>
+
+                <div class="d-flex flex-column flex-md-row gap-3">
+                    <a href="@whatsappLink" target="_blank" class="btn-whatsapp">
+                        <i class="fab fa-whatsapp fa-lg"></i> اشترك الآن عبر الواتساب
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="course-image-container">
+                    @if (!string.IsNullOrEmpty(Model.CoverImageUrl))
+                    {
+                        <img src="@Url.Content(Model.CoverImageUrl)" alt="@Model.Title">
+                    }
+                    else
+                    {
+                        <img src="~/images/default-course.jpg" alt="@Model.Title">
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="curriculum-section">
+    <div class="container">
+        <h2 class="mb-4" style="color: var(--brand-gold); font-weight: bold;">محتوى الدورة</h2>
+
+        <div class="lesson-list shadow-lg">
+            @if (Model.Lessons != null && Model.Lessons.Any())
+            {
+                var lessonsList = Model.Lessons.OrderBy(l => l.Id).ToList();
+                foreach (var lesson in lessonsList)
+                {
+                    bool isFree = lesson.IsFreePreview;
+
+                    <div class="lesson-item @(isFree ? "free-preview" : "")"
+                         onclick="@(isFree ? $"openVideoModal('{lesson.Title}', '{lesson.BunnyLibraryId}', '{lesson.BunnyVideoId}', '{lesson.VideoUrl}')" : "")">
+
+                        <div class="lesson-title">
+                            @if (isFree)
+                            {
+                                <i class="fas fa-play-circle text-[#d4af37] fa-lg"></i>
+                            }
+                            else
+                            {
+                                <i class="fas fa-lock text-secondary fa-lg"></i>
+                            }
+                            <span>@lesson.Title</span>
+
+                            @if (isFree)
+                            {
+                                <span class="badge-free ms-2">معاينة مجانية</span>
+                            }
+                        </div>
+
+                        <div class="lesson-duration text-secondary">
+                            @if (isFree)
+                            {
+                                <span style="color: var(--brand-gold);"><i class="fas fa-eye"></i> شاهد الآن</span>
+                            }
+                            else
+                            {
+                                <a href="@whatsappLink" target="_blank" style="color: var(--whatsapp-green); text-decoration: none;">
+                                    <i class="fab fa-whatsapp"></i> للاشتراك
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="p-4 text-center text-white">
+                    لم يتم إضافة دروس لهذه الدورة بعد.
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Video Player Modal -->
+<div class="modal fade video-modal" id="videoPreviewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="videoModalTitle">معاينة الدرس</h5>
+                <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close" onclick="stopVideo()"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="bunny-video-wrapper" id="videoWrapper"></div>
+            </div>
+            <div class="modal-footer justify-content-center border-0 pb-4 pt-4">
+                <p class="text-white mb-2 w-100 text-center">هل أعجبك الدرس؟ اشترك الآن لمشاهدة باقي الدورة</p>
+                <a href="@whatsappLink" target="_blank" class="btn-whatsapp" style="padding: 10px 20px; font-size: 1rem;">
+                    <i class="fab fa-whatsapp"></i> تواصل معنا عبر الواتساب
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openVideoModal(title, libraryId, videoId, youtubeUrl) {
+            document.getElementById('videoModalTitle').innerText = title;
+            let iframeHtml = '';
+
+            if (libraryId && videoId) {
+                // Bunny.net
+                const bunnyUrl = `https://iframe.mediadelivery.net/embed/${libraryId}/${videoId}?autoplay=true&loop=false&muted=false&preload=true&responsive=true`;
+                iframeHtml = `<iframe src="${bunnyUrl}" loading="lazy" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" allowfullscreen="true"></iframe>`;
+            } else if (youtubeUrl) {
+                // YouTube (Fallback)
+                let ytId = youtubeUrl.split('v=')[1];
+                if (!ytId) ytId = youtubeUrl.split('/').pop();
+                const ampersandPosition = ytId.indexOf('&');
+                if (ampersandPosition !== -1) ytId = ytId.substring(0, ampersandPosition);
+
+                iframeHtml = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+            } else {
+                alert("لا يوجد فيديو متاح لهذا الدرس.");
+                return;
+            }
+
+            document.getElementById('videoWrapper').innerHTML = iframeHtml;
+            var myModal = new bootstrap.Modal(document.getElementById('videoPreviewModal'));
+            myModal.show();
+        }
+
+        function stopVideo() {
+            document.getElementById('videoWrapper').innerHTML = '';
+        }
+
+        document.getElementById('videoPreviewModal').addEventListener('hidden.bs.modal', function () {
+            stopVideo();
+        });
+    </script>
+}

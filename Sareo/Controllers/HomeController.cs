@@ -4,6 +4,8 @@ using Sareoo.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sareoo.Controllers
 {
@@ -18,7 +20,6 @@ namespace Sareoo.Controllers
 
         public async Task<IActionResult> Index()
         {
-            // Fetch Teachers
             var teachers = await _context.Teachers
                 .Include(t => t.Subjects)
                 .Include(t => t.Courses).ThenInclude(c => c.StudentCourses)
@@ -36,7 +37,6 @@ namespace Sareoo.Controllers
                     AverageRating = t.Ratings.Any() ? t.Ratings.Average(r => r.Rating) : 0
                 })
                 .ToListAsync();
-
 
             var stages = await _context.Stages
                 .Include(s => s.Grades).ThenInclude(g => g.Subjects)
@@ -64,6 +64,7 @@ namespace Sareoo.Controllers
                     GradeName = m.Grade.Name,
                     SubjectName = m.Subject.Name
                 }).ToListAsync();
+
             var viewModel = new HomeViewModel
             {
                 Teachers = teachers,
@@ -74,23 +75,47 @@ namespace Sareoo.Controllers
             return View(viewModel);
         }
 
+        // =========================================================
+        // الدالة الجديدة: عرض تفاصيل الكورس والمعاينة المجانية للطلاب
+        // =========================================================
+        public async Task<IActionResult> CourseDetails(int id)
+        {
+            var course = await _context.Courses
+                .Include(c => c.Teacher)
+                .Include(c => c.Subject)
+                .Include(c => c.Grade)
+                .Include(c => c.Lessons)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            return View(course);
+        }
+
         public IActionResult blog()
         {
             return View();
         }
+
         public IActionResult liveCourses()
         {
             return View();
         }
+
         public IActionResult login()
         {
             return View();
         }
-   
+
         public IActionResult signUp()
         {
             return View();
         }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

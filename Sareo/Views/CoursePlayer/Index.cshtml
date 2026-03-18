@@ -8,14 +8,12 @@
 
 <style>
     :root {
-        --dark-bg: #0b261d; /* Very Dark Green */
-        --panel-bg: #154734; /* Brand Green */
-        --text-primary: #e6f2eb; /* Light Greenish White */
+        --dark-bg: #0b261d;
+        --panel-bg: #154734;
+        --text-primary: #e6f2eb;
         --text-secondary: #c9d6d1;
-        --accent: #d4af37; /* Gold */
-        --border: #d4af37; /* Gold Border */
-        --danger: #ff7b72;
-        --success: #1f5c42;
+        --accent: #d4af37;
+        --border: #d4af37;
     }
 
     body {
@@ -26,7 +24,7 @@
     .course-layout {
         display: grid;
         grid-template-columns: 320px 1fr;
-        min-height: calc(100vh - 80px); /* Adjust based on navbar height if needed */
+        min-height: calc(100vh - 80px);
     }
 
     .sidebar {
@@ -48,7 +46,7 @@
 
     .lesson-item {
         background-color: transparent;
-        border: 1px solid var(--border); /* Gold Border */
+        border: 1px solid var(--border);
         padding: 0.8rem 1rem;
         border-radius: 8px;
         margin-bottom: 0.6rem;
@@ -61,10 +59,9 @@
         .lesson-item:hover,
         .lesson-item.active {
             background-color: var(--accent);
-            color: #0b261d; /* Dark text for contrast on Gold */
+            color: #0b261d;
             font-weight: bold;
             transform: translateX(-5px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
     .main-content {
@@ -81,8 +78,9 @@
         border-radius: 15px;
         overflow: hidden;
         margin-bottom: 2rem;
-        box-shadow: 0 0 20px rgba(21, 71, 52, 0.5); /* Green glow */
+        box-shadow: 0 0 20px rgba(21, 71, 52, 0.5);
         border: 2px solid var(--border);
+        background-color: #000;
     }
 
         .video-wrapper iframe {
@@ -91,6 +89,7 @@
             left: 0;
             width: 100%;
             height: 100%;
+            border: none;
         }
 
     .nav-controls {
@@ -108,7 +107,6 @@
             transition: all 0.3s ease;
         }
 
-    /* Button Overrides for this page */
     .btn-primary {
         background-color: var(--accent);
         border-color: var(--accent);
@@ -117,7 +115,6 @@
 
         .btn-primary:hover {
             background-color: #b08d26;
-            border-color: #b08d26;
             color: #fff;
         }
 
@@ -129,7 +126,17 @@
         .btn-outline-light:hover {
             background-color: var(--accent);
             color: #0b261d;
-            border-color: var(--accent);
+        }
+
+    .btn-success {
+        background-color: #0e2e23;
+        border: 2px solid var(--accent);
+        color: #fff;
+    }
+
+        .btn-success:hover {
+            background-color: var(--accent);
+            color: #0b261d;
         }
 
     .section-box {
@@ -138,12 +145,7 @@
         border-radius: 12px;
         padding: 1.5rem;
         margin-bottom: 1.5rem;
-        transition: transform 0.3s;
     }
-
-        .section-box:hover {
-            transform: translateY(-5px);
-        }
 
     .section-header {
         display: flex;
@@ -153,18 +155,6 @@
         color: var(--accent);
         font-size: 1.2rem;
         font-weight: bold;
-    }
-
-    .text-muted {
-        color: var(--text-secondary) !important;
-    }
-
-    .section-header i {
-        color: var(--accent);
-    }
-
-    .section-body {
-        color: var(--text-primary);
     }
 
     .attachments-list {
@@ -187,95 +177,28 @@
         }
 
             .attachments-list a:hover {
-                text-decoration: underline;
                 color: #fff;
             }
 
-    .back-button {
-        margin-bottom: 1.5rem;
-    }
-
-    .btn-back {
-        background-color: transparent;
-        border: 1px solid var(--border);
-        color: var(--accent);
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        text-decoration: none;
-        transition: 0.2s;
-    }
-
-        .btn-back:hover {
-            background-color: var(--accent);
-            color: #0b261d;
-        }
-
-    /* Quiz Button Style */
-    .btn-info {
-        background-color: transparent;
-        border: 2px solid var(--accent);
-        color: var(--accent);
-    }
-
-        .btn-info:hover {
-            background-color: var(--accent);
-            color: #0b261d;
-            border-color: var(--accent);
-        }
-
-    .text-info {
-        color: var(--accent) !important;
-    }
-
-    /* Exam Button Style */
-    .btn-success {
-        background-color: #0e2e23;
-        border: 2px solid var(--accent);
-        color: #fff;
-    }
-
-        .btn-success:hover {
-            background-color: var(--accent);
-            color: #0b261d;
-            border-color: var(--accent);
-        }
-
-    /* Scrollbar */
-    ::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: var(--dark-bg);
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: var(--panel-bg);
-        border: 1px solid var(--border);
-        border-radius: 4px;
-    }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent);
-        }
-
     @@media (max-width: 768px) {
-        .course-layout {
-            display: block;
-        }
+        .course-layout
 
-        .sidebar {
-            width: 100%;
-            max-height: 250px;
-            overflow-y: auto;
-            margin-bottom: 20px;
-            border-left: none;
-            border-bottom: 1px solid var(--border);
-        }
+    {
+        display: block;
+    }
 
-        .main-content {
-            padding: 1rem;
-        }
+    .sidebar {
+        width: 100%;
+        max-height: 250px;
+        margin-bottom: 20px;
+        border-left: none;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .main-content {
+        padding: 1rem;
+    }
+
     }
 </style>
 
@@ -292,14 +215,27 @@
     </div>
 
     <div class="main-content">
-        <div class="back-button">
-            <a href="/Profile" style="display:flex; align-items:center; gap:5px;width:fit-content" class="btn-back"><i class="fas fa-arrow-right"></i> العودة إلى الملف الشخصي</a>
+        <div class="mb-4">
+            <a href="/Profile" style="border: 1px solid var(--border); color: var(--accent); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none;"><i class="fas fa-arrow-right"></i> العودة إلى الملف الشخصي</a>
         </div>
 
         <div class="video-wrapper">
-            <iframe src="@YouTubeHelper.GetEmbedUrl(Model.CurrentLesson.VideoUrl)"
-                    title="YouTube video player" frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            @if (!string.IsNullOrEmpty(Model.CurrentLesson.BunnyLibraryId) && !string.IsNullOrEmpty(Model.CurrentLesson.BunnyVideoId))
+            {
+                <iframe src="https://iframe.mediadelivery.net/embed/@Model.CurrentLesson.BunnyLibraryId/@Model.CurrentLesson.BunnyVideoId?autoplay=true&loop=false&muted=false&preload=true&responsive=true"
+                        loading="lazy" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" allowfullscreen="true">
+                </iframe>
+            }
+            else if (!string.IsNullOrEmpty(Model.CurrentLesson.VideoUrl))
+            {
+                <iframe src="@YouTubeHelper.GetEmbedUrl(Model.CurrentLesson.VideoUrl)" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            }
+            else
+            {
+                <div class="d-flex justify-content-center align-items-center h-100 w-100 text-white">
+                    لا يوجد فيديو متاح لهذا الدرس.
+                </div>
+            }
         </div>
 
         <div class="nav-controls">
@@ -309,12 +245,13 @@
             }
             else
             {
-                <button class="btn btn-outline-light" disabled style="opacity: 0.5; cursor: not-allowed;">الدرس السابق</button>
+                <button class="btn btn-outline-light" disabled style="opacity: 0.5;">الدرس السابق</button>
             }
 
-            <div class="sidebar-footer-pro" id="exam-button-container" style="display: @(Model.IsCourseCompleted ? "block" : "none");">
+            <div class="sidebar-footer-pro" style="display: @(Model.IsCourseCompleted ? "block" : "none");">
                 <a asp-controller="Exam" asp-action="Take" asp-route-id="@Model.CourseId" class="btn btn-success fw-bold"><i class="fas fa-file-alt me-2"></i> ابدأ الاختبار النهائي</a>
             </div>
+
             @if (Model.NextLessonId.HasValue)
             {
                 <a asp-action="Index" asp-route-courseId="@Model.CourseId" asp-route-lessonId="@Model.NextLessonId" class="btn btn-primary">الدرس التالي</a>
@@ -325,14 +262,12 @@
             }
         </div>
 
-
-        <div class="row g-4">
-            <!-- Attachments Card -->
+        <div class="row g-4 mt-2">
+            <!-- Attachments -->
             <div class="col-md-6">
                 <div class="section-box h-100">
                     <div class="section-header">
-                        <i class="fas fa-paperclip"></i>
-                        <span>المرفقات</span>
+                        <i class="fas fa-paperclip"></i><span>المرفقات</span>
                     </div>
                     <div class="section-body">
                         @if (Model.LessonDetails.Attachments.Any())
@@ -340,10 +275,7 @@
                             <ul class="attachments-list">
                                 @foreach (var attachment in Model.LessonDetails.Attachments)
                                 {
-                                    <li>
-                                        <i class="fas fa-file-alt me-2 text-info"></i>
-                                        <a href="@Url.Content(attachment.FilePath)" download>@attachment.FileName</a>
-                                    </li>
+                                    <li><i class="fas fa-file-alt me-2 text-[#d4af37]"></i><a href="@Url.Content(attachment.FilePath)" download>@attachment.FileName</a></li>
                                 }
                             </ul>
                         }
@@ -355,18 +287,17 @@
                 </div>
             </div>
 
-            <!-- Lesson Quiz Card -->
+            <!-- Quiz -->
             <div class="col-md-6">
                 <div class="section-box h-100 d-flex flex-column">
                     <div class="section-header">
-                        <i class="fas fa-question-circle"></i>
-                        <span>اختبار الدرس</span>
+                        <i class="fas fa-question-circle"></i><span>اختبار الدرس</span>
                     </div>
                     <div class="section-body flex-grow-1 d-flex flex-column justify-content-center align-items-center">
                         @if (Model.CurrentLesson.LessonQuiz != null)
                         {
-                            <p class="text-center mb-3 text-white">اختبر فهمك للدرس من خلال هذا الاختبار القصير.</p>
-                            <a asp-controller="LessonQuizPlayer" asp-action="Take" asp-route-lessonId="@Model.CurrentLesson.Id" class="btn btn-info w-75 fw-bold">
+                            <p class="text-center mb-3 text-white">اختبر فهمك للدرس من خلال هذا الاختبار.</p>
+                            <a asp-controller="LessonQuizPlayer" asp-action="Take" asp-route-lessonId="@Model.CurrentLesson.Id" class="btn" style="background:transparent; border:1px solid #d4af37; color:#d4af37; border-radius:50px; padding:8px 30px;">
                                 <i class="fas fa-pencil-alt me-2"></i> ابدأ الاختبار
                             </a>
                         }

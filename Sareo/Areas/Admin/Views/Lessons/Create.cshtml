@@ -17,10 +17,25 @@
                 <span asp-validation-for="Lesson.Title" class="text-red-400 mt-2 text-xs"></span>
             </div>
 
-            <div>
-                <label asp-for="Lesson.VideoUrl" class="block mb-2 text-sm font-medium"></label>
-                <input asp-for="Lesson.VideoUrl" class="input-style w-full p-2.5" placeholder="https://www.youtube.com/watch?v=..." />
-                <span asp-validation-for="Lesson.VideoUrl" class="text-red-400 mt-2 text-xs"></span>
+            <!-- Bunny.net Fields -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="Lesson.BunnyLibraryId" class="block mb-2 text-sm font-medium"></label>
+                    <input asp-for="Lesson.BunnyLibraryId" class="input-style w-full p-2.5" placeholder="مثال: 123456" />
+                    <span asp-validation-for="Lesson.BunnyLibraryId" class="text-red-400 mt-2 text-xs"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Lesson.BunnyVideoId" class="block mb-2 text-sm font-medium"></label>
+                    <input asp-for="Lesson.BunnyVideoId" class="input-style w-full p-2.5" placeholder="مثال: abcdef-1234-5678-..." />
+                    <span asp-validation-for="Lesson.BunnyVideoId" class="text-red-400 mt-2 text-xs"></span>
+                </div>
+            </div>
+
+            <!-- Optional: Checkbox for Free Preview -->
+            <div class="flex items-center mt-4">
+                <input asp-for="Lesson.IsFreePreview" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-600 ring-offset-gray-800 focus:ring-2">
+                <label asp-for="Lesson.IsFreePreview" class="ms-2 text-sm font-medium text-gray-300">السماح بمعاينة مجانية لهذا الدرس من الخارج</label>
             </div>
 
             <div class="flex items-center justify-end space-x-4 space-x-reverse pt-4">

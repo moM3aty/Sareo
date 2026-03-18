@@ -230,33 +230,33 @@ namespace Sareoo.Controllers
             return await Index();
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Subscribe(int courseId)
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var student = await _context.Students.FirstOrDefaultAsync(s => s.ApplicationUserId == userId);
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Subscribe(int courseId)
+        //{
+        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    var student = await _context.Students.FirstOrDefaultAsync(s => s.ApplicationUserId == userId);
 
-            if (student == null) return Unauthorized();
+        //    if (student == null) return Unauthorized();
 
-            var isAlreadySubscribed = await _context.StudentCourses
-                .AnyAsync(sc => sc.StudentId == student.Id && sc.CourseId == courseId);
+        //    var isAlreadySubscribed = await _context.StudentCourses
+        //        .AnyAsync(sc => sc.StudentId == student.Id && sc.CourseId == courseId);
 
-            if (!isAlreadySubscribed)
-            {
-                var studentCourse = new StudentCourse
-                {
-                    StudentId = student.Id,
-                    CourseId = courseId,
-                    ProgressPercentage = 0,
-                    LastAccessDate = null
-                };
-                _context.StudentCourses.Add(studentCourse);
-                await _context.SaveChangesAsync();
-            }
+        //    if (!isAlreadySubscribed)
+        //    {
+        //        var studentCourse = new StudentCourse
+        //        {
+        //            StudentId = student.Id,
+        //            CourseId = courseId,
+        //            ProgressPercentage = 0,
+        //            LastAccessDate = null
+        //        };
+        //        _context.StudentCourses.Add(studentCourse);
+        //        await _context.SaveChangesAsync();
+        //    }
 
-            return RedirectToAction("Index");
-        }
+        //    return RedirectToAction("Index");
+        //}
 
         private string GetGradeFromPercentage(int? percentage)
         {
