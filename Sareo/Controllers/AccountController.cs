@@ -120,7 +120,7 @@ namespace Sareoo.Controllers
 
                             if (student != null && !student.IsActive)
                             {
-                                ModelState.AddModelError(string.Empty, "عذراً، حسابك غير مفعل بعد. يرجى انتظار تفعيل الحساب من قبل الإدارة.");
+                                ModelState.AddModelError(string.Empty, "01150459759 عذراً، حسابك غير مفعل بعد. يرجى انتظار تفعيل الحساب من قبل الإدارة.");
                                 return View(model);
                             }
                         }
