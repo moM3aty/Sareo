@@ -506,6 +506,10 @@ namespace Sareoo.Migrations
                     b.Property<bool>("IsFreePreview")
                         .HasColumnType("bit");
 
+                    b.Property<string>("SectionName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -909,6 +913,9 @@ namespace Sareoo.Migrations
 
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("ExpiryDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("LastAccessDate")
                         .HasColumnType("datetime2");
