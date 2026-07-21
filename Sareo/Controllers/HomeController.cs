@@ -4,6 +4,7 @@ using Sareoo.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Security.Claims;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -38,6 +39,33 @@ namespace Sareoo.Controllers
                 })
                 .ToListAsync();
 
+            var subscribedCourses = new List<UserCourseViewModel>();
+            if (User.Identity.IsAuthenticated && User.IsInRole("Student"))
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    var student = await _context.Students.AsNoTracking().FirstOrDefaultAsync(s => s.ApplicationUserId == userId);
+                    if (student != null)
+                    {
+                        subscribedCourses = await _context.StudentCourses
+                            .Where(sc => sc.StudentId == student.Id)
+                            .Include(sc => sc.Course).ThenInclude(c => c.Teacher)
+                            .Select(sc => new UserCourseViewModel
+                            {
+                                Id = sc.CourseId,
+                                Title = sc.Course.Title,
+                                TeacherName = sc.Course.Teacher != null ? sc.Course.Teacher.FullName : "غير محدد",
+                                CoverImageUrl = sc.Course.CoverImageUrl,
+                                ProgressPercentage = sc.ProgressPercentage
+                            })
+                            .ToListAsync();
+                    }
+                }
+            }
+
+       
+
             var stages = await _context.Stages
                 .Include(s => s.Grades).ThenInclude(g => g.Subjects)
                 .Include(s => s.Grades).ThenInclude(g => g.Students)
@@ -69,7 +97,8 @@ namespace Sareoo.Controllers
             {
                 Teachers = teachers,
                 Stages = stages,
-                EducationalMaterials = educationalMaterials
+                EducationalMaterials = educationalMaterials,
+                SubscribedCourses = subscribedCourses 
             };
 
             return View(viewModel);

@@ -6,11 +6,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="وسارعو التعليمية - منصة تعليمية تقدم دورات مسجلة ودروس مباشرة وشهادات معتمدة في مختلف المجالات.">
-    <meta name="keywords" content="وسارعو التعليمية, منصة تعليمية, دورات تعليمية, دورات مباشرة, دورات مسجلة, شهادات تعليمية">
-    <meta name="author" content="وسارعو التعليمية">
+    <meta name="description" content="وسارعوا التعليمية - منصة تعليمية تقدم دورات مسجلة ودروس مباشرة وشهادات معتمدة في مختلف المجالات.">
+    <meta name="keywords" content="وسارعوا التعليمية, منصة تعليمية, دورات تعليمية, دورات مباشرة, دورات مسجلة, شهادات تعليمية">
+    <meta name="author" content="وسارعوا التعليمية">
     <link rel="icon" href="~/images/logo.png" type="image/x-icon">
-    <meta property="og:title" content="وسارعو التعليمية">
+    <meta property="og:title" content="وسارعوا التعليمية">
     <meta property="og:description" content="منصة تعليمية متكاملة تقدم دورات مسجلة ودروس مباشرة مع شهادات معتمدة.">
     <meta property="og:image" content="https://www.yoursite.com/images/og-image.png">
     <meta property="og:url" content="https://www.yoursite.com">
@@ -18,7 +18,7 @@
 
     <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="وسارعو التعليمية">
+    <meta name="twitter:title" content="وسارعوا التعليمية">
     <meta name="twitter:description" content="منصة تعليمية متكاملة تقدم دورات مسجلة ودروس مباشرة مع شهادات معتمدة.">
     <meta name="twitter:image" content="https://www.yoursite.com/images/twitter-image.png">
     <link rel="stylesheet" href="~/css/all.min.css">
@@ -65,7 +65,7 @@
                         <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="teachers">المعلمون</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="statements">سلسلة وسارعو</a>
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="statements">سلسلة وسارعوا</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="Blog" asp-action="Index">المدونة</a>
@@ -103,7 +103,7 @@
                         <h1>
                             منصة
                             <span>
-                                وسارعو
+                                وسارعوا
                             </span>
                             التعليمية
                         </h1>
@@ -136,7 +136,6 @@
     <main>
             @RenderBody()
     </main>
-
     <footer class="footer text-white">
         <div class="container">
             <div class="row g-4 align-items-start">
@@ -161,19 +160,26 @@
                         </ul>
                     </div>
                     <div class="col-md-12 text-center">
-
-                        <h3>تواصل معنا</h3>
-                        <ul class="list-unstyled d-flex gap-3 mt-3 justify-content-evenly">
-                            <li class="footer-contact-item">
+                        
+                            <h3>تواصل معنا</h3>
+                            <ul class="list-unstyled d-flex gap-3 mt-3 justify-content-evenly">
+                                <li class="footer-contact-item">
                                 <!-- التعديل: تغيير رقم الواتساب في الفوتر إلى الرقم الجديد -->
                                 <a href="https://wa.me/201041434757" target="_blank" class="d-flex align-items-center justify-content-center gap-2">
-                                    <i class="fab fa-whatsapp fa-lg" style="color: #25D366;"></i>
+                                        <i class="fab fa-whatsapp fa-lg" style="color: #25D366;"></i>
                                     <span dir="ltr" style="font-family: sans-serif;color: #154734">+201041434757</span>
-                                </a>
-                            </li>
-                            <li class="footer-contact-item d-flex align-items-center justify-content-center gap-2">
-                                <i class="fas fa-map-marker-alt fa-lg" style="color: #d4af37;"></i>
-                                <span style="color: #154734">كفر قنديل - أطفيح</span>
+                                    </a>
+                                </li>
+                                <!-- إضافة رابط الفيسبوك -->
+                                <li class="footer-contact-item">
+                                    <a href="https://www.facebook.com/share/1FDXoDYABp/" target="_blank" class="d-flex align-items-center justify-content-center gap-2">
+                                        <i class="fab fa-facebook fa-lg" style="color: #1877F2;"></i>
+                                        <span style="color: #154734">صفحتنا على فيسبوك</span>
+                                    </a>
+                                </li>
+                                <li class="footer-contact-item d-flex align-items-center justify-content-center gap-2">
+                                    <i class="fas fa-map-marker-alt fa-lg" style="color: #d4af37;"></i>
+                                    <span style="color: #154734">كفر قنديل - أطفيح</span>
                                 </li>
                             </ul>
                         </div>

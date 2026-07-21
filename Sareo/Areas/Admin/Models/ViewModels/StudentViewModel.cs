@@ -73,6 +73,7 @@ namespace Sareoo.Areas.Admin.Models.ViewModels
     // ViewModel for displaying a single course progress
     public class StudentCourseProgressViewModel
     {
+        public int CourseId { get; set; }
         public string CourseTitle { get; set; }
         public int ProgressPercentage { get; set; }
         public string Status { get; set; }
@@ -81,6 +82,7 @@ namespace Sareoo.Areas.Admin.Models.ViewModels
         public DateTime? LastAccessDate { get; set; }
         public double Grade { get; set; }
     }
+
 
     // ViewModel for displaying certificate info in the profile
     public class CertificateInfoViewModel

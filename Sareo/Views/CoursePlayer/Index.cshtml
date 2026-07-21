@@ -27,6 +27,7 @@
         min-height: calc(100vh - 80px);
     }
 
+    /* --- تحسينات تصميم الفولدرات والشريط الجانبي --- */
     .sidebar {
         background-color: var(--panel-bg);
         border-left: 1px solid var(--border);
@@ -44,24 +45,108 @@
             padding-bottom: 10px;
         }
 
-    .lesson-item {
-        background-color: transparent;
-        border: 1px solid var(--border);
-        padding: 0.8rem 1rem;
-        border-radius: 8px;
-        margin-bottom: 0.6rem;
-        color: var(--text-primary);
-        cursor: pointer;
+    /* --- تحسينات تصميم الفولدرات والشجرة (Tree Style) --- */
+    .folder-group {
+        margin-bottom: 1rem;
+        background: rgba(0, 0, 0, 0.15);
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid rgba(212, 175, 55, 0.1);
         transition: all 0.3s ease;
+    }
+
+    .folder-header {
+        padding: 12px 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        background: linear-gradient(90deg, rgba(212,175,55,0.05) 0%, transparent 100%);
+        transition: all 0.3s ease;
+    }
+
+        .folder-header:hover {
+            background-color: rgba(212, 175, 55, 0.15);
+        }
+
+        .folder-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            color: var(--accent);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+    .folder-icon {
+        font-size: 1.2rem;
+    }
+
+    .chevron-icon {
+        transition: transform 0.3s ease;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+    }
+
+    .folder-header[aria-expanded="true"] .chevron-icon {
+        transform: rotate(180deg);
+        color: var(--accent);
+    }
+
+    .folder-lessons {
+        border-right: 2px solid rgba(212, 175, 55, 0.2);
+        margin-right: 1.5rem;
+        padding-right: 0.8rem;
+        padding-bottom: 0.8rem;
+    }
+
+    .lesson-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0.8rem 1rem;
+        margin-top: 0.5rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        position: relative;
         font-weight: 500;
     }
 
-        .lesson-item:hover,
-        .lesson-item.active {
-            background-color: var(--accent);
-            color: #0b261d;
-            font-weight: bold;
+        .lesson-link:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
             transform: translateX(-5px);
+        }
+
+        .lesson-link.active {
+            background: var(--accent);
+            color: var(--dark-bg);
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(212, 175, 55, 0.2);
+        }
+
+        .lesson-link::before {
+            content: '';
+            position: absolute;
+            right: -1.1rem;
+            width: 10px;
+            height: 10px;
+            background: rgba(212, 175, 55, 0.3);
+            border-radius: 50%;
+            transform: translateY(1px);
+            transition: all 0.3s ease;
+        }
+
+        .lesson-link:hover::before {
+            background: rgba(212, 175, 55, 0.8);
+        }
+
+        .lesson-link.active::before {
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent);
         }
 
     .main-content {
@@ -189,7 +274,7 @@
 
     .sidebar {
         width: 100%;
-        max-height: 250px;
+        max-height: 350px;
         margin-bottom: 20px;
         border-left: none;
         border-bottom: 1px solid var(--border);
@@ -201,53 +286,69 @@
 
     }
 </style>
+
 <div class="course-layout">
     <div class="sidebar">
         <h2>@Model.CourseTitle</h2>
         @{
-            // التعديل: تجميع الدروس بناءً على الفولدر/القسم، وفي حال كان فارغاً يتم وضعه في "الدروس"
-            var groupedLessons = Model.AllLessons.GroupBy(l => string.IsNullOrWhiteSpace(l.SectionName) ? "الدروس" : l.SectionName);
+            var groupedLessons = Model.AllLessons.GroupBy(l => string.IsNullOrWhiteSpace(l.SectionName) ? "دروس عامة" : l.SectionName);
+            int folderIndex = 0;
         }
         @foreach (var group in groupedLessons)
         {
-            <div class="folder-group mb-3">
-                <div class="folder-header d-flex justify-content-between align-items-center mb-2 p-2 rounded" style="background: rgba(212, 175, 55, 0.1); cursor: pointer;" onclick="this.nextElementSibling.classList.toggle('d-none'); this.querySelector('.toggle-icon').classList.toggle('fa-chevron-up'); this.querySelector('.toggle-icon').classList.toggle('fa-chevron-down');">
-                    <span style="color: var(--accent); font-weight: bold;"><i class="fas fa-folder-open me-2"></i> @group.Key</span>
-                    <i class="fas toggle-icon @(group.Any(l => l.Id == Model.CurrentLesson.Id) ? "fa-chevron-up" : "fa-chevron-down")" style="color: var(--accent); font-size: 0.8rem;"></i>
+            bool isFolderActive = group.Any(l => l.Id == Model.CurrentLesson.Id);
+            string collapseId = $"folder-{folderIndex}";
+
+            <div class="folder-group shadow-sm">
+                <!-- التعديل: استخدام Bootstrap Collapse لحركة انسيابية -->
+                <div class="folder-header" data-bs-toggle="collapse" data-bs-target="#@collapseId" aria-expanded="@(isFolderActive ? "true" : "false")" aria-controls="@collapseId">
+                    <h3><i class="fas fa-folder-open folder-icon"></i> @group.Key</h3>
+                    <i class="fas fa-chevron-down chevron-icon"></i>
                 </div>
-                <div class="folder-lessons @(group.Any(l => l.Id == Model.CurrentLesson.Id) ? "" : "d-none")">
-                    @foreach (var lesson in group)
-                    {
-                        <div class="lesson-item @(lesson.Id == Model.CurrentLesson.Id ? "active" : "") ms-3"
-                             onclick="window.location.href='/CoursePlayer/Index/@Model.CourseId?lessonId=@lesson.Id'">
-                            <i class="fas fa-play-circle me-2"></i> @lesson.Title
-                        </div>
-                    }
+
+                <div class="collapse @(isFolderActive ? "show" : "")" id="@collapseId">
+                    <div class="folder-lessons">
+                        @foreach (var lesson in group)
+                        {
+                            <!-- التعديل الجذري لحل مشكلة الـ 404: تحويله إلى رابط حقيقي -->
+                            <a asp-controller="CoursePlayer" asp-action="Index" asp-route-courseId="@Model.CourseId" asp-route-lessonId="@lesson.Id"
+                               class="lesson-link @(lesson.Id == Model.CurrentLesson.Id ? "active" : "")">
+                                <i class="fas @(lesson.Id == Model.CurrentLesson.Id ? "fa-play" : "fa-play-circle")"></i>
+                                <span>@lesson.Title</span>
+                            </a>
+                        }
+                    </div>
                 </div>
             </div>
+            folderIndex++;
         }
     </div>
 
     <div class="main-content">
         <div class="mb-4">
-            <a href="/Profile" style="border: 1px solid var(--border); color: var(--accent); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none;"><i class="fas fa-arrow-right"></i> العودة إلى الملف الشخصي</a>
+            <a href="/Profile" style="border: 1px solid var(--border); color: var(--accent); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; transition: 0.3s;">
+                <i class="fas fa-arrow-right"></i> العودة إلى الملف الشخصي
+            </a>
         </div>
 
         <div class="video-wrapper">
             @if (!string.IsNullOrEmpty(Model.CurrentLesson.BunnyLibraryId) && !string.IsNullOrEmpty(Model.CurrentLesson.BunnyVideoId))
             {
-                <iframe src="https://iframe.mediadelivery.net/embed/@Model.CurrentLesson.BunnyLibraryId/@Model.CurrentLesson.BunnyVideoId?autoplay=true&loop=false&muted=false&preload=true&responsive=true"
-                        loading="lazy" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" allowfullscreen="true">
+                <iframe src="https://iframe.mediadelivery.net/embed/@Model.CurrentLesson.BunnyLibraryId/@Model.CurrentLesson.BunnyVideoId?autoplay=false&loop=false&muted=false&preload=true&responsive=true"
+                        loading="lazy" allow="accelerometer; gyroscope; encrypted-media; picture-in-picture;" allowfullscreen="true">
                 </iframe>
             }
             else if (!string.IsNullOrEmpty(Model.CurrentLesson.VideoUrl))
             {
-                <iframe src="@YouTubeHelper.GetEmbedUrl(Model.CurrentLesson.VideoUrl)" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe src="@YouTubeHelper.GetEmbedUrl(Model.CurrentLesson.VideoUrl)" title="YouTube video player" frameborder="0" allow="accelerometer;  clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             }
             else
             {
                 <div class="d-flex justify-content-center align-items-center h-100 w-100 text-white">
-                    لا يوجد فيديو متاح لهذا الدرس.
+                    <div class="text-center">
+                        <i class="fas fa-video-slash fa-3x text-muted mb-3"></i>
+                        <p>لا يوجد فيديو متاح لهذا الدرس.</p>
+                    </div>
                 </div>
             }
         </div>
@@ -255,11 +356,11 @@
         <div class="nav-controls">
             @if (Model.PreviousLessonId.HasValue)
             {
-                <a asp-action="Index" asp-route-courseId="@Model.CourseId" asp-route-lessonId="@Model.PreviousLessonId" class="btn btn-outline-light">الدرس السابق</a>
+                <a asp-action="Index" asp-route-courseId="@Model.CourseId" asp-route-lessonId="@Model.PreviousLessonId" class="btn btn-outline-light"><i class="fas fa-chevron-right me-2"></i> الدرس السابق</a>
             }
             else
             {
-                <button class="btn btn-outline-light" disabled style="opacity: 0.5;">الدرس السابق</button>
+                <button class="btn btn-outline-light" disabled style="opacity: 0.5;"><i class="fas fa-chevron-right me-2"></i> الدرس السابق</button>
             }
 
             <div class="sidebar-footer-pro" style="display: @(Model.IsCourseCompleted ? "block" : "none");">
@@ -268,7 +369,7 @@
 
             @if (Model.NextLessonId.HasValue)
             {
-                <a asp-action="Index" asp-route-courseId="@Model.CourseId" asp-route-lessonId="@Model.NextLessonId" class="btn btn-primary">الدرس التالي</a>
+                <a asp-action="Index" asp-route-courseId="@Model.CourseId" asp-route-lessonId="@Model.NextLessonId" class="btn btn-primary">الدرس التالي <i class="fas fa-chevron-left ms-2"></i></a>
             }
             else
             {
@@ -279,23 +380,29 @@
         <div class="row g-4 mt-2">
             <!-- Attachments -->
             <div class="col-md-6">
-                <div class="section-box h-100">
+                <div class="section-box h-100 shadow-sm">
                     <div class="section-header">
-                        <i class="fas fa-paperclip"></i><span>المرفقات</span>
+                        <i class="fas fa-paperclip"></i><span>المرفقات والملفات</span>
                     </div>
-                    <div class="section-body">
+                    <div class="section-body mt-3">
                         @if (Model.LessonDetails.Attachments.Any())
                         {
                             <ul class="attachments-list">
                                 @foreach (var attachment in Model.LessonDetails.Attachments)
                                 {
-                                    <li><i class="fas fa-file-alt me-2 text-[#d4af37]"></i><a href="@Url.Content(attachment.FilePath)" download>@attachment.FileName</a></li>
+                                    <li class="d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <i class="fas fa-file-pdf me-2 text-[#d4af37]"></i>
+                                            <a href="@Url.Content(attachment.FilePath)" download>@attachment.FileName</a>
+                                        </div>
+                                        <a href="@Url.Content(attachment.FilePath)" download class="btn btn-sm" style="background: rgba(212,175,55,0.2); color: var(--accent);"><i class="fas fa-download"></i></a>
+                                    </li>
                                 }
                             </ul>
                         }
                         else
                         {
-                            <p class="text-muted">لا توجد مرفقات لهذا الدرس.</p>
+                            <p class="text-muted text-center py-3"><i class="fas fa-folder-open mb-2 text-secondary fa-2x d-block"></i> لا توجد مرفقات لهذا الدرس.</p>
                         }
                     </div>
                 </div>
@@ -303,21 +410,21 @@
 
             <!-- Quiz -->
             <div class="col-md-6">
-                <div class="section-box h-100 d-flex flex-column">
+                <div class="section-box h-100 d-flex flex-column shadow-sm">
                     <div class="section-header">
-                        <i class="fas fa-question-circle"></i><span>اختبار الدرس</span>
+                        <i class="fas fa-question-circle"></i><span>اختبار الدرس السريع</span>
                     </div>
-                    <div class="section-body flex-grow-1 d-flex flex-column justify-content-center align-items-center">
+                    <div class="section-body flex-grow-1 d-flex flex-column justify-content-center align-items-center mt-3">
                         @if (Model.CurrentLesson.LessonQuiz != null)
                         {
-                            <p class="text-center mb-3 text-white">اختبر فهمك للدرس من خلال هذا الاختبار.</p>
-                            <a asp-controller="LessonQuizPlayer" asp-action="Take" asp-route-lessonId="@Model.CurrentLesson.Id" class="btn" style="background:transparent; border:1px solid #d4af37; color:#d4af37; border-radius:50px; padding:8px 30px;">
-                                <i class="fas fa-pencil-alt me-2"></i> ابدأ الاختبار
+                            <p class="text-center mb-4 text-white">يوجد اختبار قصير لتحديد مستوى فهمك لهذا الدرس.</p>
+                            <a asp-controller="LessonQuizPlayer" asp-action="Take" asp-route-lessonId="@Model.CurrentLesson.Id" class="btn" style="background:transparent; border:2px solid #d4af37; color:#d4af37; border-radius:50px; padding:10px 30px; font-weight:bold; transition: 0.3s;" onmouseover="this.style.background='#d4af37'; this.style.color='#0b261d';" onmouseout="this.style.background='transparent'; this.style.color='#d4af37';">
+                                <i class="fas fa-pencil-alt me-2"></i> ابدأ الاختبار الآن
                             </a>
                         }
                         else
                         {
-                            <p class="text-muted text-center">لا يوجد اختبار لهذا الدرس.</p>
+                            <p class="text-muted text-center py-3"><i class="fas fa-clipboard-check mb-2 text-secondary fa-2x d-block"></i> لا يوجد اختبار مخصص لهذا الدرس.</p>
                         }
                     </div>
                 </div>

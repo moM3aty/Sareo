@@ -10,14 +10,51 @@
         width: fit-content;
         padding: 10px 20px !important
     }
-    option{
-        color:#000;
-    }
+
+    option {
+        color: #000;
+    
+        .profile .course-card .img
+        {
+        height: 500px;
+        }
 </style>
 
 <section class="section-padding profile">
     <div class="container">
         <!-- Profile Header & Stats -->
+        <div class="mb-5">
+            @if (Model.InProgressCourses.Any())
+            {
+                <h4 class="mb-4 text-white" style="font-weight: bold;"><i class="fas fa-laptop-code text-[#d4af37] me-2"></i> دورات قيد التقدم (@ArabicNumberHelper.ToArabicNumerals(Model.InProgressCourses.Count))</h4>
+                <div class="row g-4 mb-5">
+                    @foreach (var course in Model.InProgressCourses)
+                    {
+                        <div class="col-md-6 col-lg-4"><partial name="_UserProfileCourseCardPartial" model="course" /></div>
+                    }
+                </div>
+            }
+
+            @if (Model.CompletedCourses.Any())
+            {
+                <h4 class="mb-4 text-white" style="font-weight: bold;"><i class="fas fa-check-circle text-[#d4af37] me-2"></i> دورات مكتملة (@ArabicNumberHelper.ToArabicNumerals(Model.CompletedCourses.Count))</h4>
+                <div class="row g-4 mb-5">
+                    @foreach (var course in Model.CompletedCourses)
+                    {
+                        <div class="col-md-6 col-lg-4"><partial name="_UserProfileCourseCardPartial" model="course" /></div>
+                    }
+                </div>
+            }
+
+            @if (!Model.InProgressCourses.Any() && !Model.CompletedCourses.Any())
+            {
+                <div class="text-center p-5 card-bg rounded-lg mb-5 border border-[#d4af37]">
+                    <i class="fas fa-folder-open fa-3x text-gray-500 mb-3"></i>
+                    <p class="text-white fs-5">لم تشترك في أي دورات حتى الآن.</p>
+                    <a href="#recordedLessons" onclick="document.getElementById('recorded-lessons-tab').click();" class="btn mt-3" style="background-color: #d4af37; color: #0b261d; font-weight: bold; border-radius: 25px; padding: 10px 30px;">تصفح الدورات المتاحة</a>
+                </div>
+            }
+        </div>
         <div class="row g-4 justify-content-center align-items-center mb-5">
             <div class="col-12">
                 <div class="profile-card w-100">
@@ -40,10 +77,12 @@
             <div class="col-md-6 col-lg-3"><div class="card p-3 d-flex flex-column justify-content-center align-items-center gap-2"><div class="icon"><i class="fas fa-chart-line"></i></div><h3 class="mb-0">@ArabicNumberHelper.ToArabicNumerals(Model.AverageGrade)%</h3><p>متوسط الدرجات</p></div></div>
         </div>
 
+        <!-- التعديل: عرض الكورسات المشترك فيها الطالب في أعلى البروفايل وتحديث تصميمها -->
+       
+
         <!-- Navigation Tabs -->
         <ul class="nav nav-tabs justify-content-evenly mb-5" id="myTab" role="tablist">
             <li class="nav-item" role="presentation"><button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button">نظرة عامة</button></li>
-            <li class="nav-item" role="presentation"><button class="nav-link" id="my-courses-tab" data-bs-toggle="tab" data-bs-target="#my-courses" type="button">دوراتي (@ArabicNumberHelper.ToArabicNumerals(allCoursesCount))</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" id="books-tab" data-bs-toggle="tab" data-bs-target="#books" type="button">الكتب (@ArabicNumberHelper.ToArabicNumerals(Model.AvailableBooks.Count))</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" id="recorded-lessons-tab" data-bs-toggle="tab" data-bs-target="#recordedLessons" type="button">الدورات المسجلة</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" id="live-lessons-tab" data-bs-toggle="tab" data-bs-target="#liveLessons" type="button">الدروس المباشرة</button></li>
@@ -103,39 +142,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- My Courses Tab -->
-            <div class="tab-pane fade" id="my-courses" role="tabpanel">
-                <h4 class="mb-4 text-white">دورات قيد التقدم (@ArabicNumberHelper.ToArabicNumerals(Model.InProgressCourses.Count))</h4>
-                <div class="row g-4 mb-5">
-                    @if (Model.InProgressCourses.Any())
-                    {
-                        foreach (var course in Model.InProgressCourses)
-                        {
-                            <div class="col-md-6 col-lg-4"><partial name="_UserProfileCourseCardPartial" model="course" /></div>
-                        }
-                    }
-                    else
-                    {
-                        <p class="text-center text-white">ليس لديك دورات قيد التقدم حالياً.</p>
-                    }
-                </div>
-                <hr class="my-5" />
-                <h4 class="mb-4 text-white">دورات مكتملة (@ArabicNumberHelper.ToArabicNumerals(Model.CompletedCourses.Count))</h4>
-                <div class="row g-4">
-                    @if (Model.CompletedCourses.Any())
-                    {
-                        foreach (var course in Model.CompletedCourses)
-                        {
-                            <div class="col-md-6 col-lg-4"><partial name="_UserProfileCourseCardPartial" model="course" /></div>
-                        }
-                    }
-                    else
-                    {
-                        <p class="text-center text-white">لم تكمل أي دورات بعد.</p>
-                    }
                 </div>
             </div>
 

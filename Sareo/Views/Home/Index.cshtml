@@ -4,11 +4,153 @@
 @{
     ViewData["Title"] = "الصفحة الرئيسيه";
 }
+<style>
+    /* تنسيقات إضافية لقسم كورسات الطالب */
+    .student-courses-section {
+        background: linear-gradient(135deg, #0b261d 0%, #154734 100%);
+        border-bottom: 3px solid #d4af37;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .student-courses-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23d4af37" fill-opacity="0.05"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+            opacity: 0.5;
+            z-index: 0;
+        }
+
+    .course-card-custom {
+        background-color: rgba(14, 46, 35, 0.8);
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .course-card-custom:hover {
+            transform: translateY(-5px);
+            border-color: #d4af37;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+    .course-card-img {
+        height: 500px;
+        width: 100%;
+        border-bottom: 2px solid rgba(212, 175, 55, 0.5);
+    }
+
+    .course-card-body {
+        padding: 1.5rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .course-card-title {
+        color: #fff;
+        font-weight: bold;
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .course-card-teacher {
+        color: #d4af37;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .progress-custom {
+        height: 8px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        margin-bottom: 0.5rem;
+        overflow: hidden;
+    }
+
+    .progress-bar-custom {
+        height: 100%;
+        background: linear-gradient(90deg, #d4af37, #f7e7b5);
+        border-radius: 5px;
+    }
+
+    .btn-continue {
+        background-color: transparent;
+        border: 1px solid #d4af37;
+        color: #d4af37;
+        border-radius: 25px;
+        padding: 8px 20px;
+        font-weight: 600;
+        transition: all 0.3s;
+        text-align: center;
+        text-decoration: none;
+        margin-top: auto;
+    }
+
+        .btn-continue:hover {
+            background-color: #d4af37;
+            color: #0b261d;
+        }
+</style>
+
+<!-- التعديل: عرض كورسات الطالب المشترك فيها بتصميم محسن -->
+@if (Model.SubscribedCourses != null && Model.SubscribedCourses.Any())
+{
+    <section class="section-padding student-courses-section" id="my-courses">
+        <div class="container position-relative" style="z-index: 1;">
+            <div class="heading text-center mb-5">
+                <h2 class="title" style="color: #d4af37;">مرحباً بك مجدداً!</h2>
+                <p class="description text-white fs-5">استمر في التعلم، واصل رحلتك في دوراتك من هنا</p>
+            </div>
+            <div class="row g-4 justify-content-center">
+                @foreach (var course in Model.SubscribedCourses)
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="course-card-custom shadow">
+                            <img src="@(string.IsNullOrEmpty(course.CoverImageUrl) ? $"[https://placehold.co/600x400/1b263b/e0e1dd?text=](https://placehold.co/600x400/1b263b/e0e1dd?text=){course.Title}" : course.CoverImageUrl)"
+                                 class="course-card-img" alt="@course.Title"
+                                 onerror="this.src='[https://placehold.co/600x400/1b263b/e0e1dd?text=Error](https://placehold.co/600x400/1b263b/e0e1dd?text=Error)'">
+
+                            <div class="course-card-body">
+                                <h3 class="course-card-title">@course.Title</h3>
+                                <p class="course-card-teacher"><i class="fas fa-chalkboard-teacher me-2"></i>أ. @course.TeacherName</p>
+
+                                <div class="mt-auto mb-3">
+                                    <div class="d-flex justify-content-between text-white small mb-1">
+                                        <span>نسبة الإنجاز</span>
+                                        <span class="fw-bold" style="color:#d4af37;">@course.ProgressPercentage%</span>
+                                    </div>
+                                    <div class="progress-custom">
+                                        <div class="progress-bar-custom" style="width: @course.ProgressPercentage%"></div>
+                                    </div>
+                                </div>
+
+                                <a asp-controller="CoursePlayer" asp-action="Index" asp-route-courseId="@course.Id" class="btn-continue w-100">
+                                    <i class="fas fa-play-circle me-2"></i>
+                                    @(course.ProgressPercentage == 0 ? "ابدأ التعلم" : (course.ProgressPercentage == 100 ? "مراجعة الدورة" : "متابعة التعلم"))
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
 <section class="section-padding about-us" id="about">
     <div class="container">
         <div class="heading text-center mb-5">
             <h2 class="title ">من نحن</h2>
-            <p class="description about-us-p">منصة وسارعو التعليمية التعليمية هي منصة رائدة في مجال التعليم الإلكتروني في مصر، تأسست بهدف تطوير التعليم وتقديم أفضل الخدمات التعليمية للطلاب في جميع المراحل الدراسية</p>
+            <p class="description about-us-p">منصة وسارعوا التعليمية هي منصة رائدة في مجال التعليم الإلكتروني في مصر، تأسست بهدف تطوير التعليم وتقديم أفضل الخدمات التعليمية للطلاب في جميع المراحل الدراسية</p>
         </div>
         <div class="row g-4 justify-content-center align-items-center mt-5">
             <div class="col-lg-5">
@@ -19,7 +161,7 @@
                     </p>
                     <p class="mb-4">تقدم المنصة محتوىً مكتوبًا وفيديوهات تعليمية، اختبارات تفاعلية، تعليمًا مباشرًا ومسجلًا، وموارد مهنية للمعلمين، وكل ذلك وفق المناهج المصرية ووثائق التقويم الحديثة.</p>
                     <p>
-                        وسارعو التعليمية… تعلم أصيل، تعليم متجدد، رؤية تواكب المستقبل.
+                        وسارعوا التعليمية… تعلم أصيل، تعليم متجدد، رؤية تواكب المستقبل.
                     </p>
                     <div class="row g-4 mt-5 mb-4 mb-lg-0">
                         <div class="col-4">
@@ -48,6 +190,7 @@
         </div>
     </div>
 </section>
+
 <section class="vision section-padding" id="vision">
     <div class="container">
         <div class="heading text-center mb-5">
@@ -203,7 +346,7 @@
 <section class="section-padding statement" id="statements">
     <div class="container">
         <div class="heading text-center mb-5">
-            <h2 class="title">سلسلة وسارعو التعليمية</h2>
+            <h2 class="title">سلسلة وسارعوا التعليمية</h2>
             <p class="description">مجموعة شاملة من الكتب التعليمية المطبوعة والرقمية لجميع المراحل الدراسية</p>
             <div class="bgde">
                 <i class="fas fa-star text-warning me-2"></i> متوفرة في مصر
@@ -330,7 +473,7 @@
 </section>
 <section class="section-padding">
     <div class="container d-flex flex-column justify-content-center align-items-center text-center">
-        <p class="text-white fs-5">جميع كتب سلسلة وسارعو التعليمية متوفرة للشراء في مصر</p>
+        <p class="text-white fs-5">جميع كتب سلسلة وسارعوا التعليمية متوفرة للشراء في مصر</p>
         <button class="gradient-btn">اطلب نسختك الآن</button>
     </div>
 </section>

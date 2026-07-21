@@ -7,6 +7,8 @@ namespace Sareoo.ViewModels
         public IEnumerable<PublicTeacherViewModel> Teachers { get; set; }
         public IEnumerable<PublicStageViewModel> Stages { get; set; }
         public IEnumerable<PublicEducationalMaterialViewModel> EducationalMaterials { get; set; }
+        public List<UserCourseViewModel> SubscribedCourses { get; set; } = new List<UserCourseViewModel>();
+
 
     }
 

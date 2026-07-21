@@ -130,15 +130,30 @@
 
                     @foreach (var course in Model.CoursesProgress)
                     {
-                        <div>
-                            <div class="flex justify-between mb-1">
+                        <div class="border border-gray-700 p-4 rounded-lg bg-black/20">
+                            <div class="flex justify-between mb-2 items-center">
                                 <span class="text-base font-medium text-white">@course.CourseTitle</span>
-                                <span class="text-sm font-medium text-white">@course.ProgressPercentage%</span>
+                                <div class="flex items-center gap-4">
+                                    <span class="text-sm font-medium text-white">@course.ProgressPercentage%</span>
+
+                                    <!-- التعديل: إضافة زر الإلغاء للأدمن فقط -->
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <form asp-action="UnassignCourseFromStudent" asp-controller="Students" method="post" class="m-0" onsubmit="return confirm('هل أنت متأكد من إلغاء اشتراك الطالب من هذه الدورة؟ سيتم مسح تقدمه الحالي في هذا الكورس.');">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="studentId" value="@Model.Student.Id" />
+                                            <input type="hidden" name="courseId" value="@course.CourseId" />
+                                            <button type="submit" class="text-red-400 hover:text-red-300 transition-colors p-1" title="إلغاء الاشتراك">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
                             </div>
                             <div class="w-full bg-gray-700 rounded-full h-2.5">
                                 <div class="bg-blue-600 h-2.5 rounded-full" style="width: @course.ProgressPercentage%"></div>
                             </div>
-                            <p class="text-xs text-gray-400 mt-1">الحالة: @course.Status</p>
+                            <p class="text-xs text-gray-400 mt-2">الحالة: @course.Status</p>
                         </div>
                     }
                 }

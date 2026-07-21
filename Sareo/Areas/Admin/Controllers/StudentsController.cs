@@ -151,6 +151,8 @@ namespace Sareoo.Areas.Admin.Controllers
 
                 return new StudentCourseProgressViewModel
                 {
+                    // التعديل: تمرير معرف الدورة للفيو
+                    CourseId = sc.CourseId,
                     CourseTitle = sc.Course.Title,
                     ProgressPercentage = sc.ProgressPercentage,
                     Status = status,
@@ -474,7 +476,6 @@ namespace Sareoo.Areas.Admin.Controllers
                 return RedirectToAction("Details", new { id = studentId });
             }
 
-            // التعديل 1: إضافة فترة زمنية للاشتراك (شهر واحد من تاريخ التفعيل)
             var subscription = new StudentCourse
             {
                 StudentId = studentId,
@@ -490,5 +491,26 @@ namespace Sareoo.Areas.Admin.Controllers
             return RedirectToAction("Details", new { id = studentId });
         }
 
+        // التعديل: إضافة وظيفة جديدة لإلغاء الاشتراك
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UnassignCourseFromStudent(int studentId, int courseId)
+        {
+            var subscription = await _context.StudentCourses
+                .FirstOrDefaultAsync(sc => sc.StudentId == studentId && sc.CourseId == courseId);
+
+            if (subscription == null)
+            {
+                TempData["ErrorMessage"] = "الطالب غير مشترك في هذه الدورة.";
+                return RedirectToAction("Details", new { id = studentId });
+            }
+
+            _context.StudentCourses.Remove(subscription);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "تم إلغاء اشتراك الطالب من الدورة بنجاح!";
+            return RedirectToAction("Details", new { id = studentId });
+        }
     }
 }

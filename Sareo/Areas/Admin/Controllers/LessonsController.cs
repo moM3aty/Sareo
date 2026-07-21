@@ -87,6 +87,13 @@ namespace Sareoo.Areas.Admin.Controllers
                 return NotFound();
             }
 
+            // جلب أسماء الفولدرات الموجودة مسبقاً في هذا الكورس لعرضها كخيارات
+            ViewBag.ExistingSections = await _context.Lessons
+                .Where(l => l.CourseId == courseId && !string.IsNullOrWhiteSpace(l.SectionName))
+                .Select(l => l.SectionName)
+                .Distinct()
+                .ToListAsync();
+
             var viewModel = new LessonViewModel
             {
                 Lesson = new Lesson { CourseId = course.Id },
@@ -114,6 +121,13 @@ namespace Sareoo.Areas.Admin.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index), new { courseId = viewModel.Lesson.CourseId });
             }
+        
+            ViewBag.ExistingSections = await _context.Lessons
+                .Where(l => l.CourseId == viewModel.CourseId && !string.IsNullOrWhiteSpace(l.SectionName))
+                .Select(l => l.SectionName)
+                .Distinct()
+                .ToListAsync();
+
             return View(viewModel);
         }
 
@@ -125,6 +139,13 @@ namespace Sareoo.Areas.Admin.Controllers
             if (lesson == null) return NotFound();
 
             var course = await _context.Courses.FindAsync(lesson.CourseId);
+
+            // جلب أسماء الفولدرات الموجودة مسبقاً
+            ViewBag.ExistingSections = await _context.Lessons
+                .Where(l => l.CourseId == lesson.CourseId && !string.IsNullOrWhiteSpace(l.SectionName))
+                .Select(l => l.SectionName)
+                .Distinct()
+                .ToListAsync();
 
             var viewModel = new LessonViewModel
             {

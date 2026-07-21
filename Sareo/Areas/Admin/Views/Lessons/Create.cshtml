@@ -16,11 +16,24 @@
                 <input asp-for="Lesson.Title" class="input-style w-full p-2.5" />
                 <span asp-validation-for="Lesson.Title" class="text-red-400 mt-2 text-xs"></span>
             </div>
+
+            <!-- التعديل 2: حقل القسم / الفولدر (قائمة ذكية) -->
             <div>
                 <label asp-for="Lesson.SectionName" class="block mb-2 text-sm font-medium"></label>
-                <input asp-for="Lesson.SectionName" class="input-style w-full p-2.5" placeholder="مثال: الوحدة الأولى (اختياري)" />
+                <input asp-for="Lesson.SectionName" list="existingSections" autocomplete="off" class="input-style w-full p-2.5" placeholder="اختر الفولدر من القائمة أو اكتب اسماً جديداً..." />
+                <datalist id="existingSections">
+                    @if (ViewBag.ExistingSections != null)
+                    {
+                        foreach (var sec in ViewBag.ExistingSections)
+                        {
+                            <option value="@sec"></option>
+                        }
+                    }
+                </datalist>
+                <p class="text-xs text-gray-400 mt-1">اضغط مرتين بالماوس على الحقل لترى الفولدرات السابقة، أو اكتب اسماً جديداً لإنشاء فولدر.</p>
                 <span asp-validation-for="Lesson.SectionName" class="text-red-400 mt-2 text-xs"></span>
             </div>
+
             <!-- Bunny.net Fields -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
