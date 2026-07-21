@@ -13,6 +13,10 @@ namespace Sareoo.Areas.Admin.Models.Entities
         [Display(Name = "عنوان الدرس")]
         public string Title { get; set; }
 
+        [Display(Name = "اسم القسم / الفولدر (اختياري)")]
+        [StringLength(100)]
+        public string? SectionName { get; set; }
+
         [Display(Name = "رابط فيديو اليوتيوب (اختياري)")]
         [Url(ErrorMessage = "الرجاء إدخال رابط صحيح")]
         public string? VideoUrl { get; set; }

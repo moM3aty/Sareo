@@ -63,7 +63,7 @@ namespace Sareoo.Areas.Admin.Controllers
                 }
                 else
                 {
-                    studentsQuery = studentsQuery.Where(s => false); 
+                    studentsQuery = studentsQuery.Where(s => false);
                 }
             }
 
@@ -86,7 +86,7 @@ namespace Sareoo.Areas.Admin.Controllers
             var students = await projectedQuery.ToListAsync();
             return View(students);
 
-            
+
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -459,32 +459,34 @@ namespace Sareoo.Areas.Admin.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AssignCourseToStudent(int studentId, int courseId)
         {
-            // التأكد إن الطالب مش مشترك بالفعل
             var isEnrolled = await _context.StudentCourses
                 .AnyAsync(sc => sc.StudentId == studentId && sc.CourseId == courseId);
 
             if (isEnrolled)
             {
                 TempData["ErrorMessage"] = "الطالب مشترك بالفعل في هذه الدورة!";
-                return RedirectToAction("Details", new { id = studentId }); // العودة لصفحة تفاصيل الطالب
+                return RedirectToAction("Details", new { id = studentId });
             }
 
+            // التعديل 1: إضافة فترة زمنية للاشتراك (شهر واحد من تاريخ التفعيل)
             var subscription = new StudentCourse
             {
                 StudentId = studentId,
                 CourseId = courseId,
-                ProgressPercentage = 0
+                ProgressPercentage = 0,
+                ExpiryDate = DateTime.UtcNow.AddMonths(1)
             };
 
             _context.StudentCourses.Add(subscription);
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "تم تفعيل الكورس للطالب بنجاح!";
+            TempData["SuccessMessage"] = "تم تفعيل الكورس للطالب بنجاح لمدة شهر!";
             return RedirectToAction("Details", new { id = studentId });
         }
 

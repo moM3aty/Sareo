@@ -27,7 +27,6 @@ namespace Sareoo.Controllers
             _fileService = fileService;
         }
 
-        [Route("Index/{courseId}")]
         public async Task<IActionResult> Index(int courseId, int? lessonId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -36,6 +35,13 @@ namespace Sareoo.Controllers
 
             var subscription = await _context.StudentCourses.FirstOrDefaultAsync(sc => sc.StudentId == student.Id && sc.CourseId == courseId);
             if (subscription == null) return RedirectToAction("Index", "Profile");
+
+            // التعديل 1: التحقق من فترة صلاحية الاشتراك (يتم تجديده شهرياً)
+            if (subscription.ExpiryDate.HasValue && subscription.ExpiryDate.Value < DateTime.UtcNow)
+            {
+                TempData["ErrorMessage"] = "عفواً، لقد انتهت فترة اشتراكك في هذه الدورة. يرجى تجديد الاشتراك للمتابعة.";
+                return RedirectToAction("Index", "Profile");
+            }
 
             var course = await _context.Courses
                 // --- FIX APPLIED HERE: Added includes for LessonQuiz ---

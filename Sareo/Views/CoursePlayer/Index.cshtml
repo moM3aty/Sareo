@@ -201,15 +201,29 @@
 
     }
 </style>
-
 <div class="course-layout">
     <div class="sidebar">
         <h2>@Model.CourseTitle</h2>
-        @foreach (var lesson in Model.AllLessons)
+        @{
+            // التعديل: تجميع الدروس بناءً على الفولدر/القسم، وفي حال كان فارغاً يتم وضعه في "الدروس"
+            var groupedLessons = Model.AllLessons.GroupBy(l => string.IsNullOrWhiteSpace(l.SectionName) ? "الدروس" : l.SectionName);
+        }
+        @foreach (var group in groupedLessons)
         {
-            <div class="lesson-item @(lesson.Id == Model.CurrentLesson.Id ? "active" : "")"
-                 onclick="window.location.href='/CoursePlayer/Index/@Model.CourseId?lessonId=@lesson.Id'">
-                <i class="fas fa-play-circle me-2"></i> @lesson.Title
+            <div class="folder-group mb-3">
+                <div class="folder-header d-flex justify-content-between align-items-center mb-2 p-2 rounded" style="background: rgba(212, 175, 55, 0.1); cursor: pointer;" onclick="this.nextElementSibling.classList.toggle('d-none'); this.querySelector('.toggle-icon').classList.toggle('fa-chevron-up'); this.querySelector('.toggle-icon').classList.toggle('fa-chevron-down');">
+                    <span style="color: var(--accent); font-weight: bold;"><i class="fas fa-folder-open me-2"></i> @group.Key</span>
+                    <i class="fas toggle-icon @(group.Any(l => l.Id == Model.CurrentLesson.Id) ? "fa-chevron-up" : "fa-chevron-down")" style="color: var(--accent); font-size: 0.8rem;"></i>
+                </div>
+                <div class="folder-lessons @(group.Any(l => l.Id == Model.CurrentLesson.Id) ? "" : "d-none")">
+                    @foreach (var lesson in group)
+                    {
+                        <div class="lesson-item @(lesson.Id == Model.CurrentLesson.Id ? "active" : "") ms-3"
+                             onclick="window.location.href='/CoursePlayer/Index/@Model.CourseId?lessonId=@lesson.Id'">
+                            <i class="fas fa-play-circle me-2"></i> @lesson.Title
+                        </div>
+                    }
+                </div>
             </div>
         }
     </div>

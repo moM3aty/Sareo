@@ -226,5 +226,19 @@ namespace Sareoo.Areas.Admin.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+        public async Task<IActionResult> EnrolledStudents(int id)
+        {
+            var course = await _context.Courses.FindAsync(id);
+            if (course == null) return NotFound();
+
+            ViewBag.CourseTitle = course.Title;
+
+            var activeSubscriptions = await _context.StudentCourses
+                .Include(sc => sc.Student)
+                .Where(sc => sc.CourseId == id && sc.ExpiryDate.HasValue && sc.ExpiryDate.Value > DateTime.UtcNow)
+                .ToListAsync();
+
+            return View(activeSubscriptions);
+        }
     }
 }

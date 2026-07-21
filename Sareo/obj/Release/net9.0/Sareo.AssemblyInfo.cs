@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Sareo")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a7cd8165b67a2317589ea913c10fc6ee253d6c85")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+81cf6df1dbfb96dd3d730f552a5d36a28b744293")]
 [assembly: System.Reflection.AssemblyProductAttribute("Sareo")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Sareo")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

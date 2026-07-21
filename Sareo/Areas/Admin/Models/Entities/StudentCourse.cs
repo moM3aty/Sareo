@@ -15,6 +15,9 @@ namespace Sareoo.Areas.Admin.Models.Entities
         [Display(Name = "آخر وصول")]
         public DateTime? LastAccessDate { get; set; }
 
+        [Display(Name = "تاريخ انتهاء الاشتراك")]
+        public DateTime? ExpiryDate { get; set; }
+
         public virtual Student Student { get; set; }
         public virtual Course Course { get; set; }
     }
