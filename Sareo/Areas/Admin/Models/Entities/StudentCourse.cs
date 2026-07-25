@@ -15,6 +15,10 @@ namespace Sareoo.Areas.Admin.Models.Entities
         [Display(Name = "آخر وصول")]
         public DateTime? LastAccessDate { get; set; }
 
+        // التعديل الجديد: إضافة تاريخ البداية
+        [Display(Name = "تاريخ بداية الاشتراك")]
+        public DateTime? StartDate { get; set; }
+
         [Display(Name = "تاريخ انتهاء الاشتراك")]
         public DateTime? ExpiryDate { get; set; }
 

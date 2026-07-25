@@ -151,12 +151,14 @@ namespace Sareoo.Areas.Admin.Controllers
 
                 return new StudentCourseProgressViewModel
                 {
-                    // التعديل: تمرير معرف الدورة للفيو
                     CourseId = sc.CourseId,
                     CourseTitle = sc.Course.Title,
                     ProgressPercentage = sc.ProgressPercentage,
                     Status = status,
-                    LastAccessDate = sc.LastAccessDate
+                    LastAccessDate = sc.LastAccessDate,
+                    // التعديل: تمرير تواريخ البداية والنهاية للفيو
+                    StartDate = sc.StartDate,
+                    ExpiryDate = sc.ExpiryDate
                 };
             }).ToList();
 
@@ -465,7 +467,8 @@ namespace Sareoo.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AssignCourseToStudent(int studentId, int courseId)
+        // التعديل: استقبال تواريخ البداية والنهاية من الفورم
+        public async Task<IActionResult> AssignCourseToStudent(int studentId, int courseId, DateTime? startDate, DateTime? expiryDate)
         {
             var isEnrolled = await _context.StudentCourses
                 .AnyAsync(sc => sc.StudentId == studentId && sc.CourseId == courseId);
@@ -481,17 +484,18 @@ namespace Sareoo.Areas.Admin.Controllers
                 StudentId = studentId,
                 CourseId = courseId,
                 ProgressPercentage = 0,
-                ExpiryDate = DateTime.UtcNow.AddMonths(1)
+                // التعديل: استخدام التواريخ المدخلة أو وضع قيم افتراضية (اليوم وبعد شهر)
+                StartDate = startDate ?? DateTime.UtcNow,
+                ExpiryDate = expiryDate ?? DateTime.UtcNow.AddMonths(1)
             };
 
             _context.StudentCourses.Add(subscription);
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "تم تفعيل الكورس للطالب بنجاح لمدة شهر!";
+            TempData["SuccessMessage"] = "تم تفعيل الكورس للطالب بنجاح!";
             return RedirectToAction("Details", new { id = studentId });
         }
 
-        // التعديل: إضافة وظيفة جديدة لإلغاء الاشتراك
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
@@ -510,6 +514,29 @@ namespace Sareoo.Areas.Admin.Controllers
             await _context.SaveChangesAsync();
 
             TempData["SuccessMessage"] = "تم إلغاء اشتراك الطالب من الدورة بنجاح!";
+            return RedirectToAction("Details", new { id = studentId });
+        }
+
+        // التعديل: إضافة وظيفة جديدة لتحديث وتعديل تواريخ الاشتراك (تجديد أو تقليص المدة)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> EditStudentSubscription(int studentId, int courseId, DateTime startDate, DateTime expiryDate)
+        {
+            var subscription = await _context.StudentCourses
+                .FirstOrDefaultAsync(sc => sc.StudentId == studentId && sc.CourseId == courseId);
+
+            if (subscription == null)
+            {
+                TempData["ErrorMessage"] = "اشتراك الطالب غير موجود.";
+                return RedirectToAction("Details", new { id = studentId });
+            }
+
+            subscription.StartDate = startDate;
+            subscription.ExpiryDate = expiryDate;
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "تم تحديث فترة الاشتراك بنجاح!";
             return RedirectToAction("Details", new { id = studentId });
         }
     }

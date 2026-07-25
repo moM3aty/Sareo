@@ -80,8 +80,13 @@ namespace Sareoo.Areas.Admin.Models.ViewModels
 
         public int CourseHours { get; set; }
         public DateTime? LastAccessDate { get; set; }
+
+        // التعديل: إضافة تواريخ البداية والنهاية لاستخدامها في العرض والتعديل
+        public DateTime? StartDate { get; set; }
+        public DateTime? ExpiryDate { get; set; }
         public double Grade { get; set; }
     }
+
 
 
     // ViewModel for displaying certificate info in the profile

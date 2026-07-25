@@ -923,6 +923,9 @@ namespace Sareoo.Migrations
                     b.Property<int>("ProgressPercentage")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("StudentId", "CourseId");
 
                     b.HasIndex("CourseId");
