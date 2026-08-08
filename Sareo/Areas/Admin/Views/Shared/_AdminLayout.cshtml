@@ -29,6 +29,7 @@
             font-family: 'Cairo', sans-serif;
             background-color: var(--brand-green-dark);
             color: var(--text-light);
+            overflow-x: hidden; /* لمنع أي تمرير أفقي للصفحة بأكملها */
         }
 
         .main-bg {
@@ -112,6 +113,7 @@
         /* --- Scrollbar --- */
         ::-webkit-scrollbar {
             width: 8px;
+            height: 8px; /* شريط التمرير الأفقي للجداول */
         }
 
         ::-webkit-scrollbar-track {
@@ -127,6 +129,15 @@
             ::-webkit-scrollbar-thumb:hover {
                 background: var(--brand-gold);
             }
+
+        /* --- Table Mobile Wrapper --- */
+        .table-responsive-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
 
         /* --- Modals --- */
         .modal-overlay {
@@ -153,21 +164,19 @@
         }
 
         /* --- GLOBAL OVERRIDES FOR BLUE HEADERS/CARDS (The Fix) --- */
-
-        /* 1. Force generic Table Headers */
         thead, th {
             background-color: var(--brand-green) !important;
             color: var(--brand-gold) !important;
             border-color: var(--brand-gold) !important;
+            white-space: nowrap; /* لمنع تكسر النصوص في عناوين الجداول */
         }
 
-        /* 2. Force Table Rows */
         tbody tr {
             background-color: var(--brand-green-dark) !important;
             color: var(--text-light) !important;
             border-bottom: 1px solid var(--brand-green) !important;
         }
-            /* Hover Effect */
+
             tbody tr:hover, tbody tr:hover td {
                 background-color: var(--brand-green-light) !important;
                 color: #fff !important;
@@ -175,17 +184,14 @@
 
         table, td {
             border-color: var(--brand-green) !important;
+            white-space: nowrap; /* لمنع تكسر النصوص في الجداول */
         }
-
-        /* 3. AGGRESSIVE OVERRIDE for Blue/Slate/Gray Backgrounds
-                   This targets the specific blue headers shown in your images (likely bg-slate-800 or similar) */
 
         .bg-slate-700, .bg-slate-800, .bg-slate-900,
         .bg-gray-700, .bg-gray-800, .bg-gray-900,
         .bg-zinc-700, .bg-zinc-800, .bg-zinc-900,
         .bg-neutral-700, .bg-neutral-800, .bg-neutral-900,
         .bg-blue-900, .bg-blue-800,
-        /* Arbitrary values often used by Tailwind JIT */
         [class*="bg-[#1e293b]"], [class*="bg-[#0f172a]"],
         [class*="bg-[#1f2937]"], [class*="bg-[#111827]"],
         [class*="bg-[#1e1b4b]"] {
@@ -194,13 +200,11 @@
             border-color: var(--brand-gold) !important;
         }
 
-        /* 4. Fix specific light blue backgrounds to be dark green */
         .bg-gray-50, .bg-gray-100, .bg-gray-200, .bg-blue-50, .bg-blue-100 {
             background-color: var(--brand-green) !important;
             color: var(--brand-gold) !important;
         }
 
-        /* 5. Pagination & Bootstrap Buttons Override */
         .page-link, .btn-primary, .btn-info {
             background-color: var(--brand-green) !important;
             border-color: var(--brand-gold) !important;
@@ -211,14 +215,36 @@
                 background-color: var(--brand-gold) !important;
                 color: #000 !important;
             }
+
+        /* Sidebar transition for mobile */
+        .sidebar-transition {
+            transition: transform 0.3s ease-in-out;
+        }
     </style>
 </head>
-<body class="main-bg">
-    <div class="flex h-screen">
-        <aside class="sidebar-bg w-64 h-screen flex flex-col p-4 overflow-y-auto">
-            <div class="text-center mb-10">
+<body class="main-bg relative">
+
+    <!-- زر فتح القائمة للموبايل -->
+    <button id="mobileMenuBtn" class="lg:hidden fixed top-4 right-4 z-40 bg-[var(--brand-gold)] text-[var(--brand-green-dark)] p-3 rounded-lg shadow-lg">
+        <i class="fas fa-bars fa-lg"></i>
+    </button>
+
+    <!-- الخلفية الداكنة عند فتح القائمة بالموبايل -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden backdrop-blur-sm transition-opacity"></div>
+
+    <div class="flex h-screen overflow-hidden">
+        <!-- القائمة الجانبية (Sidebar) -->
+        <!-- تمت إضافة الكلاسات المسئولة عن إخفائها وإظهارها في الموبايل -->
+        <aside id="adminSidebar" class="sidebar-bg w-72 h-screen flex flex-col p-4 overflow-y-auto fixed lg:static inset-y-0 right-0 z-50 transform translate-x-full lg:translate-x-0 sidebar-transition shadow-2xl lg:shadow-none">
+
+            <!-- زر إغلاق القائمة من الداخل (يظهر للموبايل فقط) -->
+            <button id="closeMenuBtn" class="lg:hidden absolute top-4 left-4 text-[var(--brand-gold)] text-2xl">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="text-center mb-10 mt-4 lg:mt-0">
                 <a asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="~/images/logo.png" style="background-color:#fff;border-radius:25px;width:150px;padding:5px;margin:5px auto;" alt="Sareoo" />
+                    <img src="~/images/logo.png" style="background-color:#fff;border-radius:25px;width:120px;padding:5px;margin:5px auto;" alt="Sareoo" />
                 </a>
                 <p class="text-gray-400 mt-2 text-sm font-bold" style="color:#d4af37 !important;">لوحة التحكم</p>
             </div>
@@ -239,21 +265,24 @@
                     <li><a asp-area="Admin" asp-controller="Certificates" asp-action="Index" class="sidebar-link flex items-center justify-between p-3 rounded-lg @(currentController == "certificates" ? "active" : "")"><span>الشهادات</span><i class="fas fa-certificate fa-fw"></i></a></li>
                 </ul>
             </nav>
-            <div class="mt-auto">
+            <div class="mt-auto pt-4">
                 <form asp-area="Admin" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm">
                     <a href="#" onclick="document.getElementById('logoutForm').submit();" class="sidebar-link flex items-center justify-between p-3 rounded-lg">
-                        <span>تسجيل الخروج</span> <i class="fas fa-sign-out-alt fa-fw"></i>
+                        <span>تسجيل الخروج</span> <i class="fas fa-sign-out-alt fa-fw text-red-400"></i>
                     </a>
                 </form>
             </div>
         </aside>
-        <main class="flex-1 p-8 overflow-y-auto">
+
+        <!-- المحتوى الرئيسي (Main Content) -->
+        <!-- تم إضافة padding من الأعلى في الموبايل لتفادي تداخل زر القائمة مع المحتوى -->
+        <main class="flex-1 p-4 pt-16 lg:p-8 lg:pt-8 overflow-y-auto w-full">
             @RenderBody()
         </main>
     </div>
 
     <!-- Quick Add Modal -->
-    <div id="quickAddModal" class="modal-overlay fixed inset-0 z-50 hidden opacity-0 flex items-center justify-center bg-black bg-opacity-70 p-4" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div id="quickAddModal" class="modal-overlay fixed inset-0 z-[60] hidden opacity-0 flex items-center justify-center bg-black bg-opacity-70 p-4" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="modal-content w-full max-w-lg rounded-lg shadow-xl opacity-100">
             <div class="modal-header flex items-center justify-between p-4">
                 <h3 class="text-xl font-semibold text-white" id="quickAddModalTitle"></h3>
@@ -266,10 +295,41 @@
             </div>
         </div>
     </div>
+
     <script src="~/js/admin-main.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+
+            // --- 1. كود فتح وإغلاق القائمة الجانبية في الموبايل ---
+            const sidebar = document.getElementById('adminSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const closeMenuBtn = document.getElementById('closeMenuBtn');
+
+            function toggleSidebar() {
+                sidebar.classList.toggle('translate-x-full'); // يقوم بإظهار/إخفاء القائمة بانزلاق
+                overlay.classList.toggle('hidden'); // إظهار/إخفاء الخلفية الشفافة
+            }
+
+            if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleSidebar);
+            if (closeMenuBtn) closeMenuBtn.addEventListener('click', toggleSidebar);
+            if (overlay) overlay.addEventListener('click', toggleSidebar);
+
+            // --- 2. كود جعل الجداول قابلة للتمرير الأفقي (Responsive Tables) ---
+            // يقوم هذا الكود بالبحث عن كل الجداول ووضعها داخل ديف يدعم الـ overflow-x تلقائياً
+            const tables = document.querySelectorAll('main table');
+            tables.forEach(table => {
+                if (!table.parentElement.classList.contains('table-responsive-wrapper')) {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'table-responsive-wrapper';
+                    table.parentNode.insertBefore(wrapper, table);
+                    wrapper.appendChild(table);
+                }
+            });
+
+            // --- 3. كود الـ Modal ---
             const modal = document.getElementById('quickAddModal');
             if (!modal) return;
 
@@ -388,33 +448,5 @@
              });
         });
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
-    <script>
-        @if (User.Identity.IsAuthenticated)
-        {
-                    <text>
-                    document.addEventListener("DOMContentLoaded", function () {
-                        const connection = new signalR.HubConnectionBuilder()
-                            .withUrl("/presenceHub")
-                            .withAutomaticReconnect()
-                            .build();
-
-                        function start() {
-                            connection.start().catch(err => {
-                                console.error('SignalR Connection Error: ', err);
-                                setTimeout(start, 5000);
-                            });
-                        }
-
-                        connection.onclose(async () => {
-                            await start();
-                        });
-
-                        start();
-                    });
-                    </text>
-        }
-    </script>
-
 </body>
 </html>

@@ -118,11 +118,7 @@ namespace Sareoo.Controllers
                             var student = await _context.Students
                                                         .FirstOrDefaultAsync(s => s.ApplicationUserId == user.Id);
 
-                            if (student != null && !student.IsActive)
-                            {
-                                ModelState.AddModelError(string.Empty, "01041434757 عذراً، حسابك غير مفعل بعد. يرجى انتظار تفعيل الحساب من قبل الإدارة أو تواصل معنا.");
-                                return View(model);
-                            }
+                           
                         }
 
                     }
